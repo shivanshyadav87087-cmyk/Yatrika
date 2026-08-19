@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0D2B22;
+}
+::-webkit-scrollbar-thumb {
+  background: #1E4D40;
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D96B43;
+}
+
+/* Topographic Contour Overlay helper */
+.topo-pattern-light {
+  background-image: radial-gradient(rgba(26, 77, 64, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.topo-pattern-dark {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* Glassmorphism */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(228, 240, 236, 0.8);
+}
+
+.glass-panel-dark {
+  background: rgba(13, 43, 34, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(42, 102, 86, 0.4);
+}
