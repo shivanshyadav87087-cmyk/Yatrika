@@ -147,21 +147,25 @@ export default function GemSimulator({ customGems }) {
     }, 400);
   };
 
-  // POST /api/v1/sos/dispatch to Production API_BASE_URL
-  const handleTriggerSOS = () => {
+  // POST /api/v1/sos/dispatch to Production API_BASE_URL (with Mock/Test Mode support)
+  const handleTriggerSOS = (isMockTest = false) => {
     setSosSent(true);
 
-    fetch(`${API_BASE_URL}/api/v1/sos/dispatch`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        gemName: currentGem.gemName,
-        location: currentGem.location,
-        policeStation: police.policeStationName
+    if (isMockTest === true) {
+      console.log('🧪 Mock/Test Mode Active: Simulated SOS payload response { success: true, status: "DISPATCHED_TO_POLICE" }');
+    } else {
+      fetch(`${API_BASE_URL}/api/v1/sos/dispatch`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          gemName: currentGem.gemName,
+          location: currentGem.location,
+          policeStation: police.policeStationName
+        })
       })
-    })
-    .then((res) => res.json())
-    .catch((err) => console.log('SOS API Dispatch Notice:', err.message));
+      .then((res) => res.json())
+      .catch((err) => console.log('SOS API Dispatch Notice:', err.message));
+    }
 
     setTimeout(() => {
       setSosSent(false);
