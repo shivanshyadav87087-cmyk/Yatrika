@@ -1,0 +1,27 @@
+{
+  "name": "yatrika-backend",
+  "version": "1.0.0",
+  "description": "Yatrika Commercial AI Vector Search & Emergency Police Safety Microservices Backend",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mongodb": "^6.18.0"
+  },
+  "keywords": [
+    "yatrika",
+    "tourism",
+    "ai",
+    "safety",
+    "police",
+    "express",
+    "vector-search"
+  ],
+  "author": "Yatrika Technologies",
+  "license": "MIT"
+}
