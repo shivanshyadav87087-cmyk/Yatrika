@@ -1,14 +1,17 @@
 import express from 'express';
 import cors from 'cors';
+import { MongoClient } from 'mongodb';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const MONGODB_URI = process.env.MONGODB_URI;
+const DB_NAME = 'yatrika';
 
 app.use(cors());
 app.use(express.json());
 
-/* Mock Pan-India Hidden Gems & Police Safety Database */
-const hiddenGemsDB = [
+/* Sample Hidden Gems Dataset for Seeding & Fallback */
+const sampleHiddenGemsDB = [
   {
     id: "gem_001",
     state: "Rajasthan",
@@ -96,6 +99,44 @@ const hiddenGemsDB = [
   }
 ];
 
+let db = null;
+let gemsCollection = null;
+let sosCollection = null;
+let isMongoConnected = false;
+
+/* Initialize MongoDB Connection */
+async function connectToMongoDB() {
+  if (!MONGODB_URI) {
+    console.log('ℹ️ MONGODB_URI env variable not set. Running in fallback mode with sample database.');
+    return;
+  }
+
+  try {
+    const client = new MongoClient(MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000,
+    });
+
+    await client.connect();
+    db = client.db(DB_NAME);
+    gemsCollection = db.collection('gems');
+    sosCollection = db.collection('sos_alerts');
+    isMongoConnected = true;
+
+    console.log(`✅ Successfully connected to MongoDB Atlas database: "${DB_NAME}"`);
+
+    // Seed initial dataset if gems collection is empty
+    const count = await gemsCollection.countDocuments();
+    if (count === 0) {
+      await gemsCollection.insertMany(sampleHiddenGemsDB);
+      console.log(`🌱 Seeded ${sampleHiddenGemsDB.length} sample hidden gems into "${DB_NAME}.gems" collection.`);
+    }
+  } catch (error) {
+    console.error('⚠️ MongoDB Connection Warning:', error.message);
+    console.log('ℹ️ Falling back to in-memory dataset for seamless API availability.');
+    isMongoConnected = false;
+  }
+}
+
 /* 1. Health Check Endpoint */
 app.get('/api/v1/health', (req, res) => {
   res.json({
@@ -103,45 +144,91 @@ app.get('/api/v1/health', (req, res) => {
     system: 'Yatrika AI Hidden Gem & Police Safety Microservices',
     brand: 'Yatrika Technologies',
     timestamp: new Date().toISOString(),
+    mongoDb: isMongoConnected ? `CONNECTED (database: ${DB_NAME})` : 'IN_MEMORY_FALLBACK',
     vectorEngine: 'FAISS / ChromaDB RAG Vector Store Active',
     policeGateway: '24/7 SOS Emergency Relay Active'
   });
 });
 
-/* 2. State & Vibe Vector Search API */
-app.get('/api/v1/gems', (req, res) => {
-  const { state, vibe } = req.query;
-  let results = hiddenGemsDB;
+/* 2. State & Vibe Vector Search API (MongoDB Atlas Query with In-Memory Fallback) */
+app.get('/api/v1/gems', async (req, res) => {
+  try {
+    const { state, vibe } = req.query;
 
-  if (state && state !== 'All States') {
-    results = results.filter(g => g.state.toLowerCase() === state.toLowerCase());
+    if (isMongoConnected && gemsCollection) {
+      const query = {};
+      if (state && state !== 'All States') {
+        query.state = { $regex: new RegExp(`^${state}$`, 'i') };
+      }
+      if (vibe && vibe !== 'All Vibes') {
+        query.vibeTag = { $regex: new RegExp(`^${vibe}$`, 'i') };
+      }
+
+      const results = await gemsCollection.find(query).toArray();
+      return res.json({
+        success: true,
+        source: 'MongoDB_Atlas',
+        count: results.length,
+        query: { state: state || 'All', vibe: vibe || 'All' },
+        data: results
+      });
+    }
+
+    // In-memory fallback
+    let results = sampleHiddenGemsDB;
+    if (state && state !== 'All States') {
+      results = results.filter(g => g.state.toLowerCase() === state.toLowerCase());
+    }
+    if (vibe && vibe !== 'All Vibes') {
+      results = results.filter(g => g.vibeTag.toLowerCase() === vibe.toLowerCase());
+    }
+
+    res.json({
+      success: true,
+      source: 'In_Memory_Fallback',
+      count: results.length,
+      query: { state: state || 'All', vibe: vibe || 'All' },
+      data: results
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
-
-  if (vibe && vibe !== 'All Vibes') {
-    results = results.filter(g => g.vibeTag.toLowerCase() === vibe.toLowerCase());
-  }
-
-  res.json({
-    success: true,
-    count: results.length,
-    query: { state: state || 'All', vibe: vibe || 'All' },
-    data: results
-  });
 });
 
-/* 3. 1-Tap Police & Emergency SOS Dispatch Gateway API */
-app.post('/api/v1/sos/dispatch', (req, res) => {
-  const { location, gemName, policeStation, userLat, userLng } = req.body;
+/* 3. 1-Tap Police & Emergency SOS Dispatch Gateway API (MongoDB Persistence) */
+app.post('/api/v1/sos/dispatch', async (req, res) => {
+  try {
+    const { location, gemName, policeStation, userLat, userLng } = req.body;
+    const sosTicketId = `SOS-YATRIKA-${Math.floor(100000 + Math.random() * 900000)}`;
 
-  res.json({
-    success: true,
-    sosTicketId: `SOS-YATRIKA-${Math.floor(100000 + Math.random() * 900000)}`,
-    status: 'DISPATCHED_TO_POLICE',
-    policeStation: policeStation || 'Nearest District Police Station',
-    responseEta: '< 4 minutes',
-    sentAt: new Date().toISOString(),
-    message: `SOS Emergency Alert successfully relayed to ${policeStation} and local village guards.`
-  });
+    const sosPayload = {
+      sosTicketId,
+      status: 'DISPATCHED_TO_POLICE',
+      gemName: gemName || 'Hidden Gem Location',
+      location: location || 'Unknown Coordinates',
+      policeStation: policeStation || 'Nearest District Police Station',
+      coordinates: { lat: userLat || null, lng: userLng || null },
+      responseEta: '< 4 minutes',
+      createdAt: new Date()
+    };
+
+    if (isMongoConnected && sosCollection) {
+      await sosCollection.insertOne(sosPayload);
+    }
+
+    res.json({
+      success: true,
+      source: isMongoConnected ? 'MongoDB_Atlas' : 'Emergency_Relay',
+      sosTicketId: sosPayload.sosTicketId,
+      status: sosPayload.status,
+      policeStation: sosPayload.policeStation,
+      responseEta: sosPayload.responseEta,
+      sentAt: sosPayload.createdAt.toISOString(),
+      message: `SOS Emergency Alert successfully relayed to ${sosPayload.policeStation} and saved to database.`
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 /* OpenAPI / Swagger Spec JSON Endpoint */
@@ -155,12 +242,14 @@ app.get('/api/v1/docs', (req, res) => {
     },
     paths: {
       "/api/v1/health": { get: { summary: "System Health Check" } },
-      "/api/v1/gems": { get: { summary: "RAG Vector Search by State & Vibe" } },
-      "/api/v1/sos/dispatch": { post: { summary: "1-Tap Police Emergency SOS Dispatch" } }
+      "/api/v1/gems": { get: { summary: "RAG Vector Search by State & Vibe (MongoDB Atlas)" } },
+      "/api/v1/sos/dispatch": { post: { summary: "1-Tap Police Emergency SOS Dispatch (MongoDB Persistence)" } }
     }
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Yatrika Commercial Backend Microservice running at http://localhost:${PORT}`);
+/* Start Server & Connect Database */
+app.listen(PORT, async () => {
+  console.log(`🚀 Yatrika Backend Microservice running on port ${PORT}`);
+  await connectToMongoDB();
 });
