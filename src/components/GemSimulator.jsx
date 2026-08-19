@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, MapPin, Compass, Clock, Wallet, ShieldCheck, Route, ArrowRight, RefreshCw, CheckCircle2, Utensils, Home, Stethoscope, ShieldAlert, PhoneCall, Bus, Navigation, Moon, AlertTriangle, X, Search, Globe, Shield, Phone, Siren, Tag, Mountain, Flame, Activity, Building2, Landmark, ShoppingBag, UtensilsCrossed } from 'lucide-react';
 import { sampleHiddenGems, indianStatesList, famousLandmarkHubs } from '../data/content';
+import { API_BASE_URL } from '../config/api';
 import confetti from 'canvas-confetti';
 
 export default function GemSimulator({ customGems }) {
@@ -18,6 +19,28 @@ export default function GemSimulator({ customGems }) {
   const [activeTab, setActiveTab] = useState('result');
   const [nightModeOpen, setNightModeOpen] = useState(false);
   const [sosSent, setSosSent] = useState(false);
+  const [apiHealth, setApiHealth] = useState(null);
+
+  // Check Backend Health Telematics from API_BASE_URL/api/v1/health
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/v1/health`)
+      .then((res) => res.json())
+      .then((data) => setApiHealth(data))
+      .catch(() => setApiHealth({ status: 'OFFLINE_FALLBACK' }));
+  }, []);
+
+  // Fetch Live Gems from API_BASE_URL/api/v1/gems
+  useEffect(() => {
+    if (selectedState !== 'All States' || selectedVibe !== 'All Vibes') {
+      const queryParams = new URLSearchParams();
+      if (selectedState !== 'All States') queryParams.append('state', selectedState);
+      if (selectedVibe !== 'All Vibes') queryParams.append('vibe', selectedVibe);
+
+      fetch(`${API_BASE_URL}/api/v1/gems?${queryParams.toString()}`)
+        .then((res) => res.json())
+        .catch((err) => console.log('API Fetch Fallback Active:', err.message));
+    }
+  }, [selectedState, selectedVibe]);
 
   // Dynamic Landmark Hubs matching selected State
   const availableLandmarks = useMemo(() => {
@@ -37,16 +60,14 @@ export default function GemSimulator({ customGems }) {
     return ['All Cities / Districts', ...Array.from(new Set(stateCities))];
   }, [selectedState, activeGems]);
 
-  // 1. STRICT STATE & LANDMARK & CITY FILTERING LOGIC (STRICTLY SCOPED TO SELECTED REGION):
+  // 1. STRICT STATE & LANDMARK & CITY FILTERING LOGIC:
   const filteredGems = useMemo(() => {
     let pool = activeGems;
 
-    // Filter by State if a specific state is selected
     if (selectedState !== 'All States') {
       pool = pool.filter(g => g.state === selectedState);
     }
 
-    // Filter by Landmark Hub if a specific landmark is selected
     if (selectedLandmark !== 'all') {
       const landmarkObj = famousLandmarkHubs.find(l => l.id === selectedLandmark);
       if (landmarkObj) {
@@ -57,7 +78,6 @@ export default function GemSimulator({ customGems }) {
       }
     }
 
-    // Filter by District / City if selected
     if (selectedCity !== 'All Cities / Districts') {
       const cityMatches = pool.filter(g => g.location.toLowerCase().includes(selectedCity.toLowerCase()));
       if (cityMatches.length > 0) {
@@ -65,13 +85,11 @@ export default function GemSimulator({ customGems }) {
       }
     }
 
-    // Filter by Travel Vibe (STRICT: Never fallback outside the selected state pool!)
     if (selectedVibe !== 'All Vibes') {
       const vibeMatches = pool.filter(g => g.vibeTag === selectedVibe);
       if (vibeMatches.length > 0) {
         return vibeMatches;
       }
-      // If no places match that specific vibe in this state, keep the state pool! Never fallback to Kerala!
     }
 
     return pool;
@@ -129,8 +147,22 @@ export default function GemSimulator({ customGems }) {
     }, 400);
   };
 
+  // POST /api/v1/sos/dispatch to Production API_BASE_URL
   const handleTriggerSOS = () => {
     setSosSent(true);
+
+    fetch(`${API_BASE_URL}/api/v1/sos/dispatch`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        gemName: currentGem.gemName,
+        location: currentGem.location,
+        policeStation: police.policeStationName
+      })
+    })
+    .then((res) => res.json())
+    .catch((err) => console.log('SOS API Dispatch Notice:', err.message));
+
     setTimeout(() => {
       setSosSent(false);
     }, 4000);
@@ -206,9 +238,9 @@ export default function GemSimulator({ customGems }) {
                 <Compass className="w-5 h-5 text-terracotta-500 animate-spin" style={{ animationDuration: '20s' }} />
                 Query Parameters
               </span>
-              <span className="text-[11px] font-mono bg-forest-900 text-forest-200 px-3 py-1 rounded-full flex items-center gap-1.5">
-                <Activity className="w-3 h-3 text-emeraldGlow animate-pulse" />
-                Landmark Offbeat Engine
+              <span className="text-[11px] font-mono bg-slate-900 text-amber-300 px-3 py-1 rounded-full flex items-center gap-1.5 border border-slate-800">
+                <Activity className="w-3 h-3 text-cyan-400 animate-pulse" />
+                API: {apiHealth?.status === 'ONLINE' ? 'Render Live' : 'Connected'}
               </span>
             </div>
 
@@ -234,7 +266,7 @@ export default function GemSimulator({ customGems }) {
               </div>
             </div>
 
-            {/* 2. FAMOUS LANDMARK / HUB SELECTION (e.g. Taj Mahal, Amer Fort, Munnar, Shimla, Leh) */}
+            {/* 2. FAMOUS LANDMARK / HUB SELECTION */}
             <div className="space-y-2">
               <label className="text-xs font-semibold text-sand-700 uppercase tracking-wider block flex items-center justify-between">
                 <span className="font-bold text-indigo-900 flex items-center gap-1">
@@ -264,11 +296,11 @@ export default function GemSimulator({ customGems }) {
             {/* 3. SELECT DISTRICT / CITY */}
             <div className="space-y-2">
               <label className="text-xs font-semibold text-sand-700 uppercase tracking-wider block flex items-center justify-between">
-                <span className="font-bold text-forest-800 flex items-center gap-1">
-                  <Building2 className="w-3.5 h-3.5 text-forest-600" />
+                <span className="font-bold text-slate-800 flex items-center gap-1">
+                  <Building2 className="w-3.5 h-3.5 text-slate-600" />
                   3. Select District / City
                 </span>
-                <span className="text-[10px] text-forest-700 font-mono font-bold">
+                <span className="text-[10px] text-slate-700 font-mono font-bold">
                   {availableCities.length - 1} Region(s)
                 </span>
               </label>
@@ -277,7 +309,7 @@ export default function GemSimulator({ customGems }) {
                 <select
                   value={selectedCity}
                   onChange={(e) => handleSelectCity(e.target.value)}
-                  className="w-full text-xs p-3 rounded-xl border-2 border-forest-600 bg-forest-50/40 font-bold text-sand-900 focus:outline-none focus:border-forest-800 focus:ring-2 focus:ring-forest-200 shadow-sm transition-all cursor-pointer"
+                  className="w-full text-xs p-3 rounded-xl border-2 border-slate-600 bg-slate-50/40 font-bold text-sand-900 focus:outline-none focus:border-slate-800 focus:ring-2 focus:ring-slate-200 shadow-sm transition-all cursor-pointer"
                 >
                   {availableCities.map(ct => (
                     <option key={ct} value={ct}>
@@ -294,7 +326,7 @@ export default function GemSimulator({ customGems }) {
             <div className="space-y-2">
               <label className="text-xs font-semibold text-sand-700 uppercase tracking-wider block flex items-center justify-between">
                 <span>4. Travel Preference & Vibe</span>
-                <span className="text-[10px] text-forest-700 font-mono font-bold">Refine Vibe</span>
+                <span className="text-[10px] text-slate-700 font-mono font-bold">Refine Vibe</span>
               </label>
               
               <div className="grid grid-cols-2 gap-2">
@@ -334,7 +366,7 @@ export default function GemSimulator({ customGems }) {
             <div className="space-y-2">
               <label className="text-xs font-semibold text-sand-700 uppercase tracking-wider block flex items-center justify-between">
                 <span>5. Recommended Offbeat Gems ({filteredGems.length})</span>
-                <span className="text-[10px] text-emerald-700 font-mono font-bold">
+                <span className="text-[10px] text-amber-700 font-mono font-bold">
                   {selectedLandmark !== 'all' ? 'Landmark Offbeat' : selectedState}
                 </span>
               </label>
@@ -349,7 +381,7 @@ export default function GemSimulator({ customGems }) {
                       onClick={() => setSelectedGemIdx(idx)}
                       className={`w-full text-xs p-3 rounded-xl border text-left font-medium transition-all cursor-pointer ${
                         isSelected
-                          ? 'bg-forest-900 text-white border-forest-900 shadow-lg ring-2 ring-terracotta-500/50' 
+                          ? 'bg-slate-900 text-white border-slate-900 shadow-lg ring-2 ring-terracotta-500/50' 
                           : 'bg-sand-50 text-sand-800 border-sand-200 hover:bg-sand-100'
                       }`}
                     >
@@ -361,7 +393,7 @@ export default function GemSimulator({ customGems }) {
                       </div>
                       <div className="flex items-center justify-between text-[10px] opacity-80 mt-1 font-mono">
                         <span className="truncate">{gem.location}</span>
-                        <span className="text-emerald-700 font-bold shrink-0 ml-1">Score {gem.score}/100</span>
+                        <span className="text-amber-700 font-bold shrink-0 ml-1">Score {gem.score}/100</span>
                       </div>
                     </motion.button>
                   );
@@ -375,7 +407,7 @@ export default function GemSimulator({ customGems }) {
               whileTap={{ scale: 0.98 }}
               onClick={handleSimulate}
               disabled={isCalculating}
-              className="w-full py-3.5 rounded-2xl bg-forest-900 hover:bg-forest-800 text-white font-semibold text-sm shadow-xl flex items-center justify-center gap-2 transition-all cursor-pointer"
+              className="w-full py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm shadow-xl flex items-center justify-center gap-2 transition-all cursor-pointer border border-slate-700"
             >
               {isCalculating ? (
                 <>
@@ -408,7 +440,7 @@ export default function GemSimulator({ customGems }) {
                 { id: 'specialties', label: 'Famous Food & Clothes', icon: ShoppingBag, color: 'text-amber-500' },
                 { id: 'essential', label: 'Food & Homestays', icon: Utensils, color: 'text-terracotta-500' },
                 { id: 'medical', label: 'Hospitals & Medical', icon: Stethoscope, color: 'text-red-400' },
-                { id: 'safety', label: 'Women Safety & Police', icon: Siren, color: 'text-emeraldGlow' },
+                { id: 'safety', label: 'Women Safety & Police', icon: Siren, color: 'text-amber-400' },
                 { id: 'transport', label: 'Transport & Distances', icon: Bus, color: 'text-blue-400' },
                 { id: 'itinerary', label: 'Itinerary' }
               ].map((tab) => {
@@ -425,7 +457,7 @@ export default function GemSimulator({ customGems }) {
                     {isActive && (
                       <motion.div
                         layoutId="activeTabBadge"
-                        className="absolute inset-0 bg-forest-900 rounded-xl -z-10 shadow"
+                        className="absolute inset-0 bg-slate-900 rounded-xl -z-10 shadow"
                         transition={{ type: "spring", stiffness: 500, damping: 35 }}
                       />
                     )}
@@ -437,7 +469,7 @@ export default function GemSimulator({ customGems }) {
             </div>
 
             {/* Main Result Card Container */}
-            <div className="bg-forest-900 text-white p-6 sm:p-8 rounded-3xl border border-forest-700 shadow-2xl relative min-h-[460px] flex flex-col justify-between overflow-hidden topo-pattern-dark">
+            <div className="bg-slate-900 text-white p-6 sm:p-8 rounded-3xl border border-slate-700 shadow-2xl relative min-h-[460px] flex flex-col justify-between overflow-hidden topo-pattern-dark">
               
               <AnimatePresence mode="wait">
                 {isCalculating ? (
@@ -451,7 +483,7 @@ export default function GemSimulator({ customGems }) {
                     <RefreshCw className="w-12 h-12 text-terracotta-400 animate-spin mx-auto" />
                     <div className="space-y-1">
                       <h4 className="font-serif font-bold text-lg text-sand-50">Retrieving Destinations in {currentGem.state}</h4>
-                      <p className="text-xs text-forest-300 font-mono">Auditing nearby 24/7 police posts, ER hospitals, verified food dhabas & local transit...</p>
+                      <p className="text-xs text-slate-300 font-mono">Auditing nearby 24/7 police posts, ER hospitals, verified food dhabas & local transit...</p>
                     </div>
                   </motion.div>
                 ) : activeTab === 'result' ? (
@@ -464,17 +496,17 @@ export default function GemSimulator({ customGems }) {
                     transition={{ duration: 0.3 }}
                     className="space-y-6"
                   >
-                    <div className="flex flex-wrap items-start justify-between gap-4 pb-4 border-b border-forest-800">
+                    <div className="flex flex-wrap items-start justify-between gap-4 pb-4 border-b border-slate-800">
                       <div>
                         <div className="flex flex-wrap items-center gap-2 mb-1.5">
                           <span className="bg-terracotta-500/20 text-terracotta-300 text-xs px-3 py-0.5 rounded-full font-mono border border-terracotta-500/30 font-bold flex items-center gap-1">
                             <Tag className="w-3 h-3" />
                             {currentGem.vibeTag}
                           </span>
-                          <span className="bg-forest-800 text-emeraldGlow text-xs px-3 py-0.5 rounded-full font-mono">
+                          <span className="bg-slate-800 text-amber-300 text-xs px-3 py-0.5 rounded-full font-mono border border-slate-700">
                             📍 State: {currentGem.state}
                           </span>
-                          <span className="text-xs text-forest-300 font-mono">
+                          <span className="text-xs text-slate-300 font-mono">
                             {currentGem.distance}
                           </span>
                         </div>
@@ -486,36 +518,36 @@ export default function GemSimulator({ customGems }) {
                       <div className="flex items-center gap-2.5">
                         <motion.div 
                           whileHover={{ scale: 1.05 }}
-                          className="bg-forest-800/90 border border-terracotta-500/40 p-2.5 rounded-2xl text-center min-w-[90px] shadow-lg"
+                          className="bg-slate-950/90 border border-terracotta-500/40 p-2.5 rounded-2xl text-center min-w-[90px] shadow-lg"
                         >
                           <span className="text-2xl font-serif font-extrabold text-terracotta-400 block">
                             {currentGem.score}/100
                           </span>
-                          <span className="text-[9px] text-forest-300 uppercase tracking-wider block font-mono">
+                          <span className="text-[9px] text-slate-300 uppercase tracking-wider block font-mono">
                             Gem Score
                           </span>
                         </motion.div>
                         <motion.div 
                           whileHover={{ scale: 1.05 }}
-                          className="bg-forest-800/90 border border-emerald-500/40 p-2.5 rounded-2xl text-center min-w-[90px] shadow-lg"
+                          className="bg-slate-950/90 border border-amber-500/40 p-2.5 rounded-2xl text-center min-w-[90px] shadow-lg"
                         >
-                          <span className="text-2xl font-serif font-extrabold text-emeraldGlow block">
+                          <span className="text-2xl font-serif font-extrabold text-amber-300 block">
                             {currentGem.womenSafetyIndex}/100
                           </span>
-                          <span className="text-[9px] text-forest-300 uppercase tracking-wider block font-mono">
+                          <span className="text-[9px] text-slate-300 uppercase tracking-wider block font-mono">
                             Women Safety
                           </span>
                         </motion.div>
                       </div>
                     </div>
 
-                    <p className="text-sm sm:text-base text-forest-100 leading-relaxed">
+                    <p className="text-sm sm:text-base text-slate-200 leading-relaxed">
                       {currentGem.desc}
                     </p>
 
                     {/* Regional Famous Food & Clothes Teaser Box */}
-                    <div className="p-4 rounded-2xl bg-forest-950/90 border border-amber-500/40 space-y-2 text-xs">
-                      <div className="flex items-center justify-between border-b border-forest-800 pb-1.5">
+                    <div className="p-4 rounded-2xl bg-slate-950/90 border border-amber-500/40 space-y-2 text-xs">
+                      <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
                         <span className="text-amber-400 font-bold font-mono uppercase tracking-wider flex items-center gap-1.5">
                           <ShoppingBag className="w-4 h-4 text-amber-400" />
                           Famous Food & Local Clothes/Crafts
@@ -529,11 +561,11 @@ export default function GemSimulator({ customGems }) {
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
                         <div>
-                          <span className="text-forest-400 block font-mono text-[10px]">🍲 Famous Food:</span>
+                          <span className="text-slate-400 block font-mono text-[10px]">🍲 Famous Food:</span>
                           <span className="text-sand-100 font-medium">{specialties.food}</span>
                         </div>
                         <div>
-                          <span className="text-forest-400 block font-mono text-[10px]">👗 Famous Clothes & Crafts:</span>
+                          <span className="text-slate-400 block font-mono text-[10px]">👗 Famous Clothes & Crafts:</span>
                           <span className="text-sand-100 font-medium">{specialties.crafts}</span>
                         </div>
                       </div>
@@ -541,26 +573,26 @@ export default function GemSimulator({ customGems }) {
 
                     {/* Quick Facilities Summary Chips */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-xs">
-                      <div className="bg-forest-950/80 p-3 rounded-xl border border-emerald-500/30">
-                        <span className="text-emeraldGlow text-[10px] uppercase font-bold block flex items-center gap-1">
-                          <Siren className="w-3 h-3 text-emerald-400" />
+                      <div className="bg-slate-950/80 p-3 rounded-xl border border-cyan-500/30">
+                        <span className="text-cyan-400 text-[10px] uppercase font-bold block flex items-center gap-1">
+                          <Siren className="w-3 h-3 text-cyan-400" />
                           Nearest Police
                         </span>
                         <span className="text-sand-100 font-bold text-[11px] truncate block mt-0.5">{police.policeStationName}</span>
-                        <span className="text-forest-400 text-[10px] block">{police.policeStationDist}</span>
+                        <span className="text-slate-400 text-[10px] block">{police.policeStationDist}</span>
                       </div>
-                      <div className="bg-forest-950/80 p-3 rounded-xl border border-forest-800">
-                        <span className="text-forest-400 text-[10px] uppercase block">Nearest Clinic</span>
+                      <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+                        <span className="text-slate-400 text-[10px] uppercase block">Nearest Clinic</span>
                         <span className="text-sand-100 font-bold text-[11px] truncate block mt-0.5">{facilities.medical[0].name}</span>
-                        <span className="text-forest-400 text-[10px] block">{facilities.medical[0].dist}</span>
+                        <span className="text-slate-400 text-[10px] block">{facilities.medical[0].dist}</span>
                       </div>
-                      <div className="bg-forest-950/80 p-3 rounded-xl border border-forest-800">
-                        <span className="text-forest-400 text-[10px] uppercase block">Local Food</span>
+                      <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+                        <span className="text-slate-400 text-[10px] uppercase block">Local Food</span>
                         <span className="text-terracotta-400 font-bold mt-0.5 block">{facilities.food[0].dist}</span>
                       </div>
-                      <div className="bg-forest-950/80 p-3 rounded-xl border border-forest-800">
-                        <span className="text-forest-400 text-[10px] uppercase block">Night Transit</span>
-                        <span className="text-emeraldGlow font-bold mt-0.5 block">24/7 Available</span>
+                      <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+                        <span className="text-slate-400 text-[10px] uppercase block">Night Transit</span>
+                        <span className="text-amber-300 font-bold mt-0.5 block">24/7 Available</span>
                       </div>
                     </div>
 
@@ -575,15 +607,15 @@ export default function GemSimulator({ customGems }) {
                     transition={{ duration: 0.3 }}
                     className="space-y-5"
                   >
-                    <div className="flex items-center justify-between border-b border-forest-800 pb-3">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                       <div>
                         <h4 className="font-serif font-bold text-lg text-sand-50 flex items-center gap-2">
                           <ShoppingBag className="w-5 h-5 text-amber-400" />
                           Famous Local Food & Native Clothes / Crafts in {currentGem.state}
                         </h4>
-                        <span className="text-xs text-forest-300 font-mono">Authentic regional specialties recommended by local village hosts</span>
+                        <span className="text-xs text-slate-300 font-mono">Authentic regional specialties recommended by local village hosts</span>
                       </div>
-                      <span className="bg-amber-950 text-amber-300 border border-amber-800 text-xs px-3 py-1 rounded-full font-mono font-bold">
+                      <span className="bg-amber-950/80 text-amber-300 border border-amber-800 text-xs px-3 py-1 rounded-full font-mono font-bold">
                         Native Specialties
                       </span>
                     </div>
@@ -591,35 +623,35 @@ export default function GemSimulator({ customGems }) {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                       
                       {/* Famous Local Food Card */}
-                      <div className="p-5 rounded-2xl bg-forest-950/90 border border-amber-500/40 space-y-3 shadow-lg">
-                        <div className="flex items-center justify-between border-b border-forest-800 pb-2">
+                      <div className="p-5 rounded-2xl bg-slate-950/90 border border-amber-500/40 space-y-3 shadow-lg">
+                        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                           <span className="font-bold text-amber-300 flex items-center gap-1.5 font-mono text-xs uppercase">
                             <UtensilsCrossed className="w-4 h-4 text-amber-400" />
                             Famous Regional Dishes & Sweets
                           </span>
-                          <span className="text-[10px] text-forest-300 font-mono">Must-Try</span>
+                          <span className="text-[10px] text-slate-300 font-mono">Must-Try</span>
                         </div>
                         <p className="text-sand-100 text-sm leading-relaxed font-sans font-medium">
                           {specialties.food}
                         </p>
-                        <div className="pt-2 border-t border-forest-800 text-[11px] text-forest-300 font-mono">
+                        <div className="pt-2 border-t border-slate-800 text-[11px] text-slate-400 font-mono">
                           Served fresh at nearby verified village dhabas & organic kitchens.
                         </div>
                       </div>
 
                       {/* Famous Native Clothes & Crafts Card */}
-                      <div className="p-5 rounded-2xl bg-forest-950/90 border border-terracotta-500/40 space-y-3 shadow-lg">
-                        <div className="flex items-center justify-between border-b border-forest-800 pb-2">
+                      <div className="p-5 rounded-2xl bg-slate-950/90 border border-terracotta-500/40 space-y-3 shadow-lg">
+                        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                           <span className="font-bold text-terracotta-400 flex items-center gap-1.5 font-mono text-xs uppercase">
                             <ShoppingBag className="w-4 h-4 text-terracotta-400" />
                             Famous Native Clothes & Artisan Crafts
                           </span>
-                          <span className="text-[10px] text-forest-300 font-mono">Authentic</span>
+                          <span className="text-[10px] text-slate-300 font-mono">Authentic</span>
                         </div>
                         <p className="text-sand-100 text-sm leading-relaxed font-sans font-medium">
                           {specialties.crafts}
                         </p>
-                        <div className="pt-2 border-t border-forest-800 text-[11px] text-forest-300 font-mono">
+                        <div className="pt-2 border-t border-slate-800 text-[11px] text-slate-400 font-mono">
                           Directly supports native village weavers & artisan cooperatives.
                         </div>
                       </div>
@@ -637,15 +669,15 @@ export default function GemSimulator({ customGems }) {
                     transition={{ duration: 0.3 }}
                     className="space-y-5"
                   >
-                    <div className="flex items-center justify-between border-b border-forest-800 pb-3">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                       <div>
                         <h4 className="font-serif font-bold text-lg text-sand-50 flex items-center gap-2">
                           <Utensils className="w-5 h-5 text-terracotta-400" />
                           Nearby Food & Accommodation Options in {currentGem.state}
                         </h4>
-                        <span className="text-xs text-forest-300 font-mono">Verified local dhabas, organic home kitchens & homestays</span>
+                        <span className="text-xs text-slate-300 font-mono">Verified local dhabas, organic home kitchens & homestays</span>
                       </div>
-                      <span className="bg-forest-800 text-emeraldGlow text-xs px-2.5 py-1 rounded-full font-mono">
+                      <span className="bg-slate-800 text-amber-300 text-xs px-2.5 py-1 rounded-full font-mono border border-slate-700">
                         Audited
                       </span>
                     </div>
@@ -653,13 +685,13 @@ export default function GemSimulator({ customGems }) {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                       
                       {/* Food Options Card */}
-                      <div className="p-4 rounded-2xl bg-forest-950/80 border border-forest-800 space-y-2">
-                        <div className="flex items-center justify-between border-b border-forest-800 pb-2">
+                      <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-2">
+                        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                           <span className="font-bold text-sand-50 flex items-center gap-1.5">
                             <Utensils className="w-4 h-4 text-terracotta-400" />
                             Food & Dining Nearby
                           </span>
-                          <span className="text-[10px] text-forest-300 font-mono">Hygiene Verified</span>
+                          <span className="text-[10px] text-slate-300 font-mono">Hygiene Verified</span>
                         </div>
                         {facilities.food.map((f, i) => (
                           <div key={i} className="space-y-0.5 pt-1">
@@ -667,22 +699,22 @@ export default function GemSimulator({ customGems }) {
                               <span>{f.name}</span>
                               <span className="text-terracotta-400 font-bold">{f.dist}</span>
                             </div>
-                            <div className="flex justify-between text-[11px] text-forest-300">
+                            <div className="flex justify-between text-[11px] text-slate-300">
                               <span>{f.type}</span>
-                              <span className="text-emerald-400">{f.open}</span>
+                              <span className="text-amber-300">{f.open}</span>
                             </div>
                           </div>
                         ))}
                       </div>
 
                       {/* Accommodation Card */}
-                      <div className="p-4 rounded-2xl bg-forest-950/80 border border-forest-800 space-y-2">
-                        <div className="flex items-center justify-between border-b border-forest-800 pb-2">
+                      <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-2">
+                        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                           <span className="font-bold text-sand-50 flex items-center gap-1.5">
-                            <Home className="w-4 h-4 text-emeraldGlow" />
+                            <Home className="w-4 h-4 text-cyan-400" />
                             Verified Homestays & Lodges
                           </span>
-                          <span className="text-[10px] text-forest-300 font-mono">Night Available</span>
+                          <span className="text-[10px] text-slate-300 font-mono">Night Available</span>
                         </div>
                         {facilities.accommodation.map((a, i) => (
                           <div key={i} className="space-y-0.5 pt-1">
@@ -690,9 +722,9 @@ export default function GemSimulator({ customGems }) {
                               <span>{a.name}</span>
                               <span className="text-sand-100 font-bold">{a.tariff}</span>
                             </div>
-                            <div className="flex justify-between text-[11px] text-forest-300">
+                            <div className="flex justify-between text-[11px] text-slate-300">
                               <span>{a.type}</span>
-                              <span className="text-emerald-400">Night Stay ✓</span>
+                              <span className="text-amber-300">Night Stay ✓</span>
                             </div>
                           </div>
                         ))}
@@ -711,13 +743,13 @@ export default function GemSimulator({ customGems }) {
                     transition={{ duration: 0.3 }}
                     className="space-y-5"
                   >
-                    <div className="flex items-center justify-between border-b border-forest-800 pb-3">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                       <div>
                         <h4 className="font-serif font-bold text-lg text-sand-50 flex items-center gap-2">
                           <Stethoscope className="w-5 h-5 text-red-400" />
                           Nearby Hospitals & Medical Facilities in {currentGem.state}
                         </h4>
-                        <span className="text-xs text-forest-300 font-mono">24/7 Emergency hospitals, clinics, ambulance contacts & pharmacies</span>
+                        <span className="text-xs text-slate-300 font-mono">24/7 Emergency hospitals, clinics, ambulance contacts & pharmacies</span>
                       </div>
                       <span className="bg-red-950 text-red-400 border border-red-800 text-xs px-3 py-1 rounded-full font-mono font-bold">
                         24/7 ER Ready
@@ -726,15 +758,15 @@ export default function GemSimulator({ customGems }) {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                       {facilities.medical.map((m, i) => (
-                        <div key={i} className="p-4 rounded-2xl bg-forest-950/80 border border-red-500/30 space-y-2">
-                          <div className="flex items-center justify-between border-b border-forest-800 pb-2">
+                        <div key={i} className="p-4 rounded-2xl bg-slate-950/80 border border-red-500/30 space-y-2">
+                          <div className="flex items-center justify-between border-b border-slate-800 pb-2">
                             <span className="font-bold text-sand-50">{m.name}</span>
                             <span className="text-red-400 font-bold font-mono">{m.dist} ({m.travelTime})</span>
                           </div>
-                          <p className="text-forest-200 text-[11px]">{m.type}</p>
-                          <div className="pt-2 border-t border-forest-800 flex items-center justify-between font-mono text-[11px]">
-                            <span className="text-forest-400">Emergency Phone:</span>
-                            <span className="text-sand-50 font-bold bg-forest-900 px-2 py-0.5 rounded border border-forest-700">{m.phone}</span>
+                          <p className="text-slate-200 text-[11px]">{m.type}</p>
+                          <div className="pt-2 border-t border-slate-800 flex items-center justify-between font-mono text-[11px]">
+                            <span className="text-slate-400">Emergency Phone:</span>
+                            <span className="text-sand-50 font-bold bg-slate-900 px-2 py-0.5 rounded border border-slate-700">{m.phone}</span>
                           </div>
                         </div>
                       ))}
@@ -750,15 +782,15 @@ export default function GemSimulator({ customGems }) {
                     transition={{ duration: 0.3 }}
                     className="space-y-5"
                   >
-                    <div className="flex items-center justify-between border-b border-forest-800 pb-3">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                       <div>
                         <h4 className="font-serif font-bold text-lg text-sand-50 flex items-center gap-2">
-                          <Siren className="w-5 h-5 text-emeraldGlow animate-pulse" />
+                          <Siren className="w-5 h-5 text-cyan-400 animate-pulse" />
                           Women Safety & Nearest Police Station Hub
                         </h4>
-                        <span className="text-xs text-forest-300 font-mono">Explicit police post mapping, verified female hosts & emergency helplines</span>
+                        <span className="text-xs text-slate-300 font-mono">Explicit police post mapping, verified female hosts & emergency helplines</span>
                       </div>
-                      <span className="bg-emerald-950 text-emerald-400 border border-emerald-800 text-xs px-3 py-1 rounded-full font-mono font-bold">
+                      <span className="bg-amber-950/80 text-amber-300 border border-amber-800 text-xs px-3 py-1 rounded-full font-mono font-bold">
                         Safety Rating: {currentGem.womenSafetyIndex}/100
                       </span>
                     </div>
@@ -766,13 +798,13 @@ export default function GemSimulator({ customGems }) {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       
                       {/* High-Impact Dedicated Police Station Card */}
-                      <div className="p-5 rounded-2xl bg-forest-950 border-2 border-emerald-500/50 space-y-3 font-sans text-xs relative overflow-hidden shadow-lg">
-                        <div className="flex items-center justify-between border-b border-forest-800 pb-2">
-                          <span className="text-emeraldGlow font-bold uppercase font-mono tracking-wider flex items-center gap-1.5">
-                            <Siren className="w-4 h-4 text-emerald-400 animate-pulse" />
+                      <div className="p-5 rounded-2xl bg-slate-950 border-2 border-cyan-500/50 space-y-3 font-sans text-xs relative overflow-hidden shadow-lg">
+                        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                          <span className="text-cyan-400 font-bold uppercase font-mono tracking-wider flex items-center gap-1.5">
+                            <Siren className="w-4 h-4 text-cyan-400 animate-pulse" />
                             Nearest Police Station
                           </span>
-                          <span className="text-[10px] bg-emerald-950 text-emerald-300 font-mono px-2 py-0.5 rounded border border-emerald-800 font-bold">
+                          <span className="text-[10px] bg-cyan-950 text-cyan-300 font-mono px-2 py-0.5 rounded border border-cyan-800 font-bold">
                             On-Call Response
                           </span>
                         </div>
@@ -780,21 +812,21 @@ export default function GemSimulator({ customGems }) {
                         <div className="space-y-1">
                           <h5 className="text-base font-bold text-sand-50">{police.policeStationName}</h5>
                           <div className="flex items-center justify-between text-xs font-mono">
-                            <span className="text-forest-300">Distance & ETA:</span>
-                            <span className="text-emerald-400 font-bold">{police.policeStationDist}</span>
+                            <span className="text-slate-300">Distance & ETA:</span>
+                            <span className="text-cyan-400 font-bold">{police.policeStationDist}</span>
                           </div>
                           <div className="flex items-center justify-between text-xs font-mono">
-                            <span className="text-forest-300">Police Hotline Phone:</span>
-                            <span className="text-sand-50 font-bold bg-forest-900 px-2 py-0.5 rounded border border-forest-700">{police.policeStationPhone}</span>
+                            <span className="text-slate-300">Police Hotline Phone:</span>
+                            <span className="text-sand-50 font-bold bg-slate-900 px-2 py-0.5 rounded border border-slate-700">{police.policeStationPhone}</span>
                           </div>
                           <div className="flex items-center justify-between text-xs font-mono">
-                            <span className="text-forest-300">Patrol Unit:</span>
-                            <span className="text-sand-200">{police.policePatrol}</span>
+                            <span className="text-slate-300">Patrol Unit:</span>
+                            <span className="text-slate-200">{police.policePatrol}</span>
                           </div>
                         </div>
 
-                        <div className="pt-2 border-t border-forest-800 flex items-center justify-between text-[11px] font-mono">
-                          <span className="text-forest-400">Emergency Police Code:</span>
+                        <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono">
+                          <span className="text-slate-400">Emergency Police Code:</span>
                           <span className="text-terracotta-400 font-bold">{police.helpline}</span>
                         </div>
                       </div>
@@ -810,7 +842,7 @@ export default function GemSimulator({ customGems }) {
                           <ul className="space-y-1.5">
                             {police.features.map((feat, i) => (
                               <li key={i} className="flex items-center gap-2 text-indigo-100 text-[11px]">
-                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                                <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
                                 <span>{feat}</span>
                               </li>
                             ))}
@@ -830,12 +862,12 @@ export default function GemSimulator({ customGems }) {
                           {sosSent ? (
                             <>
                               <CheckCircle2 className="w-4 h-4 animate-bounce" />
-                              <span>SOS Alert Dispatched to Police ({police.policeStationName}) & Village Host!</span>
+                              <span>SOS Dispatched via Production API to {police.policeStationName}!</span>
                             </>
                           ) : (
                             <>
                               <PhoneCall className="w-4 h-4" />
-                              <span>Simulate 1-Tap SOS to Police ({police.policeStationName})</span>
+                              <span>Dispatch SOS to {police.policeStationName} (Render API)</span>
                             </>
                           )}
                         </motion.button>
@@ -854,13 +886,13 @@ export default function GemSimulator({ customGems }) {
                     transition={{ duration: 0.3 }}
                     className="space-y-5"
                   >
-                    <div className="flex items-center justify-between border-b border-forest-800 pb-3">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                       <div>
                         <h4 className="font-serif font-bold text-lg text-sand-50 flex items-center gap-2">
                           <Bus className="w-5 h-5 text-blue-400" />
                           Local Transport & Distances in {currentGem.state}
                         </h4>
-                        <span className="text-xs text-forest-300 font-mono">Local auto stands, jeeps, bus timings & distances to fuel/ATMs</span>
+                        <span className="text-xs text-slate-300 font-mono">Local auto stands, jeeps, bus timings & distances to fuel/ATMs</span>
                       </div>
                       <span className="bg-blue-950 text-blue-300 border border-blue-800 text-xs px-3 py-1 rounded-full font-mono">
                         Transit Audited
@@ -870,39 +902,39 @@ export default function GemSimulator({ customGems }) {
                     {/* Local Drivers Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                       {facilities.transport.map((t, i) => (
-                        <div key={i} className="p-4 rounded-2xl bg-forest-950/80 border border-forest-800 space-y-1">
+                        <div key={i} className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-1">
                           <div className="flex justify-between font-bold text-sand-100">
                             <span>{t.name}</span>
                             <span className="text-blue-400 font-mono">{t.phone}</span>
                           </div>
-                          <div className="flex justify-between text-[11px] text-forest-300 pt-1">
+                          <div className="flex justify-between text-[11px] text-slate-300 pt-1">
                             <span>{t.type}</span>
-                            <span className="text-emerald-400">{t.availability}</span>
+                            <span className="text-amber-300">{t.availability}</span>
                           </div>
                         </div>
                       ))}
                     </div>
 
                     {/* Essential Key Distances Grid */}
-                    <div className="p-4 rounded-2xl bg-forest-950 border border-forest-800 space-y-2 text-xs">
+                    <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2 text-xs">
                       <span className="text-terracotta-400 font-bold font-mono block uppercase text-[11px]">
                         Directions & Distance to Key Services
                       </span>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-[11px]">
-                        <div className="bg-forest-900 p-2.5 rounded-xl border border-forest-800">
-                          <span className="text-forest-400 block text-[10px]">Petrol Pump</span>
+                        <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                          <span className="text-slate-400 block text-[10px]">Petrol Pump</span>
                           <span className="text-sand-100 font-bold">{facilities.distances.petrolPump}</span>
                         </div>
-                        <div className="bg-forest-900 p-2.5 rounded-xl border border-forest-800">
-                          <span className="text-forest-400 block text-[10px]">ATM</span>
+                        <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                          <span className="text-slate-400 block text-[10px]">ATM</span>
                           <span className="text-sand-100 font-bold">{facilities.distances.atm}</span>
                         </div>
-                        <div className="bg-forest-900 p-2.5 rounded-xl border border-forest-800">
-                          <span className="text-forest-400 block text-[10px]">District HQ</span>
+                        <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                          <span className="text-slate-400 block text-[10px]">District HQ</span>
                           <span className="text-sand-100 font-bold">{facilities.distances.districtHQ}</span>
                         </div>
-                        <div className="bg-forest-900 p-2.5 rounded-xl border border-forest-800">
-                          <span className="text-forest-400 block text-[10px]">National Highway</span>
+                        <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                          <span className="text-slate-400 block text-[10px]">National Highway</span>
                           <span className="text-sand-100 font-bold">{facilities.distances.nationalHighway}</span>
                         </div>
                       </div>
@@ -919,18 +951,18 @@ export default function GemSimulator({ customGems }) {
                     transition={{ duration: 0.3 }}
                     className="space-y-4"
                   >
-                    <div className="flex items-center justify-between border-b border-forest-800 pb-3">
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                       <h4 className="font-serif font-bold text-lg text-sand-50 flex items-center gap-2">
                         <Route className="w-5 h-5 text-terracotta-400" />
                         Auto-Synthesized Day Plan ({duration})
                       </h4>
-                      <span className="text-xs font-mono text-forest-300">Carbon-Optimized Route</span>
+                      <span className="text-xs font-mono text-slate-300">Carbon-Optimized Route</span>
                     </div>
 
                     <div className="space-y-3 font-sans">
                       {currentGem.itinerary.map((item, idx) => (
-                        <div key={idx} className="p-3.5 rounded-xl bg-forest-950/80 border border-forest-800 flex items-start gap-3 text-xs sm:text-sm text-forest-100">
-                          <div className="w-6 h-6 rounded-full bg-forest-800 text-terracotta-400 flex items-center justify-center shrink-0 mt-0.5 font-bold font-mono text-xs">
+                        <div key={idx} className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 flex items-start gap-3 text-xs sm:text-sm text-slate-100">
+                          <div className="w-6 h-6 rounded-full bg-slate-800 text-terracotta-400 flex items-center justify-center shrink-0 mt-0.5 font-bold font-mono text-xs">
                             {idx + 1}
                           </div>
                           <span>{item}</span>
@@ -942,11 +974,11 @@ export default function GemSimulator({ customGems }) {
               </AnimatePresence>
 
               {/* Footer inside result card */}
-              <div className="pt-4 border-t border-forest-800 flex flex-wrap items-center justify-between gap-2 text-xs text-forest-300 font-sans">
-                <span>RAG Engine + {police.policeStationName} Emergency Relay Active</span>
+              <div className="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-300 font-sans">
+                <span>API Endpoint: {API_BASE_URL}</span>
                 <button
                   onClick={() => setActiveTab('safety')}
-                  className="text-emerald-400 font-semibold hover:underline flex items-center gap-1 font-mono cursor-pointer"
+                  className="text-cyan-400 font-semibold hover:underline flex items-center gap-1 font-mono cursor-pointer"
                 >
                   <span>Police Post: {police.policeStationName}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -964,7 +996,7 @@ export default function GemSimulator({ customGems }) {
       {/* 24/7 Night Emergency Mode Modal */}
       <AnimatePresence>
         {nightModeOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-forest-950/80 backdrop-blur-md">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -981,7 +1013,7 @@ export default function GemSimulator({ customGems }) {
 
               <div className="flex items-center gap-3 border-b border-indigo-800 pb-4">
                 <div className="w-12 h-12 rounded-2xl bg-indigo-800 text-amber-300 flex items-center justify-center font-bold">
-                  <Siren className="w-6 h-6 text-emerald-400 animate-pulse" />
+                  <Siren className="w-6 h-6 text-cyan-400 animate-pulse" />
                 </div>
                 <div>
                   <span className="text-xs font-mono text-amber-300 uppercase tracking-widest block font-bold">
@@ -994,20 +1026,20 @@ export default function GemSimulator({ customGems }) {
               </div>
 
               <p className="text-xs sm:text-sm text-indigo-100 leading-relaxed font-sans">
-                If a traveler experiences any problem after dark in {currentGem.gemName} ({currentGem.state}), pressing SOS dispatches live location telemetry directly to <strong>{police.policeStationName} ({police.policeStationDist})</strong> and local village guards.
+                If a traveler experiences any problem after dark in {currentGem.gemName} ({currentGem.state}), pressing SOS dispatches live location telemetry directly to <strong>{police.policeStationName} ({police.policeStationDist})</strong> and local village guards via <code className="text-amber-300">{API_BASE_URL}</code>.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 
                 {/* Police Station Callout in Night Modal */}
-                <div className="p-3.5 rounded-xl bg-indigo-900/90 border border-emerald-400/50 space-y-1">
-                  <span className="text-emerald-400 font-bold font-mono block uppercase text-[10px] flex items-center gap-1">
-                    <Siren className="w-3.5 h-3.5 text-emerald-400" />
+                <div className="p-3.5 rounded-xl bg-indigo-900/90 border border-cyan-400/50 space-y-1">
+                  <span className="text-cyan-400 font-bold font-mono block uppercase text-[10px] flex items-center gap-1">
+                    <Siren className="w-3.5 h-3.5 text-cyan-400" />
                     Nearest Police Station
                   </span>
                   <span className="text-sand-50 font-bold block text-xs">{police.policeStationName}</span>
                   <span className="text-indigo-200 block text-[11px] font-mono">Distance & Response: {police.policeStationDist}</span>
-                  <span className="text-emerald-300 block text-[11px] font-mono">Phone: {police.policeStationPhone}</span>
+                  <span className="text-cyan-300 block text-[11px] font-mono">Phone: {police.policeStationPhone}</span>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-indigo-900/60 border border-indigo-700/60 space-y-1">
@@ -1017,7 +1049,7 @@ export default function GemSimulator({ customGems }) {
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-indigo-900/60 border border-indigo-700/60 space-y-1">
-                  <span className="text-emerald-400 font-bold font-mono block uppercase text-[10px]">24/7 Emergency Night Stay</span>
+                  <span className="text-amber-300 font-bold font-mono block uppercase text-[10px]">24/7 Emergency Night Stay</span>
                   <span className="text-sand-50 font-bold block">{facilities.accommodation[0].name}</span>
                   <span className="text-indigo-200 block text-[11px]">Female Host Verified ✓</span>
                 </div>

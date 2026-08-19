@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, MapPin, ShieldCheck, CheckCircle2, RefreshCw, AlertCircle, PlusCircle, Globe, Siren, Activity, FileText, ArrowRight, Users, HeartHandshake } from 'lucide-react';
+import { API_BASE_URL } from '../config/api';
 import confetti from 'canvas-confetti';
 
 export default function GemSubmission({ onAddGemToDatabase }) {
@@ -96,146 +97,163 @@ export default function GemSubmission({ onAddGemToDatabase }) {
         ]
       };
 
+      // Background Ping to Production API Endpoint
+      fetch(`${API_BASE_URL}/api/v1/health`)
+        .then((res) => res.json())
+        .catch((err) => console.log('API Audit Verification Ping:', err.message));
+
       setAuditResult({
         approved: worthScore >= 80,
-        score: worthScore,
-        safetyScore: safetyScore,
+        worthScore,
+        safetyScore,
         gem: newGem
       });
 
-      if (worthScore >= 80 && onAddGemToDatabase) {
-        onAddGemToDatabase(newGem);
+      if (worthScore >= 80) {
+        if (onAddGemToDatabase) {
+          onAddGemToDatabase(newGem);
+        }
         try {
           confetti({
-            particleCount: 70,
+            particleCount: 80,
             spread: 80,
             origin: { y: 0.6 }
           });
-        } catch (err) {
+        } catch (e) {
           // fallback
         }
       }
 
-    }, 3200);
+    }, 3000);
   };
 
   return (
-    <section id="community-submit" className="py-24 bg-forest-950 text-white relative overflow-hidden topo-pattern-dark border-t border-forest-800">
+    <section id="gem-submission" className="py-24 bg-slate-900 text-white relative overflow-hidden topo-pattern-dark border-b border-slate-800">
       
       {/* Decorative Orbs */}
-      <div className="absolute top-1/2 left-0 w-96 h-96 bg-terracotta-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-emeraldGlow/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-terracotta-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-12">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-forest-900 border border-emerald-500/40 text-emeraldGlow text-xs font-semibold uppercase tracking-wider shadow-sm">
-            <HeartHandshake className="w-4 h-4 text-terracotta-400" />
-            <span>Crowdsourced P2P AI Network ("User se Leke User ko Dena")</span>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center max-w-3xl mx-auto space-y-4"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-amber-300 text-xs font-semibold uppercase tracking-wider shadow-sm">
+            <Users className="w-4 h-4 text-terracotta-400" />
+            <span>P2P Crowdsourced Tourism Pipeline</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-sand-50 tracking-tight">
-            Discovered a Hidden Place? Submit & Share with Travelers
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-white tracking-tight">
+            User-Submitted Gem & AI Worthiness Verification Portal
           </h2>
 
-          <p className="text-base sm:text-lg text-forest-200 leading-relaxed font-sans">
-            Know a secret offbeat place in your state? Submit it below! Our <strong className="text-sand-50">Yatrika AI Engine</strong> will evaluate if it is worth visiting (uniqueness, low footfall & emergency police/medical safety). If approved, it is <strong className="text-emeraldGlow font-bold">instantly added to Yatrika</strong> for all future travelers to discover!
+          <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-sans">
+            Have you discovered a serene, uncrowded offbeat place? Submit it here! Yatrika AI automatically audits its footfall congestion, nearby police post readiness, and safety metrics—and if it's worth it, <strong className="text-amber-300 font-bold">instantly adds it to the public simulator for fellow travelers!</strong>
           </p>
-        </div>
+        </motion.div>
 
-        {/* 3-Step Peer-to-Peer Crowdsourced Visual Explainer Banner */}
-        <div className="p-6 rounded-3xl bg-forest-900/90 border border-emerald-500/40 grid grid-cols-1 md:grid-cols-3 gap-6 font-sans text-xs">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-xl bg-terracotta-500 text-white flex items-center justify-center font-bold font-mono text-sm shrink-0">
-              01
-            </div>
-            <div>
-              <h4 className="font-bold text-sand-50 text-sm">User Submits Hidden Spot</h4>
-              <p className="text-forest-300 mt-1">A traveler or local discovers an untouched gem and submits its location & details.</p>
-            </div>
+        {/* 3-Step P2P Pipeline Visual Banner */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 text-center space-y-1">
+            <span className="text-amber-300 font-mono font-bold text-xs">STEP 1</span>
+            <h4 className="font-bold text-sm text-white">1. User Submits Hidden Spot</h4>
+            <p className="text-xs text-slate-300 font-sans">Travelers upload unknown scenic locations & local info</p>
           </div>
-
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500 text-forest-950 flex items-center justify-center font-bold font-mono text-sm shrink-0">
-              02
-            </div>
-            <div>
-              <h4 className="font-bold text-sand-50 text-sm">AI Audits "Is It Worth It?"</h4>
-              <p className="text-forest-300 mt-1">Yatrika AI evaluates uniqueness, footfall, nearby police stations & emergency safety.</p>
-            </div>
+          <div className="p-4 rounded-2xl bg-slate-950/80 border border-terracotta-500/40 text-center space-y-1">
+            <span className="text-terracotta-400 font-mono font-bold text-xs">STEP 2</span>
+            <h4 className="font-bold text-sm text-white">2. AI Audits "Is It Worth It?"</h4>
+            <p className="text-xs text-slate-300 font-sans">AI evaluates low footfall, police distance & safety</p>
           </div>
-
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-500 text-white flex items-center justify-center font-bold font-mono text-sm shrink-0">
-              03
-            </div>
-            <div>
-              <h4 className="font-bold text-sand-50 text-sm">Served to Fellow Travelers</h4>
-              <p className="text-forest-300 mt-1">Approved spots are ingested instantly and shown to travelers searching that state/landmark!</p>
-            </div>
+          <div className="p-4 rounded-2xl bg-slate-950/80 border border-cyan-500/40 text-center space-y-1">
+            <span className="text-cyan-400 font-mono font-bold text-xs">STEP 3</span>
+            <h4 className="font-bold text-sm text-white">3. Served to Fellow Travelers</h4>
+            <p className="text-xs text-slate-300 font-sans">Approved spot instantly appears in Yatrika Recommender</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        {/* Submission Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* Submission Form */}
-          <div className="lg:col-span-6 bg-forest-900/90 p-6 sm:p-8 rounded-3xl border border-forest-800 shadow-2xl space-y-5">
-            
-            <div className="flex items-center justify-between border-b border-forest-800 pb-3">
-              <span className="font-serif font-bold text-lg text-sand-50 flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-terracotta-400" />
-                Submit New Hidden Gem
-              </span>
-              <span className="text-[11px] font-mono bg-emerald-950 text-emerald-300 border border-emerald-800 px-2.5 py-0.5 rounded-full">
-                AI Evaluation Active
+          {/* Form Column */}
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-6 bg-slate-950 p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl space-y-6"
+          >
+            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+              <h3 className="font-serif font-bold text-lg text-white flex items-center gap-2">
+                <PlusCircle className="w-5 h-5 text-terracotta-400" />
+                Submit New Offbeat Destination
+              </h3>
+              <span className="text-[10px] font-mono text-cyan-400 bg-slate-900 px-3 py-1 rounded-full border border-slate-800">
+                API: {API_BASE_URL}
               </span>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4 text-xs font-sans">
               
-              <div>
-                <label className="block text-forest-300 font-bold mb-1 uppercase font-mono text-[10px]">
-                  1. Hidden Place Name *
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Chehni Kothi, Secret Pine Falls, Gavi Spring..."
-                  value={formData.gemName}
-                  onChange={(e) => setFormData({ ...formData, gemName: e.target.value })}
-                  className="w-full p-3 rounded-xl bg-forest-950 border border-forest-700 text-sand-50 font-bold focus:outline-none focus:border-terracotta-500"
-                  required
-                />
-              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-slate-300 font-semibold block uppercase font-mono text-[10px]">
+                    Place / Gem Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Sur Sarovar Bird Sanctuary"
+                    value={formData.gemName}
+                    onChange={(e) => setFormData({ ...formData, gemName: e.target.value })}
+                    className="w-full p-3 rounded-xl bg-slate-900 border border-slate-800 text-white font-medium focus:outline-none focus:border-terracotta-500 focus:ring-1 focus:ring-terracotta-500"
+                  />
+                </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-forest-300 font-bold mb-1 uppercase font-mono text-[10px]">
-                    2. State / UT *
+                <div className="space-y-1.5">
+                  <label className="text-slate-300 font-semibold block uppercase font-mono text-[10px]">
+                    Target State *
                   </label>
                   <select
                     value={formData.state}
                     onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                    className="w-full p-3 rounded-xl bg-forest-950 border border-forest-700 text-sand-50 font-bold focus:outline-none focus:border-terracotta-500 cursor-pointer"
+                    className="w-full p-3 rounded-xl bg-slate-900 border border-slate-800 text-white font-medium focus:outline-none focus:border-terracotta-500 focus:ring-1 focus:ring-terracotta-500"
                   >
-                    {[
-                      "Rajasthan", "Kerala", "Himachal Pradesh", "Uttar Pradesh", "Meghalaya", 
-                      "Ladakh", "Sikkim", "Madhya Pradesh", "Maharashtra", "Karnataka", 
-                      "Tamil Nadu", "West Bengal", "Assam", "Odisha"
-                    ].map(st => (
+                    {['Rajasthan', 'Kerala', 'Himachal Pradesh', 'Uttar Pradesh', 'Meghalaya', 'Ladakh', 'Sikkim', 'Madhya Pradesh', 'Maharashtra', 'Karnataka'].map(st => (
                       <option key={st} value={st}>{st}</option>
                     ))}
                   </select>
                 </div>
+              </div>
 
-                <div>
-                  <label className="block text-forest-300 font-bold mb-1 uppercase font-mono text-[10px]">
-                    3. Travel Vibe Category *
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-slate-300 font-semibold block uppercase font-mono text-[10px]">
+                    Specific District / City / Coordinates *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Keetham Lake, Agra, UP"
+                    value={formData.location}
+                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                    className="w-full p-3 rounded-xl bg-slate-900 border border-slate-800 text-white font-medium focus:outline-none focus:border-terracotta-500 focus:ring-1 focus:ring-terracotta-500"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-slate-300 font-semibold block uppercase font-mono text-[10px]">
+                    Travel Preference / Vibe Tag
                   </label>
                   <select
                     value={formData.vibeTag}
                     onChange={(e) => setFormData({ ...formData, vibeTag: e.target.value })}
-                    className="w-full p-3 rounded-xl bg-forest-950 border border-forest-700 text-sand-50 font-bold focus:outline-none focus:border-terracotta-500 cursor-pointer"
+                    className="w-full p-3 rounded-xl bg-slate-900 border border-slate-800 text-white font-medium focus:outline-none focus:border-terracotta-500 focus:ring-1 focus:ring-terracotta-500"
                   >
                     <option value="Eco Nature">🌿 Eco Nature</option>
                     <option value="Heritage & Crafts">🏰 Heritage & Crafts</option>
@@ -245,184 +263,153 @@ export default function GemSubmission({ onAddGemToDatabase }) {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-forest-300 font-bold mb-1 uppercase font-mono text-[10px]">
-                  4. Location / District / Nearest Landmark *
+              <div className="space-y-1.5">
+                <label className="text-slate-300 font-semibold block uppercase font-mono text-[10px]">
+                  Nearest Police Station Name (Optional Safety Audit)
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Banjar Valley, Kullu, Himachal Pradesh"
-                  value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  className="w-full p-3 rounded-xl bg-forest-950 border border-forest-700 text-sand-50 font-bold focus:outline-none focus:border-terracotta-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-forest-300 font-bold mb-1 uppercase font-mono text-[10px]">
-                  5. Nearest Police Station (If known)
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Banjar Police Post (7.2 km)"
+                  placeholder="e.g. Runakta Police Post / Agra Tourist Police"
                   value={formData.policeStationName}
                   onChange={(e) => setFormData({ ...formData, policeStationName: e.target.value })}
-                  className="w-full p-3 rounded-xl bg-forest-950 border border-forest-700 text-sand-50 font-bold focus:outline-none focus:border-terracotta-500"
+                  className="w-full p-3 rounded-xl bg-slate-900 border border-slate-800 text-white font-medium focus:outline-none focus:border-terracotta-500 focus:ring-1 focus:ring-terracotta-500"
                 />
               </div>
 
-              <div>
-                <label className="block text-forest-300 font-bold mb-1 uppercase font-mono text-[10px]">
-                  6. Why is this place special? (Uniqueness & Highlights)
+              <div className="space-y-1.5">
+                <label className="text-slate-300 font-semibold block uppercase font-mono text-[10px]">
+                  Why is this place special & worth visiting?
                 </label>
                 <textarea
                   rows="3"
-                  placeholder="Describe the untouched nature, village homestays, or historical significance..."
+                  placeholder="Describe serenity, pristine views, local food, native handicrafts, or cultural uniqueness..."
                   value={formData.desc}
                   onChange={(e) => setFormData({ ...formData, desc: e.target.value })}
-                  className="w-full p-3 rounded-xl bg-forest-950 border border-forest-700 text-sand-50 focus:outline-none focus:border-terracotta-500"
+                  className="w-full p-3 rounded-xl bg-slate-900 border border-slate-800 text-white font-medium focus:outline-none focus:border-terracotta-500 focus:ring-1 focus:ring-terracotta-500 resize-none"
                 />
               </div>
 
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+              <button
                 type="submit"
                 disabled={isAuditing}
-                className="w-full py-4 rounded-2xl bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-sm shadow-xl flex items-center justify-center gap-2 transition-all cursor-pointer"
+                className="w-full py-4 rounded-2xl bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-xs shadow-xl flex items-center justify-center gap-2 transition-all hover:scale-102 cursor-pointer"
               >
                 {isAuditing ? (
                   <>
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span>Evaluating Worthiness & Ingesting...</span>
+                    <RefreshCw className="w-4 h-4 animate-spin text-amber-300" />
+                    <span>Yatrika AI Auditing Footfall & Police Safety...</span>
                   </>
                 ) : (
                   <>
-                    <Sparkles className="w-4 h-4" />
-                    <span>Evaluate & Share with Fellow Travelers</span>
+                    <Sparkles className="w-4 h-4 text-amber-300" />
+                    <span>Submit & Run AI Worthiness Verification</span>
                   </>
                 )}
-              </motion.button>
+              </button>
 
             </form>
+          </motion.div>
 
-          </div>
-
-          {/* Real-time AI Auditor Telematics Display Column */}
-          <div className="lg:col-span-6 space-y-6">
-            
-            <div className="bg-forest-900 p-6 sm:p-8 rounded-3xl border border-forest-800 shadow-2xl relative overflow-hidden min-h-[420px] flex flex-col justify-between">
+          {/* Audit Verification Display Column */}
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-6 space-y-6"
+          >
+            <div className="bg-slate-950 p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl space-y-6 min-h-[440px] flex flex-col justify-between">
               
-              <div className="border-b border-forest-800 pb-3 flex items-center justify-between">
-                <span className="font-serif font-bold text-lg text-sand-50 flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-emeraldGlow animate-pulse" />
-                  Yatrika AI Worthiness Auditor Console
+              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                <span className="font-serif font-bold text-lg text-white flex items-center gap-2">
+                  <Activity className="w-5 h-5 text-terracotta-400" />
+                  AI Worthiness Verification Engine
                 </span>
-                <span className="text-[10px] font-mono bg-forest-950 text-terracotta-300 px-2.5 py-1 rounded-full border border-forest-800">
-                  REAL-TIME RAG ENGINE
+                <span className="text-[10px] font-mono bg-slate-900 text-amber-300 px-3 py-1 rounded-full border border-slate-800">
+                  REAL-TIME PIPELINE
                 </span>
               </div>
 
-              <AnimatePresence mode="wait">
-                {isAuditing ? (
-                  <motion.div
-                    key="auditing"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="py-12 space-y-6 text-center"
-                  >
-                    <RefreshCw className="w-12 h-12 text-terracotta-400 animate-spin mx-auto" />
-                    
-                    <div className="space-y-3 font-mono text-xs max-w-md mx-auto">
-                      <div className={`p-3 rounded-xl border transition-all ${
-                        auditStep >= 1 ? 'bg-forest-950 text-emeraldGlow border-emerald-500/40' : 'bg-forest-950/40 text-forest-400 border-forest-800'
-                      }`}>
-                        <span>[Step 1] Vector Similarity & Low-Footfall Audit...</span>
-                      </div>
-
-                      <div className={`p-3 rounded-xl border transition-all ${
-                        auditStep >= 2 ? 'bg-forest-950 text-emeraldGlow border-emerald-500/40' : 'bg-forest-950/40 text-forest-400 border-forest-800'
-                      }`}>
-                        <span>[Step 2] Auditing Nearby Police Post (&lt;15km) & ER Medical Centers...</span>
-                      </div>
-
-                      <div className={`p-3 rounded-xl border transition-all ${
-                        auditStep >= 3 ? 'bg-forest-950 text-emeraldGlow border-emerald-500/40' : 'bg-forest-950/40 text-forest-400 border-forest-800'
-                      }`}>
-                        <span>[Step 3] Calculating Worthiness & Ingestion Eligibility...</span>
-                      </div>
+              {isAuditing ? (
+                <div className="py-12 text-center space-y-6 my-auto">
+                  <RefreshCw className="w-12 h-12 text-terracotta-400 animate-spin mx-auto" />
+                  
+                  <div className="space-y-2 max-w-sm mx-auto font-mono text-xs">
+                    <div className={`p-3 rounded-xl border transition-all ${auditStep >= 1 ? 'bg-slate-900 text-white border-amber-500/50' : 'bg-slate-900/50 text-slate-500 border-slate-800'}`}>
+                      <span>Step 1: Auditing Footfall Congestion Metrics...</span>
                     </div>
-                  </motion.div>
-                ) : auditResult ? (
-                  <motion.div
-                    key="result"
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -12 }}
-                    className="space-y-5"
-                  >
-                    <div className="p-4 rounded-2xl bg-emerald-950/80 border-2 border-emerald-500 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-emerald-400 flex items-center gap-2 text-sm">
-                          <CheckCircle2 className="w-5 h-5 text-emerald-400 animate-bounce" />
-                          WORTH IT! INGESTED FOR ALL TRAVELERS
-                        </span>
-                        <span className="bg-emerald-500 text-forest-950 font-bold font-mono text-xs px-3 py-1 rounded-full">
-                          Worth Score: {auditResult.score}/100
-                        </span>
-                      </div>
-                      <p className="text-xs text-indigo-100 font-sans">
-                        "{auditResult.gem.gemName}" has been verified as TRULY WORTH VISITING! It is low-footfall, culturally rich, and equipped with emergency police & medical coverage. It is now live in the Yatrika Simulator!
-                      </p>
+                    <div className={`p-3 rounded-xl border transition-all ${auditStep >= 2 ? 'bg-slate-900 text-white border-terracotta-500/50' : 'bg-slate-900/50 text-slate-500 border-slate-800'}`}>
+                      <span>Step 2: Mapping Nearest Police Station & Medical ER...</span>
+                    </div>
+                    <div className={`p-3 rounded-xl border transition-all ${auditStep >= 3 ? 'bg-slate-900 text-white border-cyan-500/50' : 'bg-slate-900/50 text-slate-500 border-slate-800'}`}>
+                      <span>Step 3: Calculating Uniqueness Score & Ingesting...</span>
+                    </div>
+                  </div>
+                </div>
+              ) : auditResult ? (
+                <div className="space-y-6 my-auto">
+                  <div className="p-6 rounded-2xl bg-slate-900 border-2 border-amber-500/50 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-amber-300 font-bold font-mono text-xs uppercase flex items-center gap-2">
+                        <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                        VERIFICATION APPROVED & INGESTED!
+                      </span>
+                      <span className="text-xs font-mono text-slate-300">Worthiness: {auditResult.worthScore}/100</span>
                     </div>
 
-                    <div className="p-4 rounded-2xl bg-forest-950 border border-forest-800 space-y-2 text-xs font-mono">
-                      <div className="flex justify-between">
-                        <span className="text-forest-300">Target State:</span>
-                        <span className="text-sand-100 font-bold">{auditResult.gem.state}</span>
+                    <div className="space-y-1">
+                      <h4 className="text-2xl font-serif font-bold text-white">{auditResult.gem.gemName}</h4>
+                      <p className="text-xs text-slate-300 font-mono">Location: {auditResult.gem.location}</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 text-xs font-mono">
+                      <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
+                        <span className="text-slate-400 block text-[10px]">Uniqueness Score</span>
+                        <span className="text-terracotta-400 font-bold text-sm">{auditResult.worthScore}/100</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-forest-300">Vibe Tag:</span>
-                        <span className="text-terracotta-400 font-bold">{auditResult.gem.vibeTag}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-forest-300">Nearest Police Station:</span>
-                        <span className="text-emeraldGlow font-bold">{auditResult.gem.essentialFacilities.womenSafety.policeStationName}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-forest-300">Women Safety Score:</span>
-                        <span className="text-emeraldGlow font-bold">{auditResult.gem.womenSafetyIndex}/100</span>
+                      <div className="p-3 rounded-xl bg-slate-950 border border-slate-800">
+                        <span className="text-slate-400 block text-[10px]">Women Safety Index</span>
+                        <span className="text-amber-300 font-bold text-sm">{auditResult.safetyScore}/100</span>
                       </div>
                     </div>
 
-                    <a
-                      href="#gem-simulator"
-                      className="w-full py-3 rounded-xl bg-forest-800 hover:bg-forest-700 text-sand-50 font-bold text-xs border border-forest-600 flex items-center justify-center gap-2 transition-all block text-center"
-                    >
-                      <span>Explore Newly Added Place in Simulator &rarr;</span>
-                    </a>
-                  </motion.div>
-                ) : (
-                  <div className="my-auto text-center space-y-3 py-12">
-                    <Globe className="w-12 h-12 text-terracotta-400 mx-auto animate-pulse" />
-                    <h4 className="font-serif font-bold text-lg text-sand-50">Peer-to-Peer Crowdsourced AI Pipeline</h4>
-                    <p className="text-xs text-forest-300 max-w-sm mx-auto font-sans leading-relaxed">
-                      User submits a hidden spot ➔ AI evaluates "Is it worth it?" ➔ If approved, it is instantly added to Yatrika for all other travelers to discover!
+                    <div className="p-3.5 rounded-xl bg-slate-950 border border-cyan-500/30 text-xs font-mono">
+                      <span className="text-cyan-400 font-bold block mb-1">Police Safety Audit:</span>
+                      <span className="text-slate-300 block">{auditResult.gem.essentialFacilities.womenSafety.policeStationName} ({auditResult.gem.essentialFacilities.womenSafety.policeStationDist})</span>
+                    </div>
+
+                    <p className="text-xs text-slate-300 leading-relaxed font-sans">
+                      {auditResult.gem.desc}
                     </p>
                   </div>
-                )}
-              </AnimatePresence>
 
-              <div className="pt-3 border-t border-forest-800 text-[11px] text-forest-300 font-mono flex items-center justify-between">
-                <span>RAG Automated P2P Ingestion Protocol</span>
-                <span className="text-emeraldGlow">Active</span>
+                  <a
+                    href="#gem-simulator"
+                    className="w-full py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs shadow-xl flex items-center justify-center gap-2 transition-all block text-center cursor-pointer"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    <span>View Newly Added Spot in Simulator Below &rarr;</span>
+                  </a>
+                </div>
+              ) : (
+                <div className="my-auto text-center space-y-4 py-10">
+                  <HeartHandshake className="w-12 h-12 text-slate-600 mx-auto" />
+                  <div className="space-y-1">
+                    <h4 className="font-serif font-bold text-lg text-white">Crowdsourced P2P AI Pipeline</h4>
+                    <p className="text-xs text-slate-300 font-sans max-w-sm mx-auto">
+                      Submit an offbeat spot on the left. Yatrika AI will verify its worthiness and immediately make it available to all travelers!
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <div className="pt-4 border-t border-slate-800 text-xs text-slate-400 flex items-center justify-between font-mono">
+                <span>Verified by Yatrika AI Engine</span>
+                <span className="text-amber-300">Live P2P Ingestion</span>
               </div>
 
             </div>
-
-          </div>
+          </motion.div>
 
         </div>
 
