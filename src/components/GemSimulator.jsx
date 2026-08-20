@@ -1,19 +1,19 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, MapPin, Compass, Clock, Wallet, ShieldCheck, Route, ArrowRight, RefreshCw, CheckCircle2, Utensils, Home, Stethoscope, ShieldAlert, PhoneCall, Bus, Navigation, Moon, AlertTriangle, X, Search, Globe, Shield, Phone, Siren, Tag, Mountain, Flame, Activity, Building2, Landmark, ShoppingBag, UtensilsCrossed } from 'lucide-react';
-import { sampleHiddenGems, indianStatesList, famousLandmarkHubs } from '../data/content';
-import { API_BASE_URL } from '../config/api';
+import { Sparkles, MapPin, Compass, Clock, Wallet, ShieldCheck, Route, ArrowRight, RefreshCw, CheckCircle2, Utensils, Home, Stethoscope, ShieldAlert, PhoneCall, Bus, Navigation, Moon, AlertTriangle, X, Search, Globe, Shield, Phone, Siren, Tag, Mountain, Flame, Activity, Building2, Landmark, ShoppingBag, UtensilsCrossed, Layers, Eye, PlusCircle } from 'lucide-react';
+import { sampleHiddenGems, indianStatesList, famousLandmarkHubs } from '../data/content.js';
+import { destinationsDataset, getCitiesForState, getLandmarksForStateAndCity } from '../data/destinations.js';
+import { API_BASE_URL } from '../config/api.js';
 import confetti from 'canvas-confetti';
 
 export default function GemSimulator({ customGems }) {
   const activeGems = customGems || sampleHiddenGems;
 
   const [selectedState, setSelectedState] = useState('All States');
-  const [selectedLandmark, setSelectedLandmark] = useState('all');
   const [selectedCity, setSelectedCity] = useState('All Cities / Districts');
+  const [selectedLandmark, setSelectedLandmark] = useState('all');
   const [selectedVibe, setSelectedVibe] = useState('All Vibes');
   const [selectedGemIdx, setSelectedGemIdx] = useState(0);
-  const [budget, setBudget] = useState('Moderate');
   const [duration, setDuration] = useState('1 Full Day');
   const [isCalculating, setIsCalculating] = useState(false);
   const [activeTab, setActiveTab] = useState('result');
@@ -45,89 +45,78 @@ export default function GemSimulator({ customGems }) {
     }
   }, [selectedState, selectedVibe]);
 
-  // Dynamic Landmark Hubs matching selected State
-  const availableLandmarks = useMemo(() => {
-    if (selectedState === 'All States') return famousLandmarkHubs;
-    return famousLandmarkHubs.filter(l => l.id === 'all' || l.state === selectedState);
+  // Dynamic Cities dropdown based on selected State
+  const availableCities = useMemo(() => {
+    return getCitiesForState(selectedState);
   }, [selectedState]);
 
-  // Dynamic extraction of unique Cities / Districts for the selected State
-  const availableCities = useMemo(() => {
-    if (selectedState === 'All States') {
-      const allCities = activeGems.map(g => g.location.split(',')[0].trim());
-      return ['All Cities / Districts', ...Array.from(new Set(allCities))];
+  // Dynamic Landmarks dropdown based on selected State & City
+  const availableLandmarks = useMemo(() => {
+    if (selectedState === 'All States' && selectedCity === 'All Cities / Districts') {
+      return famousLandmarkHubs;
     }
-    const stateCities = activeGems
-      .filter(g => g.state === selectedState)
-      .map(g => g.location.split(',')[0].trim());
-    return ['All Cities / Districts', ...Array.from(new Set(stateCities))];
-  }, [selectedState, activeGems]);
+    const stateLandmarks = getLandmarksForStateAndCity(selectedState, selectedCity);
+    if (stateLandmarks.length === 0) return [];
+    return [{ id: 'all', name: '✨ All Landmarks in Region' }, ...stateLandmarks];
+  }, [selectedState, selectedCity]);
 
-  // 1. STRICT STATE & LANDMARK & CITY FILTERING LOGIC:
+  // Cascading Filter: State -> City -> Landmark -> Vibe
   const filteredGems = useMemo(() => {
     let pool = activeGems;
 
     if (selectedState !== 'All States') {
-      pool = pool.filter(g => g.state === selectedState);
+      pool = pool.filter(g => g.state && g.state.toLowerCase() === selectedState.toLowerCase());
+    }
+
+    if (selectedCity !== 'All Cities / Districts') {
+      pool = pool.filter(g => (g.city && g.city.toLowerCase() === selectedCity.toLowerCase()) || (g.location && g.location.toLowerCase().includes(selectedCity.toLowerCase())));
     }
 
     if (selectedLandmark !== 'all') {
-      const landmarkObj = famousLandmarkHubs.find(l => l.id === selectedLandmark);
+      const landmarkObj = famousLandmarkHubs.find(l => l.id === selectedLandmark) || 
+                          destinationsDataset.flatMap(s => s.cities.flatMap(c => c.landmarks)).find(l => l.id === selectedLandmark);
       if (landmarkObj) {
-        const landmarkMatches = pool.filter(g => g.landmarkHub === landmarkObj.name);
+        const landmarkMatches = pool.filter(g => g.landmarkHub && g.landmarkHub.toLowerCase().includes(landmarkObj.name.toLowerCase().replace(/^[^\w]+/, '').trim()));
         if (landmarkMatches.length > 0) {
           pool = landmarkMatches;
         }
       }
     }
 
-    if (selectedCity !== 'All Cities / Districts') {
-      const cityMatches = pool.filter(g => g.location.toLowerCase().includes(selectedCity.toLowerCase()));
-      if (cityMatches.length > 0) {
-        pool = cityMatches;
-      }
-    }
-
     if (selectedVibe !== 'All Vibes') {
-      const vibeMatches = pool.filter(g => g.vibeTag === selectedVibe);
-      if (vibeMatches.length > 0) {
-        return vibeMatches;
-      }
+      pool = pool.filter(g => g.vibeTag === selectedVibe || g.category === selectedVibe);
     }
 
     return pool;
-  }, [selectedState, selectedLandmark, selectedCity, selectedVibe, activeGems]);
+  }, [selectedState, selectedCity, selectedLandmark, selectedVibe, activeGems]);
 
   // Auto-reset selected place index whenever filters change so it updates instantly
   useEffect(() => {
     setSelectedGemIdx(0);
-  }, [selectedState, selectedLandmark, selectedCity, selectedVibe]);
+  }, [selectedState, selectedCity, selectedLandmark, selectedVibe]);
 
   // Safe reference for current active place
-  const currentGem = filteredGems[selectedGemIdx] || filteredGems[0] || activeGems[0];
-  const facilities = currentGem.essentialFacilities;
-  const police = facilities.womenSafety;
-  const specialties = facilities.famousRegionalSpecialties || {
+  const currentGem = filteredGems[selectedGemIdx] || filteredGems[0] || null;
+  const facilities = currentGem?.essentialFacilities;
+  const police = facilities?.womenSafety;
+  const specialties = facilities?.famousRegionalSpecialties || {
     food: "Local Organic Thali & Regional Desserts",
     crafts: "Native Handlooms, Block Prints & Traditional Crafts"
   };
 
   const handleSelectState = (st) => {
     setSelectedState(st);
-    setSelectedLandmark('all');
     setSelectedCity('All Cities / Districts');
-  };
-
-  const handleSelectLandmark = (lId) => {
-    setSelectedLandmark(lId);
-    const landmarkObj = famousLandmarkHubs.find(l => l.id === lId);
-    if (landmarkObj && landmarkObj.state !== 'All States') {
-      setSelectedState(landmarkObj.state);
-    }
+    setSelectedLandmark('all');
   };
 
   const handleSelectCity = (ct) => {
     setSelectedCity(ct);
+    setSelectedLandmark('all');
+  };
+
+  const handleSelectLandmark = (lId) => {
+    setSelectedLandmark(lId);
   };
 
   const handleSelectVibe = (vibe) => {
@@ -156,7 +145,7 @@ export default function GemSimulator({ customGems }) {
 
     if (isMockTest === true) {
       console.log('🧪 Mock/Test Mode Active: Simulated SOS payload response { success: true, status: "DISPATCHED_TO_POLICE" }');
-    } else {
+    } else if (currentGem && police) {
       fetch(`${API_BASE_URL}/api/v1/sos/dispatch`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -180,7 +169,7 @@ export default function GemSimulator({ customGems }) {
       
       {/* Decorative Floating Topo Contour Elements */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-terracotta-500/10 rounded-full blur-3xl pointer-events-none -z-0" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-forest-900/10 rounded-full blur-3xl pointer-events-none -z-0" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-slate-900/10 rounded-full blur-3xl pointer-events-none -z-0" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
@@ -194,7 +183,7 @@ export default function GemSimulator({ customGems }) {
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-terracotta-100 border border-terracotta-300/80 text-terracotta-900 text-xs font-semibold uppercase tracking-wider shadow-sm">
             <Globe className="w-4 h-4 text-terracotta-600 animate-spin" style={{ animationDuration: '10s' }} />
-            <span>Landmark & Offbeat Discovery Radar</span>
+            <span>Pan-India Offbeat Discovery Radar</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-sand-900 tracking-tight">
@@ -202,7 +191,7 @@ export default function GemSimulator({ customGems }) {
           </h2>
 
           <p className="text-base sm:text-lg text-sand-700 leading-relaxed font-sans">
-            If you are traveling to a famous tourist spot (like <strong className="text-forest-900 font-bold">Taj Mahal, Amer Fort, Munnar, Shimla, Leh</strong>), select it below! Yatrika will automatically display <strong className="text-forest-900 font-bold">uncrowded offbeat places nearby in that region</strong>, plus famous local food & native clothes/handicrafts—backed by 24/7 nearest police station mapping & emergency SOS support.
+            Select an Indian State, City & Famous Landmark (e.g. <strong className="font-bold text-slate-900">Taj Mahal, Amer Fort, Kashi Vishwanath, Munnar, Pangong</strong>)! Yatrika automatically fetches <strong className="font-bold text-slate-900">uncrowded offbeat places nearby in that region</strong>, plus famous local food & native clothes—backed by 24/7 nearest police station mapping & emergency SOS support.
           </p>
         </motion.div>
 
@@ -247,7 +236,7 @@ export default function GemSimulator({ customGems }) {
               </span>
               <span className="text-[11px] font-mono bg-slate-900 text-amber-300 px-3 py-1 rounded-full flex items-center gap-1.5 border border-slate-800">
                 <Activity className="w-3 h-3 text-cyan-400 animate-pulse" />
-                API: {apiHealth?.status === 'ONLINE' ? 'Render Live' : 'Connected'}
+                API: Connected
               </span>
             </div>
 
@@ -273,12 +262,42 @@ export default function GemSimulator({ customGems }) {
               </div>
             </div>
 
-            {/* 2. FAMOUS LANDMARK / HUB SELECTION */}
+            {/* 2. SELECT CITY / DISTRICT */}
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-sand-700 uppercase tracking-wider block flex items-center justify-between">
+                <span className="font-bold text-slate-800 flex items-center gap-1">
+                  <Building2 className="w-3.5 h-3.5 text-slate-600" />
+                  2. Select City / District
+                </span>
+                <span className="text-[10px] text-slate-700 font-mono font-bold">
+                  {availableCities.length > 0 ? `${availableCities.length} City(ies)` : 'General'}
+                </span>
+              </label>
+              
+              <div className="relative">
+                <select
+                  value={selectedCity}
+                  onChange={(e) => handleSelectCity(e.target.value)}
+                  className="w-full text-xs p-3 rounded-xl border-2 border-slate-600 bg-slate-50/40 font-bold text-sand-900 focus:outline-none focus:border-slate-800 focus:ring-2 focus:ring-slate-200 shadow-sm transition-all cursor-pointer"
+                >
+                  <option value="All Cities / Districts">
+                    🏙️ {selectedState === 'All States' ? 'All Cities in India' : `All Cities in ${selectedState}`}
+                  </option>
+                  {availableCities.map(ct => (
+                    <option key={ct} value={ct}>
+                      📍 City: {ct}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* 3. FAMOUS LANDMARK / HUB SELECTION */}
             <div className="space-y-2">
               <label className="text-xs font-semibold text-sand-700 uppercase tracking-wider block flex items-center justify-between">
                 <span className="font-bold text-indigo-900 flex items-center gap-1">
                   <Landmark className="w-3.5 h-3.5 text-indigo-600" />
-                  2. Visiting a Famous Landmark / Hub?
+                  3. Visiting a Famous Landmark / Hub?
                 </span>
                 <span className="text-[10px] text-indigo-700 font-mono font-bold">
                   Offbeat Recommender
@@ -291,40 +310,15 @@ export default function GemSimulator({ customGems }) {
                   onChange={(e) => handleSelectLandmark(e.target.value)}
                   className="w-full text-xs p-3 rounded-xl border-2 border-indigo-500 bg-indigo-50/40 font-bold text-indigo-950 focus:outline-none focus:border-indigo-700 focus:ring-2 focus:ring-indigo-200 shadow-sm transition-all cursor-pointer"
                 >
-                  {availableLandmarks.map(lm => (
-                    <option key={lm.id} value={lm.id}>
-                      {lm.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* 3. SELECT DISTRICT / CITY */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-sand-700 uppercase tracking-wider block flex items-center justify-between">
-                <span className="font-bold text-slate-800 flex items-center gap-1">
-                  <Building2 className="w-3.5 h-3.5 text-slate-600" />
-                  3. Select District / City
-                </span>
-                <span className="text-[10px] text-slate-700 font-mono font-bold">
-                  {availableCities.length - 1} Region(s)
-                </span>
-              </label>
-              
-              <div className="relative">
-                <select
-                  value={selectedCity}
-                  onChange={(e) => handleSelectCity(e.target.value)}
-                  className="w-full text-xs p-3 rounded-xl border-2 border-slate-600 bg-slate-50/40 font-bold text-sand-900 focus:outline-none focus:border-slate-800 focus:ring-2 focus:ring-slate-200 shadow-sm transition-all cursor-pointer"
-                >
-                  {availableCities.map(ct => (
-                    <option key={ct} value={ct}>
-                      {ct === 'All Cities / Districts' 
-                        ? `🏙️ All Cities in ${selectedState === 'All States' ? 'India' : selectedState}` 
-                        : `📍 District/City: ${ct}`}
-                    </option>
-                  ))}
+                  {availableLandmarks.length > 0 ? (
+                    availableLandmarks.map(lm => (
+                      <option key={lm.id} value={lm.id}>
+                        {lm.name}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="all">No landmark registered yet for this city</option>
+                  )}
                 </select>
               </div>
             </div>
@@ -374,38 +368,49 @@ export default function GemSimulator({ customGems }) {
               <label className="text-xs font-semibold text-sand-700 uppercase tracking-wider block flex items-center justify-between">
                 <span>5. Recommended Offbeat Gems ({filteredGems.length})</span>
                 <span className="text-[10px] text-amber-700 font-mono font-bold">
-                  {selectedLandmark !== 'all' ? 'Landmark Offbeat' : selectedState}
+                  {selectedState}
                 </span>
               </label>
 
-              <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
-                {filteredGems.map((gem, idx) => {
-                  const isSelected = (currentGem.gemName === gem.gemName);
-                  return (
-                    <motion.button
-                      whileHover={{ x: 3 }}
-                      key={gem.gemName}
-                      onClick={() => setSelectedGemIdx(idx)}
-                      className={`w-full text-xs p-3 rounded-xl border text-left font-medium transition-all cursor-pointer ${
-                        isSelected
-                          ? 'bg-slate-900 text-white border-slate-900 shadow-lg ring-2 ring-terracotta-500/50' 
-                          : 'bg-sand-50 text-sand-800 border-sand-200 hover:bg-sand-100'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-xs truncate">{gem.gemName}</span>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded border shrink-0 ml-1 bg-terracotta-500 text-white font-bold border-terracotta-600">
-                          {gem.vibeTag}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between text-[10px] opacity-80 mt-1 font-mono">
-                        <span className="truncate">{gem.location}</span>
-                        <span className="text-amber-700 font-bold shrink-0 ml-1">Score {gem.score}/100</span>
-                      </div>
-                    </motion.button>
-                  );
-                })}
-              </div>
+              {filteredGems.length > 0 ? (
+                <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                  {filteredGems.map((gem, idx) => {
+                    const isSelected = (currentGem?.gemName === gem.gemName);
+                    return (
+                      <motion.button
+                        whileHover={{ x: 3 }}
+                        key={gem.gemName}
+                        onClick={() => setSelectedGemIdx(idx)}
+                        className={`w-full text-xs p-3 rounded-xl border text-left font-medium transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-slate-900 text-white border-slate-900 shadow-lg ring-2 ring-terracotta-500/50' 
+                            : 'bg-sand-50 text-sand-800 border-sand-200 hover:bg-sand-100'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-xs truncate">{gem.gemName}</span>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded border shrink-0 ml-1 bg-terracotta-500 text-white font-bold border-terracotta-600">
+                            {gem.vibeTag || gem.category}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between text-[10px] opacity-80 mt-1 font-mono">
+                          <span className="truncate">{gem.location}</span>
+                          <span className="text-amber-700 font-bold shrink-0 ml-1">Score {gem.score}/100</span>
+                        </div>
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-sans text-center space-y-1">
+                  <span className="font-bold block">
+                    {selectedVibe !== 'All Vibes' ? `No '${selectedVibe}' places found in ${selectedState}` : `More destinations for ${selectedState} coming soon!`}
+                  </span>
+                  <span className="text-[11px] text-amber-700 block">
+                    {selectedVibe !== 'All Vibes' ? `Try selecting 'All Vibes' to view all available places for this state.` : `The community audit is expanding. You can submit a new hidden place below!`}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Run Re-Animation Button */}
@@ -419,7 +424,7 @@ export default function GemSimulator({ customGems }) {
               {isCalculating ? (
                 <>
                   <RefreshCw className="w-4 h-4 animate-spin text-terracotta-400" />
-                  <span>Calculating Confetti Telematics...</span>
+                  <span>Calculating Telematics...</span>
                 </>
               ) : (
                 <>
@@ -440,7 +445,7 @@ export default function GemSimulator({ customGems }) {
             className="lg:col-span-7 space-y-4"
           >
             
-            {/* Result Tabs Navigation with Animated Indicator */}
+            {/* Result Tabs Navigation */}
             <div className="flex flex-wrap items-center gap-1.5 bg-white p-1.5 rounded-2xl border border-sand-200 shadow-sm relative">
               {[
                 { id: 'result', label: 'Overview' },
@@ -478,519 +483,572 @@ export default function GemSimulator({ customGems }) {
             {/* Main Result Card Container */}
             <div className="bg-slate-900 text-white p-6 sm:p-8 rounded-3xl border border-slate-700 shadow-2xl relative min-h-[460px] flex flex-col justify-between overflow-hidden topo-pattern-dark">
               
-              <AnimatePresence mode="wait">
-                {isCalculating ? (
-                  <motion.div 
-                    key="loading"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="my-auto text-center space-y-4 py-16"
-                  >
-                    <RefreshCw className="w-12 h-12 text-terracotta-400 animate-spin mx-auto" />
-                    <div className="space-y-1">
-                      <h4 className="font-serif font-bold text-lg text-sand-50">Retrieving Destinations in {currentGem.state}</h4>
-                      <p className="text-xs text-slate-300 font-mono">Auditing nearby 24/7 police posts, ER hospitals, verified food dhabas & local transit...</p>
-                    </div>
-                  </motion.div>
-                ) : activeTab === 'result' ? (
-                  /* Overview Tab */
-                  <motion.div
-                    key={currentGem.gemName}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -12 }}
-                    transition={{ duration: 0.3 }}
-                    className="space-y-6"
-                  >
-                    <div className="flex flex-wrap items-start justify-between gap-4 pb-4 border-b border-slate-800">
-                      <div>
-                        <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                          <span className="bg-terracotta-500/20 text-terracotta-300 text-xs px-3 py-0.5 rounded-full font-mono border border-terracotta-500/30 font-bold flex items-center gap-1">
-                            <Tag className="w-3 h-3" />
-                            {currentGem.vibeTag}
-                          </span>
-                          <span className="bg-slate-800 text-amber-300 text-xs px-3 py-0.5 rounded-full font-mono border border-slate-700">
-                            📍 State: {currentGem.state}
-                          </span>
-                          <span className="text-xs text-slate-300 font-mono">
-                            {currentGem.distance}
-                          </span>
-                        </div>
-                        <h3 className="text-2xl sm:text-3xl font-serif font-bold text-sand-50">
-                          {currentGem.gemName}
-                        </h3>
-                      </div>
-
-                      <div className="flex items-center gap-2.5">
-                        <motion.div 
-                          whileHover={{ scale: 1.05 }}
-                          className="bg-slate-950/90 border border-terracotta-500/40 p-2.5 rounded-2xl text-center min-w-[90px] shadow-lg"
-                        >
-                          <span className="text-2xl font-serif font-extrabold text-terracotta-400 block">
-                            {currentGem.score}/100
-                          </span>
-                          <span className="text-[9px] text-slate-300 uppercase tracking-wider block font-mono">
-                            Gem Score
-                          </span>
-                        </motion.div>
-                        <motion.div 
-                          whileHover={{ scale: 1.05 }}
-                          className="bg-slate-950/90 border border-amber-500/40 p-2.5 rounded-2xl text-center min-w-[90px] shadow-lg"
-                        >
-                          <span className="text-2xl font-serif font-extrabold text-amber-300 block">
-                            {currentGem.womenSafetyIndex}/100
-                          </span>
-                          <span className="text-[9px] text-slate-300 uppercase tracking-wider block font-mono">
-                            Women Safety
-                          </span>
-                        </motion.div>
-                      </div>
-                    </div>
-
-                    <p className="text-sm sm:text-base text-slate-200 leading-relaxed">
-                      {currentGem.desc}
+              {!currentGem ? (
+                /* Fallback Empty State for Unseeded State/City/Vibe */
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="my-auto text-center space-y-4 py-12 px-4"
+                >
+                  <div className="w-16 h-16 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center mx-auto">
+                    <Sparkles className="w-8 h-8 animate-pulse" />
+                  </div>
+                  <div className="space-y-2 max-w-md mx-auto">
+                    <h4 className="font-serif font-bold text-xl text-sand-50">
+                      {selectedVibe !== 'All Vibes' 
+                        ? `No places matching '${selectedVibe}' in ${selectedState}`
+                        : `More destinations for ${selectedState} coming soon!`}
+                    </h4>
+                    <p className="text-xs text-slate-300 font-sans leading-relaxed">
+                      {selectedVibe !== 'All Vibes'
+                        ? `There are currently no offbeat places registered under '${selectedVibe}' for this specific selection. Try selecting 'All Vibes' or choose another vibe category to view available places!`
+                        : `The Yatrika community audit is currently expanding coverage to ${selectedState}. You can submit a new hidden place for this state using the submission form below!`}
                     </p>
-
-                    {/* Regional Famous Food & Clothes Teaser Box */}
-                    <div className="p-4 rounded-2xl bg-slate-950/90 border border-amber-500/40 space-y-2 text-xs">
-                      <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
-                        <span className="text-amber-400 font-bold font-mono uppercase tracking-wider flex items-center gap-1.5">
-                          <ShoppingBag className="w-4 h-4 text-amber-400" />
-                          Famous Food & Local Clothes/Crafts
-                        </span>
-                        <button 
-                          onClick={() => setActiveTab('specialties')}
-                          className="text-[10px] text-amber-300 font-mono font-bold hover:underline"
-                        >
-                          View Details &rarr;
-                        </button>
+                  </div>
+                  <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
+                    {selectedVibe !== 'All Vibes' && (
+                      <button
+                        onClick={() => setSelectedVibe('All Vibes')}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold text-xs shadow border border-slate-700 transition-all cursor-pointer"
+                      >
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span>Switch to 'All Vibes'</span>
+                      </button>
+                    )}
+                    <a
+                      href="#gem-submission"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-xs shadow-lg transition-all"
+                    >
+                      <PlusCircle className="w-4 h-4 text-amber-300" />
+                      <span>Submit a Hidden Gem for {selectedState}</span>
+                    </a>
+                  </div>
+                </motion.div>
+              ) : (
+                <AnimatePresence mode="wait">
+                  {isCalculating ? (
+                    <motion.div 
+                      key="loading"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="my-auto text-center space-y-4 py-16"
+                    >
+                      <RefreshCw className="w-12 h-12 text-terracotta-400 animate-spin mx-auto" />
+                      <div className="space-y-1">
+                        <h4 className="font-serif font-bold text-lg text-sand-50">Retrieving Destinations in {currentGem.state}</h4>
+                        <p className="text-xs text-slate-300 font-mono">Auditing nearby 24/7 police posts, ER hospitals, verified food dhabas & local transit...</p>
                       </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                    </motion.div>
+                  ) : activeTab === 'result' ? (
+                    /* Overview Tab */
+                    <motion.div
+                      key={currentGem.gemName}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -12 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-6"
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-4 pb-4 border-b border-slate-800">
                         <div>
-                          <span className="text-slate-400 block font-mono text-[10px]">🍲 Famous Food:</span>
-                          <span className="text-sand-100 font-medium">{specialties.food}</span>
+                          <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                            <span className="bg-terracotta-500/20 text-terracotta-300 text-xs px-3 py-0.5 rounded-full font-mono border border-terracotta-500/30 font-bold flex items-center gap-1">
+                              <Tag className="w-3 h-3" />
+                              {currentGem.vibeTag || currentGem.category}
+                            </span>
+                            <span className="bg-slate-800 text-amber-300 text-xs px-3 py-0.5 rounded-full font-mono border border-slate-700">
+                              📍 State: {currentGem.state}
+                            </span>
+                            <span className="text-xs text-slate-300 font-mono">
+                              {currentGem.distance}
+                            </span>
+                          </div>
+                          <h3 className="text-2xl sm:text-3xl font-serif font-bold text-sand-50">
+                            {currentGem.gemName}
+                          </h3>
                         </div>
+
+                        <div className="flex items-center gap-2.5">
+                          <motion.div 
+                            whileHover={{ scale: 1.05 }}
+                            className="bg-slate-950/90 border border-terracotta-500/40 p-2.5 rounded-2xl text-center min-w-[90px] shadow-lg"
+                          >
+                            <span className="text-2xl font-serif font-extrabold text-terracotta-400 block">
+                              {currentGem.score}/100
+                            </span>
+                            <span className="text-[9px] text-slate-300 uppercase tracking-wider block font-mono">
+                              Gem Score
+                            </span>
+                          </motion.div>
+                          <motion.div 
+                            whileHover={{ scale: 1.05 }}
+                            className="bg-slate-950/90 border border-amber-500/40 p-2.5 rounded-2xl text-center min-w-[90px] shadow-lg"
+                          >
+                            <span className="text-2xl font-serif font-extrabold text-amber-300 block">
+                              {currentGem.womenSafetyIndex}/100
+                            </span>
+                            <span className="text-[9px] text-slate-300 uppercase tracking-wider block font-mono">
+                              Women Safety
+                            </span>
+                          </motion.div>
+                        </div>
+                      </div>
+
+                      <p className="text-sm sm:text-base text-slate-200 leading-relaxed">
+                        {currentGem.desc}
+                      </p>
+
+                      {/* Regional Famous Food & Clothes Teaser Box */}
+                      <div className="p-4 rounded-2xl bg-slate-950/90 border border-amber-500/40 space-y-2 text-xs">
+                        <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                          <span className="text-amber-400 font-bold font-mono uppercase tracking-wider flex items-center gap-1.5">
+                            <ShoppingBag className="w-4 h-4 text-amber-400" />
+                            Famous Food & Local Clothes/Crafts
+                          </span>
+                          <button 
+                            onClick={() => setActiveTab('specialties')}
+                            className="text-[10px] text-amber-300 font-mono font-bold hover:underline cursor-pointer"
+                          >
+                            View Details &rarr;
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                          <div>
+                            <span className="text-slate-400 block font-mono text-[10px]">🍲 Famous Food:</span>
+                            <span className="text-sand-100 font-medium">{specialties.food}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block font-mono text-[10px]">👗 Famous Clothes & Crafts:</span>
+                            <span className="text-sand-100 font-medium">{specialties.crafts}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Quick Facilities Summary Chips */}
+                      {facilities && police && (
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-xs">
+                          <div className="bg-slate-950/80 p-3 rounded-xl border border-cyan-500/30">
+                            <span className="text-cyan-400 text-[10px] uppercase font-bold block flex items-center gap-1">
+                              <Siren className="w-3 h-3 text-cyan-400" />
+                              Nearest Police
+                            </span>
+                            <span className="text-sand-100 font-bold text-[11px] truncate block mt-0.5">{police.policeStationName}</span>
+                            <span className="text-slate-400 text-[10px] block">{police.policeStationDist}</span>
+                          </div>
+                          <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+                            <span className="text-slate-400 text-[10px] uppercase block">Nearest Clinic</span>
+                            <span className="text-sand-100 font-bold text-[11px] truncate block mt-0.5">{facilities.medical[0]?.name || 'District Clinic'}</span>
+                            <span className="text-slate-400 text-[10px] block">{facilities.medical[0]?.dist || '5 km'}</span>
+                          </div>
+                          <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+                            <span className="text-slate-400 text-[10px] uppercase block">Local Food</span>
+                            <span className="text-terracotta-400 font-bold mt-0.5 block">{facilities.food[0]?.dist || '250m'}</span>
+                          </div>
+                          <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+                            <span className="text-slate-400 text-[10px] uppercase block">Night Transit</span>
+                            <span className="text-amber-300 font-bold mt-0.5 block">24/7 Available</span>
+                          </div>
+                        </div>
+                      )}
+
+                    </motion.div>
+                  ) : activeTab === 'specialties' ? (
+                    /* Famous Food & Native Clothes/Crafts Tab */
+                    <motion.div
+                      key="specialties"
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -12 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-5"
+                    >
+                      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                         <div>
-                          <span className="text-slate-400 block font-mono text-[10px]">👗 Famous Clothes & Crafts:</span>
-                          <span className="text-sand-100 font-medium">{specialties.crafts}</span>
+                          <h4 className="font-serif font-bold text-lg text-sand-50 flex items-center gap-2">
+                            <ShoppingBag className="w-5 h-5 text-amber-400" />
+                            Famous Local Food & Native Clothes / Crafts in {currentGem.state}
+                          </h4>
+                          <span className="text-xs text-slate-300 font-mono">Authentic regional specialties recommended by local village hosts</span>
                         </div>
-                      </div>
-                    </div>
-
-                    {/* Quick Facilities Summary Chips */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-xs">
-                      <div className="bg-slate-950/80 p-3 rounded-xl border border-cyan-500/30">
-                        <span className="text-cyan-400 text-[10px] uppercase font-bold block flex items-center gap-1">
-                          <Siren className="w-3 h-3 text-cyan-400" />
-                          Nearest Police
+                        <span className="bg-amber-950/80 text-amber-300 border border-amber-800 text-xs px-3 py-1 rounded-full font-mono font-bold">
+                          Native Specialties
                         </span>
-                        <span className="text-sand-100 font-bold text-[11px] truncate block mt-0.5">{police.policeStationName}</span>
-                        <span className="text-slate-400 text-[10px] block">{police.policeStationDist}</span>
-                      </div>
-                      <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
-                        <span className="text-slate-400 text-[10px] uppercase block">Nearest Clinic</span>
-                        <span className="text-sand-100 font-bold text-[11px] truncate block mt-0.5">{facilities.medical[0].name}</span>
-                        <span className="text-slate-400 text-[10px] block">{facilities.medical[0].dist}</span>
-                      </div>
-                      <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
-                        <span className="text-slate-400 text-[10px] uppercase block">Local Food</span>
-                        <span className="text-terracotta-400 font-bold mt-0.5 block">{facilities.food[0].dist}</span>
-                      </div>
-                      <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
-                        <span className="text-slate-400 text-[10px] uppercase block">Night Transit</span>
-                        <span className="text-amber-300 font-bold mt-0.5 block">24/7 Available</span>
-                      </div>
-                    </div>
-
-                  </motion.div>
-                ) : activeTab === 'specialties' ? (
-                  /* Famous Food & Native Clothes/Crafts Tab */
-                  <motion.div
-                    key="specialties"
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -12 }}
-                    transition={{ duration: 0.3 }}
-                    className="space-y-5"
-                  >
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                      <div>
-                        <h4 className="font-serif font-bold text-lg text-sand-50 flex items-center gap-2">
-                          <ShoppingBag className="w-5 h-5 text-amber-400" />
-                          Famous Local Food & Native Clothes / Crafts in {currentGem.state}
-                        </h4>
-                        <span className="text-xs text-slate-300 font-mono">Authentic regional specialties recommended by local village hosts</span>
-                      </div>
-                      <span className="bg-amber-950/80 text-amber-300 border border-amber-800 text-xs px-3 py-1 rounded-full font-mono font-bold">
-                        Native Specialties
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                      
-                      {/* Famous Local Food Card */}
-                      <div className="p-5 rounded-2xl bg-slate-950/90 border border-amber-500/40 space-y-3 shadow-lg">
-                        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                          <span className="font-bold text-amber-300 flex items-center gap-1.5 font-mono text-xs uppercase">
-                            <UtensilsCrossed className="w-4 h-4 text-amber-400" />
-                            Famous Regional Dishes & Sweets
-                          </span>
-                          <span className="text-[10px] text-slate-300 font-mono">Must-Try</span>
-                        </div>
-                        <p className="text-sand-100 text-sm leading-relaxed font-sans font-medium">
-                          {specialties.food}
-                        </p>
-                        <div className="pt-2 border-t border-slate-800 text-[11px] text-slate-400 font-mono">
-                          Served fresh at nearby verified village dhabas & organic kitchens.
-                        </div>
                       </div>
 
-                      {/* Famous Native Clothes & Crafts Card */}
-                      <div className="p-5 rounded-2xl bg-slate-950/90 border border-terracotta-500/40 space-y-3 shadow-lg">
-                        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                          <span className="font-bold text-terracotta-400 flex items-center gap-1.5 font-mono text-xs uppercase">
-                            <ShoppingBag className="w-4 h-4 text-terracotta-400" />
-                            Famous Native Clothes & Artisan Crafts
-                          </span>
-                          <span className="text-[10px] text-slate-300 font-mono">Authentic</span>
-                        </div>
-                        <p className="text-sand-100 text-sm leading-relaxed font-sans font-medium">
-                          {specialties.crafts}
-                        </p>
-                        <div className="pt-2 border-t border-slate-800 text-[11px] text-slate-400 font-mono">
-                          Directly supports native village weavers & artisan cooperatives.
-                        </div>
-                      </div>
-
-                    </div>
-
-                  </motion.div>
-                ) : activeTab === 'essential' ? (
-                  /* Food & Homestays Tab */
-                  <motion.div
-                    key="essential"
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -12 }}
-                    transition={{ duration: 0.3 }}
-                    className="space-y-5"
-                  >
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                      <div>
-                        <h4 className="font-serif font-bold text-lg text-sand-50 flex items-center gap-2">
-                          <Utensils className="w-5 h-5 text-terracotta-400" />
-                          Nearby Food & Accommodation Options in {currentGem.state}
-                        </h4>
-                        <span className="text-xs text-slate-300 font-mono">Verified local dhabas, organic home kitchens & homestays</span>
-                      </div>
-                      <span className="bg-slate-800 text-amber-300 text-xs px-2.5 py-1 rounded-full font-mono border border-slate-700">
-                        Audited
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                      
-                      {/* Food Options Card */}
-                      <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-2">
-                        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                          <span className="font-bold text-sand-50 flex items-center gap-1.5">
-                            <Utensils className="w-4 h-4 text-terracotta-400" />
-                            Food & Dining Nearby
-                          </span>
-                          <span className="text-[10px] text-slate-300 font-mono">Hygiene Verified</span>
-                        </div>
-                        {facilities.food.map((f, i) => (
-                          <div key={i} className="space-y-0.5 pt-1">
-                            <div className="flex justify-between font-medium text-sand-100">
-                              <span>{f.name}</span>
-                              <span className="text-terracotta-400 font-bold">{f.dist}</span>
-                            </div>
-                            <div className="flex justify-between text-[11px] text-slate-300">
-                              <span>{f.type}</span>
-                              <span className="text-amber-300">{f.open}</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Accommodation Card */}
-                      <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-2">
-                        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                          <span className="font-bold text-sand-50 flex items-center gap-1.5">
-                            <Home className="w-4 h-4 text-cyan-400" />
-                            Verified Homestays & Lodges
-                          </span>
-                          <span className="text-[10px] text-slate-300 font-mono">Night Available</span>
-                        </div>
-                        {facilities.accommodation.map((a, i) => (
-                          <div key={i} className="space-y-0.5 pt-1">
-                            <div className="flex justify-between font-medium text-sand-100">
-                              <span>{a.name}</span>
-                              <span className="text-sand-100 font-bold">{a.tariff}</span>
-                            </div>
-                            <div className="flex justify-between text-[11px] text-slate-300">
-                              <span>{a.type}</span>
-                              <span className="text-amber-300">Night Stay ✓</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                    </div>
-
-                  </motion.div>
-                ) : activeTab === 'medical' ? (
-                  /* Hospitals & Medical Facilities Tab */
-                  <motion.div
-                    key="medical"
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -12 }}
-                    transition={{ duration: 0.3 }}
-                    className="space-y-5"
-                  >
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                      <div>
-                        <h4 className="font-serif font-bold text-lg text-sand-50 flex items-center gap-2">
-                          <Stethoscope className="w-5 h-5 text-red-400" />
-                          Nearby Hospitals & Medical Facilities in {currentGem.state}
-                        </h4>
-                        <span className="text-xs text-slate-300 font-mono">24/7 Emergency hospitals, clinics, ambulance contacts & pharmacies</span>
-                      </div>
-                      <span className="bg-red-950 text-red-400 border border-red-800 text-xs px-3 py-1 rounded-full font-mono font-bold">
-                        24/7 ER Ready
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                      {facilities.medical.map((m, i) => (
-                        <div key={i} className="p-4 rounded-2xl bg-slate-950/80 border border-red-500/30 space-y-2">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        
+                        {/* Famous Local Food Card */}
+                        <div className="p-5 rounded-2xl bg-slate-950/90 border border-amber-500/40 space-y-3 shadow-lg">
                           <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                            <span className="font-bold text-sand-50">{m.name}</span>
-                            <span className="text-red-400 font-bold font-mono">{m.dist} ({m.travelTime})</span>
+                            <span className="font-bold text-amber-300 flex items-center gap-1.5 font-mono text-xs uppercase">
+                              <UtensilsCrossed className="w-4 h-4 text-amber-400" />
+                              Famous Regional Dishes & Sweets
+                            </span>
+                            <span className="text-[10px] text-slate-300 font-mono">Must-Try</span>
                           </div>
-                          <p className="text-slate-200 text-[11px]">{m.type}</p>
-                          <div className="pt-2 border-t border-slate-800 flex items-center justify-between font-mono text-[11px]">
-                            <span className="text-slate-400">Emergency Phone:</span>
-                            <span className="text-sand-50 font-bold bg-slate-900 px-2 py-0.5 rounded border border-slate-700">{m.phone}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </motion.div>
-                ) : activeTab === 'safety' ? (
-                  /* Women Safety & Explicit Police Station Tab */
-                  <motion.div
-                    key="safety"
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -12 }}
-                    transition={{ duration: 0.3 }}
-                    className="space-y-5"
-                  >
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                      <div>
-                        <h4 className="font-serif font-bold text-lg text-sand-50 flex items-center gap-2">
-                          <Siren className="w-5 h-5 text-cyan-400 animate-pulse" />
-                          Women Safety & Nearest Police Station Hub
-                        </h4>
-                        <span className="text-xs text-slate-300 font-mono">Explicit police post mapping, verified female hosts & emergency helplines</span>
-                      </div>
-                      <span className="bg-amber-950/80 text-amber-300 border border-amber-800 text-xs px-3 py-1 rounded-full font-mono font-bold">
-                        Safety Rating: {currentGem.womenSafetyIndex}/100
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      
-                      {/* High-Impact Dedicated Police Station Card */}
-                      <div className="p-5 rounded-2xl bg-slate-950 border-2 border-cyan-500/50 space-y-3 font-sans text-xs relative overflow-hidden shadow-lg">
-                        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                          <span className="text-cyan-400 font-bold uppercase font-mono tracking-wider flex items-center gap-1.5">
-                            <Siren className="w-4 h-4 text-cyan-400 animate-pulse" />
-                            Nearest Police Station
-                          </span>
-                          <span className="text-[10px] bg-cyan-950 text-cyan-300 font-mono px-2 py-0.5 rounded border border-cyan-800 font-bold">
-                            On-Call Response
-                          </span>
-                        </div>
-
-                        <div className="space-y-1">
-                          <h5 className="text-base font-bold text-sand-50">{police.policeStationName}</h5>
-                          <div className="flex items-center justify-between text-xs font-mono">
-                            <span className="text-slate-300">Distance & ETA:</span>
-                            <span className="text-cyan-400 font-bold">{police.policeStationDist}</span>
-                          </div>
-                          <div className="flex items-center justify-between text-xs font-mono">
-                            <span className="text-slate-300">Police Hotline Phone:</span>
-                            <span className="text-sand-50 font-bold bg-slate-900 px-2 py-0.5 rounded border border-slate-700">{police.policeStationPhone}</span>
-                          </div>
-                          <div className="flex items-center justify-between text-xs font-mono">
-                            <span className="text-slate-300">Patrol Unit:</span>
-                            <span className="text-slate-200">{police.policePatrol}</span>
+                          <p className="text-sand-100 text-sm leading-relaxed font-sans font-medium">
+                            {specialties.food}
+                          </p>
+                          <div className="pt-2 border-t border-slate-800 text-[11px] text-slate-400 font-mono">
+                            Served fresh at nearby verified village dhabas & organic kitchens.
                           </div>
                         </div>
 
-                        <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono">
-                          <span className="text-slate-400">Emergency Police Code:</span>
-                          <span className="text-terracotta-400 font-bold">{police.helpline}</span>
+                        {/* Famous Native Clothes & Crafts Card */}
+                        <div className="p-5 rounded-2xl bg-slate-950/90 border border-terracotta-500/40 space-y-3 shadow-lg">
+                          <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                            <span className="font-bold text-terracotta-400 flex items-center gap-1.5 font-mono text-xs uppercase">
+                              <ShoppingBag className="w-4 h-4 text-terracotta-400" />
+                              Famous Native Clothes & Artisan Crafts
+                            </span>
+                            <span className="text-[10px] text-slate-300 font-mono">Authentic</span>
+                          </div>
+                          <p className="text-sand-100 text-sm leading-relaxed font-sans font-medium">
+                            {specialties.crafts}
+                          </p>
+                          <div className="pt-2 border-t border-slate-800 text-[11px] text-slate-400 font-mono">
+                            Directly supports native village weavers & artisan cooperatives.
+                          </div>
                         </div>
+
                       </div>
 
-                      {/* Safety Telematics & SOS Trigger Card */}
-                      <div className="p-5 rounded-2xl bg-indigo-950/70 border border-indigo-700/60 space-y-3 font-sans text-xs flex flex-col justify-between shadow-lg">
-                        <div className="space-y-2">
-                          <span className="text-amber-300 font-bold uppercase font-mono block tracking-wider flex items-center gap-1.5">
-                            <Moon className="w-4 h-4 animate-pulse" />
-                            Women Safety Telematics
-                          </span>
+                    </motion.div>
+                  ) : activeTab === 'essential' ? (
+                    /* Food & Homestays Tab */
+                    <motion.div
+                      key="essential"
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -12 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-5"
+                    >
+                      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div>
+                          <h4 className="font-serif font-bold text-lg text-sand-50 flex items-center gap-2">
+                            <Utensils className="w-5 h-5 text-terracotta-400" />
+                            Nearby Food & Accommodation Options in {currentGem.state}
+                          </h4>
+                          <span className="text-xs text-slate-300 font-mono">Verified local dhabas, organic home kitchens & homestays</span>
+                        </div>
+                        <span className="bg-slate-800 text-amber-300 text-xs px-2.5 py-1 rounded-full font-mono border border-slate-700">
+                          Audited
+                        </span>
+                      </div>
 
-                          <ul className="space-y-1.5">
-                            {police.features.map((feat, i) => (
-                              <li key={i} className="flex items-center gap-2 text-indigo-100 text-[11px]">
-                                <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                                <span>{feat}</span>
-                              </li>
+                      {facilities && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                          
+                          {/* Food Options Card */}
+                          <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-2">
+                            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                              <span className="font-bold text-sand-50 flex items-center gap-1.5">
+                                <Utensils className="w-4 h-4 text-terracotta-400" />
+                                Food & Dining Nearby
+                              </span>
+                              <span className="text-[10px] text-slate-300 font-mono">Hygiene Verified</span>
+                            </div>
+                            {facilities.food?.map((f, i) => (
+                              <div key={i} className="space-y-0.5 pt-1">
+                                <div className="flex justify-between font-medium text-sand-100">
+                                  <span>{f.name}</span>
+                                  <span className="text-terracotta-400 font-bold">{f.dist}</span>
+                                </div>
+                                <div className="flex justify-between text-[11px] text-slate-300">
+                                  <span>{f.type}</span>
+                                  <span className="text-amber-300">{f.open}</span>
+                                </div>
+                              </div>
                             ))}
-                          </ul>
-                        </div>
+                          </div>
 
-                        <motion.button
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          onClick={handleTriggerSOS}
-                          className={`w-full py-3 rounded-xl font-bold text-xs shadow-lg flex items-center justify-center gap-2 transition-all cursor-pointer ${
-                            sosSent 
-                              ? 'bg-emerald-600 text-white' 
-                              : 'bg-red-600 hover:bg-red-700 text-white shadow-red-600/30'
-                          }`}
-                        >
-                          {sosSent ? (
-                            <>
-                              <CheckCircle2 className="w-4 h-4 animate-bounce" />
-                              <span>SOS Dispatched via Production API to {police.policeStationName}!</span>
-                            </>
-                          ) : (
-                            <>
-                              <PhoneCall className="w-4 h-4" />
-                              <span>Dispatch SOS to {police.policeStationName} (Render API)</span>
-                            </>
-                          )}
-                        </motion.button>
+                          {/* Accommodation Card */}
+                          <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-2">
+                            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                              <span className="font-bold text-sand-50 flex items-center gap-1.5">
+                                <Home className="w-4 h-4 text-cyan-400" />
+                                Verified Homestays & Lodges
+                              </span>
+                              <span className="text-[10px] text-slate-300 font-mono">Night Available</span>
+                            </div>
+                            {facilities.accommodation?.map((a, i) => (
+                              <div key={i} className="space-y-0.5 pt-1">
+                                <div className="flex justify-between font-medium text-sand-100">
+                                  <span>{a.name}</span>
+                                  <span className="text-sand-100 font-bold">{a.tariff}</span>
+                                </div>
+                                <div className="flex justify-between text-[11px] text-slate-300">
+                                  <span>{a.type}</span>
+                                  <span className="text-amber-300">Night Stay ✓</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                        </div>
+                      )}
+
+                    </motion.div>
+                  ) : activeTab === 'medical' ? (
+                    /* Hospitals & Medical Facilities Tab */
+                    <motion.div
+                      key="medical"
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -12 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-5"
+                    >
+                      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div>
+                          <h4 className="font-serif font-bold text-lg text-sand-50 flex items-center gap-2">
+                            <Stethoscope className="w-5 h-5 text-red-400" />
+                            Nearby Hospitals & Medical Facilities in {currentGem.state}
+                          </h4>
+                          <span className="text-xs text-slate-300 font-mono">24/7 Emergency hospitals, clinics, ambulance contacts & pharmacies</span>
+                        </div>
+                        <span className="bg-red-950 text-red-400 border border-red-800 text-xs px-3 py-1 rounded-full font-mono font-bold">
+                          24/7 ER Ready
+                        </span>
                       </div>
 
-                    </div>
+                      {facilities && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                          {facilities.medical?.map((m, i) => (
+                            <div key={i} className="p-4 rounded-2xl bg-slate-950/80 border border-red-500/30 space-y-2">
+                              <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                                <span className="font-bold text-sand-50">{m.name}</span>
+                                <span className="text-red-400 font-bold font-mono">{m.dist} ({m.travelTime})</span>
+                              </div>
+                              <p className="text-slate-200 text-[11px]">{m.type}</p>
+                              <div className="pt-2 border-t border-slate-800 flex items-center justify-between font-mono text-[11px]">
+                                <span className="text-slate-400">Emergency Phone:</span>
+                                <span className="text-sand-50 font-bold bg-slate-900 px-2 py-0.5 rounded border border-slate-700">{m.phone}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </motion.div>
+                  ) : activeTab === 'safety' ? (
+                    /* Women Safety & Explicit Police Station Tab */
+                    <motion.div
+                      key="safety"
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -12 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-5"
+                    >
+                      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div>
+                          <h4 className="font-serif font-bold text-lg text-sand-50 flex items-center gap-2">
+                            <Siren className="w-5 h-5 text-cyan-400 animate-pulse" />
+                            Women Safety & Nearest Police Station Hub
+                          </h4>
+                          <span className="text-xs text-slate-300 font-mono">Explicit police post mapping, verified female hosts & emergency helplines</span>
+                        </div>
+                        <span className="bg-amber-950/80 text-amber-300 border border-amber-800 text-xs px-3 py-1 rounded-full font-mono font-bold">
+                          Safety Rating: {currentGem.womenSafetyIndex}/100
+                        </span>
+                      </div>
 
-                  </motion.div>
-                ) : activeTab === 'transport' ? (
-                  /* Transport & Distances Tab */
-                  <motion.div
-                    key="transport"
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -12 }}
-                    transition={{ duration: 0.3 }}
-                    className="space-y-5"
-                  >
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                      <div>
+                      {police && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          
+                          {/* High-Impact Dedicated Police Station Card */}
+                          <div className="p-5 rounded-2xl bg-slate-950 border-2 border-cyan-500/50 space-y-3 font-sans text-xs relative overflow-hidden shadow-lg">
+                            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                              <span className="text-cyan-400 font-bold uppercase font-mono tracking-wider flex items-center gap-1.5">
+                                <Siren className="w-4 h-4 text-cyan-400 animate-pulse" />
+                                Nearest Police Station
+                              </span>
+                              <span className="text-[10px] bg-cyan-950 text-cyan-300 font-mono px-2 py-0.5 rounded border border-cyan-800 font-bold">
+                                On-Call Response
+                              </span>
+                            </div>
+
+                            <div className="space-y-1">
+                              <h5 className="text-base font-bold text-sand-50">{police.policeStationName}</h5>
+                              <div className="flex items-center justify-between text-xs font-mono">
+                                <span className="text-slate-300">Distance & ETA:</span>
+                                <span className="text-cyan-400 font-bold">{police.policeStationDist}</span>
+                              </div>
+                              <div className="flex items-center justify-between text-xs font-mono">
+                                <span className="text-slate-300">Police Hotline Phone:</span>
+                                <span className="text-sand-50 font-bold bg-slate-900 px-2 py-0.5 rounded border border-slate-700">{police.policeStationPhone}</span>
+                              </div>
+                              <div className="flex items-center justify-between text-xs font-mono">
+                                <span className="text-slate-300">Patrol Unit:</span>
+                                <span className="text-slate-200">{police.policePatrol}</span>
+                              </div>
+                            </div>
+
+                            <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono">
+                              <span className="text-slate-400">Emergency Police Code:</span>
+                              <span className="text-terracotta-400 font-bold">{police.helpline}</span>
+                            </div>
+                          </div>
+
+                          {/* Safety Telematics & SOS Trigger Card */}
+                          <div className="p-5 rounded-2xl bg-indigo-950/70 border border-indigo-700/60 space-y-3 font-sans text-xs flex flex-col justify-between shadow-lg">
+                            <div className="space-y-2">
+                              <span className="text-amber-300 font-bold uppercase font-mono block tracking-wider flex items-center gap-1.5">
+                                <Moon className="w-4 h-4 animate-pulse" />
+                                Women Safety Telematics
+                              </span>
+
+                              <ul className="space-y-1.5">
+                                {police.features?.map((feat, i) => (
+                                  <li key={i} className="flex items-center gap-2 text-indigo-100 text-[11px]">
+                                    <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                                    <span>{feat}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+
+                            <motion.button
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                              onClick={() => handleTriggerSOS(false)}
+                              className={`w-full py-3 rounded-xl font-bold text-xs shadow-lg flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                                sosSent 
+                                  ? 'bg-emerald-600 text-white' 
+                                  : 'bg-red-600 hover:bg-red-700 text-white shadow-red-600/30'
+                              }`}
+                            >
+                              {sosSent ? (
+                                <>
+                                  <CheckCircle2 className="w-4 h-4 animate-bounce" />
+                                  <span>SOS Dispatched via Production API to {police.policeStationName}!</span>
+                                </>
+                              ) : (
+                                <>
+                                  <PhoneCall className="w-4 h-4" />
+                                  <span>Dispatch SOS to {police.policeStationName}</span>
+                                </>
+                              )}
+                            </motion.button>
+                          </div>
+
+                        </div>
+                      )}
+
+                    </motion.div>
+                  ) : activeTab === 'transport' ? (
+                    /* Transport & Distances Tab */
+                    <motion.div
+                      key="transport"
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -12 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-5"
+                    >
+                      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div>
+                          <h4 className="font-serif font-bold text-lg text-sand-50 flex items-center gap-2">
+                            <Bus className="w-5 h-5 text-blue-400" />
+                            Local Transport & Distances in {currentGem.state}
+                          </h4>
+                          <span className="text-xs text-slate-300 font-mono">Local auto stands, jeeps, bus timings & distances to fuel/ATMs</span>
+                        </div>
+                        <span className="bg-blue-950 text-blue-300 border border-blue-800 text-xs px-3 py-1 rounded-full font-mono">
+                          Transit Audited
+                        </span>
+                      </div>
+
+                      {facilities && (
+                        <>
+                          {/* Local Drivers Grid */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            {facilities.transport?.map((t, i) => (
+                              <div key={i} className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-1">
+                                <div className="flex justify-between font-bold text-sand-100">
+                                  <span>{t.name}</span>
+                                  <span className="text-blue-400 font-mono">{t.phone}</span>
+                                </div>
+                                <div className="flex justify-between text-[11px] text-slate-300 pt-1">
+                                  <span>{t.type}</span>
+                                  <span className="text-amber-300">{t.availability}</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Essential Key Distances Grid */}
+                          <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2 text-xs">
+                            <span className="text-terracotta-400 font-bold font-mono block uppercase text-[11px]">
+                              Directions & Distance to Key Services
+                            </span>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-[11px]">
+                              <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                                <span className="text-slate-400 block text-[10px]">Petrol Pump</span>
+                                <span className="text-sand-100 font-bold">{facilities?.distances?.petrolPump || '2.0 km'}</span>
+                              </div>
+                              <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                                <span className="text-slate-400 block text-[10px]">ATM</span>
+                                <span className="text-sand-100 font-bold">{facilities?.distances?.atm || '1.0 km'}</span>
+                              </div>
+                              <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                                <span className="text-slate-400 block text-[10px]">District HQ</span>
+                                <span className="text-sand-100 font-bold">{facilities?.distances?.districtHQ || '10 km'}</span>
+                              </div>
+                              <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                                <span className="text-slate-400 block text-[10px]">National Highway</span>
+                                <span className="text-sand-100 font-bold">{facilities?.distances?.nationalHighway || '5.0 km'}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      )}
+
+                    </motion.div>
+                  ) : (
+                    /* Itinerary Tab */
+                    <motion.div
+                      key="itinerary"
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -12 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-4"
+                    >
+                      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                         <h4 className="font-serif font-bold text-lg text-sand-50 flex items-center gap-2">
-                          <Bus className="w-5 h-5 text-blue-400" />
-                          Local Transport & Distances in {currentGem.state}
+                          <Route className="w-5 h-5 text-terracotta-400" />
+                          Auto-Synthesized Day Plan ({duration})
                         </h4>
-                        <span className="text-xs text-slate-300 font-mono">Local auto stands, jeeps, bus timings & distances to fuel/ATMs</span>
+                        <span className="text-xs font-mono text-slate-300">Carbon-Optimized Route</span>
                       </div>
-                      <span className="bg-blue-950 text-blue-300 border border-blue-800 text-xs px-3 py-1 rounded-full font-mono">
-                        Transit Audited
-                      </span>
-                    </div>
 
-                    {/* Local Drivers Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                      {facilities.transport.map((t, i) => (
-                        <div key={i} className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-1">
-                          <div className="flex justify-between font-bold text-sand-100">
-                            <span>{t.name}</span>
-                            <span className="text-blue-400 font-mono">{t.phone}</span>
+                      <div className="space-y-3 font-sans">
+                        {currentGem.itinerary?.map((item, idx) => (
+                          <div key={idx} className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 flex items-start gap-3 text-xs sm:text-sm text-slate-100">
+                            <div className="w-6 h-6 rounded-full bg-slate-800 text-terracotta-400 flex items-center justify-center shrink-0 mt-0.5 font-bold font-mono text-xs">
+                              {idx + 1}
+                            </div>
+                            <span>{item}</span>
                           </div>
-                          <div className="flex justify-between text-[11px] text-slate-300 pt-1">
-                            <span>{t.type}</span>
-                            <span className="text-amber-300">{t.availability}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Essential Key Distances Grid */}
-                    <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2 text-xs">
-                      <span className="text-terracotta-400 font-bold font-mono block uppercase text-[11px]">
-                        Directions & Distance to Key Services
-                      </span>
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-[11px]">
-                        <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
-                          <span className="text-slate-400 block text-[10px]">Petrol Pump</span>
-                          <span className="text-sand-100 font-bold">{facilities.distances.petrolPump}</span>
-                        </div>
-                        <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
-                          <span className="text-slate-400 block text-[10px]">ATM</span>
-                          <span className="text-sand-100 font-bold">{facilities.distances.atm}</span>
-                        </div>
-                        <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
-                          <span className="text-slate-400 block text-[10px]">District HQ</span>
-                          <span className="text-sand-100 font-bold">{facilities.distances.districtHQ}</span>
-                        </div>
-                        <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
-                          <span className="text-slate-400 block text-[10px]">National Highway</span>
-                          <span className="text-sand-100 font-bold">{facilities.distances.nationalHighway}</span>
-                        </div>
+                        ))}
                       </div>
-                    </div>
-
-                  </motion.div>
-                ) : (
-                  /* Itinerary Tab */
-                  <motion.div
-                    key="itinerary"
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -12 }}
-                    transition={{ duration: 0.3 }}
-                    className="space-y-4"
-                  >
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                      <h4 className="font-serif font-bold text-lg text-sand-50 flex items-center gap-2">
-                        <Route className="w-5 h-5 text-terracotta-400" />
-                        Auto-Synthesized Day Plan ({duration})
-                      </h4>
-                      <span className="text-xs font-mono text-slate-300">Carbon-Optimized Route</span>
-                    </div>
-
-                    <div className="space-y-3 font-sans">
-                      {currentGem.itinerary.map((item, idx) => (
-                        <div key={idx} className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 flex items-start gap-3 text-xs sm:text-sm text-slate-100">
-                          <div className="w-6 h-6 rounded-full bg-slate-800 text-terracotta-400 flex items-center justify-center shrink-0 mt-0.5 font-bold font-mono text-xs">
-                            {idx + 1}
-                          </div>
-                          <span>{item}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              )}
 
               {/* Footer inside result card */}
-              <div className="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-300 font-sans">
-                <span>API Endpoint: {API_BASE_URL}</span>
-                <button
-                  onClick={() => setActiveTab('safety')}
-                  className="text-cyan-400 font-semibold hover:underline flex items-center gap-1 font-mono cursor-pointer"
-                >
-                  <span>Police Post: {police.policeStationName}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
+              {currentGem && (
+                <div className="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-300 font-sans">
+                  <span>Coordinates: {currentGem.lat ? `${currentGem.lat.toFixed(4)}, ${currentGem.lng.toFixed(4)}` : 'Verified Geographic Radius'}</span>
+                  <span className="text-terracotta-400 font-semibold font-mono">
+                    📍 {currentGem.location}
+                  </span>
+                </div>
+              )}
 
             </div>
 
@@ -1024,7 +1082,7 @@ export default function GemSimulator({ customGems }) {
                 </div>
                 <div>
                   <span className="text-xs font-mono text-amber-300 uppercase tracking-widest block font-bold">
-                    SafeHaven 24/7 Night Police Mode Active ({currentGem.state})
+                    SafeHaven 24/7 Night Police Mode Active ({currentGem?.state || selectedState})
                   </span>
                   <h3 className="text-xl sm:text-2xl font-serif font-bold text-sand-50">
                     Emergency Police & Safety Dispatch Network
@@ -1033,48 +1091,50 @@ export default function GemSimulator({ customGems }) {
               </div>
 
               <p className="text-xs sm:text-sm text-indigo-100 leading-relaxed font-sans">
-                If a traveler experiences any problem after dark in {currentGem.gemName} ({currentGem.state}), pressing SOS dispatches live location telemetry directly to <strong>{police.policeStationName} ({police.policeStationDist})</strong> and local village guards via <code className="text-amber-300">{API_BASE_URL}</code>.
+                If a traveler experiences any problem after dark in {currentGem?.gemName || 'remote offbeat areas'} ({currentGem?.state || selectedState}), pressing SOS dispatches live location telemetry directly to <strong>{police?.policeStationName || 'District Police Patrol Station'} ({police?.policeStationDist || '< 5 mins response'})</strong> and local village guards via <code className="text-amber-300">{API_BASE_URL}</code>.
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                
-                {/* Police Station Callout in Night Modal */}
-                <div className="p-3.5 rounded-xl bg-indigo-900/90 border border-cyan-400/50 space-y-1">
-                  <span className="text-cyan-400 font-bold font-mono block uppercase text-[10px] flex items-center gap-1">
-                    <Siren className="w-3.5 h-3.5 text-cyan-400" />
-                    Nearest Police Station
-                  </span>
-                  <span className="text-sand-50 font-bold block text-xs">{police.policeStationName}</span>
-                  <span className="text-indigo-200 block text-[11px] font-mono">Distance & Response: {police.policeStationDist}</span>
-                  <span className="text-cyan-300 block text-[11px] font-mono">Phone: {police.policeStationPhone}</span>
-                </div>
+              {facilities && police && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  
+                  {/* Police Station Callout in Night Modal */}
+                  <div className="p-3.5 rounded-xl bg-indigo-900/90 border border-cyan-400/50 space-y-1">
+                    <span className="text-cyan-400 font-bold font-mono block uppercase text-[10px] flex items-center gap-1">
+                      <Siren className="w-3.5 h-3.5 text-cyan-400" />
+                      Nearest Police Station
+                    </span>
+                    <span className="text-sand-50 font-bold block text-xs">{police.policeStationName}</span>
+                    <span className="text-indigo-200 block text-[11px] font-mono">Distance & Response: {police.policeStationDist}</span>
+                    <span className="text-cyan-300 block text-[11px] font-mono">Phone: {police.policeStationPhone}</span>
+                  </div>
 
-                <div className="p-3.5 rounded-xl bg-indigo-900/60 border border-indigo-700/60 space-y-1">
-                  <span className="text-amber-300 font-bold font-mono block uppercase text-[10px]">24/7 Medical ER Clinic</span>
-                  <span className="text-sand-50 font-bold block">{facilities.medical[0].name}</span>
-                  <span className="text-indigo-200 block text-[11px] font-mono">{facilities.medical[0].phone} ({facilities.medical[0].dist})</span>
-                </div>
+                  <div className="p-3.5 rounded-xl bg-indigo-900/60 border border-indigo-700/60 space-y-1">
+                    <span className="text-amber-300 font-bold font-mono block uppercase text-[10px]">24/7 Medical ER Clinic</span>
+                    <span className="text-sand-50 font-bold block">{facilities.medical[0]?.name || 'District Hospital'}</span>
+                    <span className="text-indigo-200 block text-[11px] font-mono">{facilities.medical[0]?.phone || '+91 112'} ({facilities.medical[0]?.dist || '5 km'})</span>
+                  </div>
 
-                <div className="p-3.5 rounded-xl bg-indigo-900/60 border border-indigo-700/60 space-y-1">
-                  <span className="text-amber-300 font-bold font-mono block uppercase text-[10px]">24/7 Emergency Night Stay</span>
-                  <span className="text-sand-50 font-bold block">{facilities.accommodation[0].name}</span>
-                  <span className="text-indigo-200 block text-[11px]">Female Host Verified ✓</span>
-                </div>
+                  <div className="p-3.5 rounded-xl bg-indigo-900/60 border border-indigo-700/60 space-y-1">
+                    <span className="text-amber-300 font-bold font-mono block uppercase text-[10px]">24/7 Emergency Night Stay</span>
+                    <span className="text-sand-50 font-bold block">{facilities.accommodation[0]?.name || 'Verified Eco Homestay'}</span>
+                    <span className="text-indigo-200 block text-[11px]">Female Host Verified ✓</span>
+                  </div>
 
-                <div className="p-3.5 rounded-xl bg-indigo-900/60 border border-indigo-700/60 space-y-1">
-                  <span className="text-blue-300 font-bold font-mono block uppercase text-[10px]">Night Driver Guild</span>
-                  <span className="text-sand-50 font-bold block">{facilities.transport[0].name}</span>
-                  <span className="text-indigo-200 block text-[11px] font-mono">{facilities.transport[0].phone}</span>
+                  <div className="p-3.5 rounded-xl bg-indigo-900/60 border border-indigo-700/60 space-y-1">
+                    <span className="text-blue-300 font-bold font-mono block uppercase text-[10px]">Night Driver Guild</span>
+                    <span className="text-sand-50 font-bold block">{facilities.transport[0]?.name || 'Local Auto Guild'}</span>
+                    <span className="text-indigo-200 block text-[11px] font-mono">{facilities.transport[0]?.phone || '+91 112'}</span>
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="pt-2 flex items-center justify-between">
                 <button
-                  onClick={handleTriggerSOS}
+                  onClick={() => handleTriggerSOS(false)}
                   className="px-6 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-lg flex items-center gap-2 cursor-pointer"
                 >
                   <PhoneCall className="w-4 h-4" />
-                  <span>{sosSent ? 'SOS Sent to Police Station!' : `Dispatch SOS to ${police.policeStationName}`}</span>
+                  <span>{sosSent ? 'SOS Sent to Police Station!' : `Dispatch SOS to ${police?.policeStationName || 'Nearest District Police'}`}</span>
                 </button>
                 
                 <button
