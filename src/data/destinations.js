@@ -155,35 +155,6 @@ export const destinationsDataset = [
                   famousCraft: "Local Bamboo Crafts & Sanjhi Lake Artwork"
                 }),
                 itinerary: ["06:30 AM: Sunrise bird watching boat tour on Keetham Lake", "09:30 AM: Nature walk through Sur Sarovar forest trail", "01:00 PM: Organic lunch at Lake Cafe", "03:30 PM: Visit Sloth Bear Rescue Sanctuary", "07:30 PM: Peaceful night stay at Eco Lake Resort"]
-              },
-              {
-                gemName: "Bateshwar 101 Shiva Temple Cluster on Yamuna",
-                state: "Uttar Pradesh",
-                city: "Agra",
-                landmarkHub: "🕌 Taj Mahal & Agra Hub",
-                vibeTag: "Spiritual History",
-                category: "Spiritual History",
-                location: "Agra / Bah, Uttar Pradesh",
-                lat: 26.9405,
-                lng: 78.5367,
-                distance: "70 km from Agra",
-                score: 96,
-                womenSafetyIndex: 95,
-                uniqueness: 98,
-                footfall: "Very Low (8% of Vrindavan)",
-                estCost: "₹1,100 / person",
-                desc: "An ancestral village of 101 white marble Shiva temples lined in a crescent arc along the Yamuna River bank, built by Bhadauria kings in 17th century.",
-                essentialFacilities: createGemFacilityData({
-                  hospName: "Bah Civil Hospital", hospDist: "10 km", hospPhone: "+91 5614 222010",
-                  foodName: "Bateshwar Yamuna Ghat Bhojanalaya", foodType: "Desi Ghee Poori Sabzi & Rabri",
-                  stayName: "Bateshwar Riverbank Heritage Lodge", stayTariff: "₹1,400/night",
-                  policeStationName: "Bah Police Station", policeStationDist: "10 km (10 mins response)", policeStationPhone: "+91 5614 222000", policePatrol: "Yamuna Ravine Police PCR 112",
-                  taxiName: "Bah Auto Association", taxiPhone: "+91 98371 44332",
-                  petrol: "10 km (BPCL)", atm: "10 km (SBI ATM)", hq: "70 km (Agra HQ)", hw: "15 km (Agra-Lucknow Expressway)",
-                  famousFood: "Bateshwar Rabri, Desi Ghee Poori Sabzi & Maththa",
-                  famousCraft: "Yamuna Hand-carved Brass Bells & Traditional Leather Footwear"
-                }),
-                itinerary: ["07:00 AM: Yamuna boat ride past 101 white Shiva temples", "10:30 AM: Exploration of Bhadauria fort ruins", "01:00 PM: Desi Ghee Poori & Rabri lunch", "04:30 PM: Chambal wildlife sanctuary safari nearby", "08:00 PM: Night stay at Riverbank Heritage Lodge"]
               }
             ]
           }
@@ -257,35 +228,6 @@ export const destinationsDataset = [
                   famousCraft: "Banarasi Wooden Toys, Brassware & Silk Handlooms"
                 }),
                 itinerary: ["09:00 AM: Walkthrough of Ramnagar Fort museum & vintage armory", "11:30 AM: Exploration of Royal Darbar Hall", "01:00 PM: Famous Ramnagar Rabri Lassi & lunch", "04:30 PM: Sunset view of Varanasi ghats across Ganges", "08:00 PM: Rest at Riverbank Lodge"]
-              },
-              {
-                gemName: "Chandra Prabha Devdari Waterfalls & Wildlife Trail",
-                state: "Uttar Pradesh",
-                city: "Varanasi",
-                landmarkHub: "🛕 Kashi Vishwanath & Varanasi Ghats",
-                vibeTag: "Mountain Trails",
-                category: "Mountain Trails",
-                location: "Chunar / Varanasi, Uttar Pradesh",
-                lat: 24.9312,
-                lng: 83.1865,
-                distance: "55 km from Varanasi",
-                score: 95,
-                womenSafetyIndex: 94,
-                uniqueness: 96,
-                footfall: "Low (15% of Varanasi Ghats)",
-                estCost: "₹900 / person",
-                desc: "Tucked away in the Vindhya mountain foothills near Varanasi, featuring breathtaking natural cascading waterfalls (Devdari & Rajdari) surrounded by forest gorges.",
-                essentialFacilities: createGemFacilityData({
-                  hospName: "Chakia Community Health Center", hospDist: "12 km", hospPhone: "+91 5412 223108",
-                  foodName: "Devdari Waterfall Forest Rest Stop", foodType: "Hot Baati Chokha & Tea",
-                  stayName: "Vindhya Forest Eco Huts", stayTariff: "₹1,300/night",
-                  policeStationName: "Chakia Police Station", policeStationDist: "12 km (12 mins response)", policeStationPhone: "+91 5412 223100", policePatrol: "Vindhya Patrol Unit 112",
-                  taxiName: "Chakia Taxi Union", taxiPhone: "+91 94510 88220",
-                  petrol: "10 km (HP Fuel)", atm: "12 km (SBI ATM)", hq: "55 km (Varanasi)", hw: "12 km (Chakia Highway)",
-                  famousFood: "Banarasi Baati Chokha & Hot Kulhad Chai",
-                  famousCraft: "Vindhya Bamboo Flutes & Terracotta Sculptures"
-                }),
-                itinerary: ["08:00 AM: Scenic trail hike to Devdari & Rajdari Waterfalls", "11:30 AM: Picnic & photography at waterfall pool", "01:30 PM: Hot Baati Chokha lunch", "04:00 PM: Wildlife trail trek through Chandra Prabha sanctuary", "08:00 PM: Rest at Vindhya Forest Eco Huts"]
               }
             ]
           }
@@ -366,35 +308,6 @@ export const destinationsDataset = [
                   famousCraft: "Abhaneri Terracotta Pottery & Hand-Carved Wooden Toys"
                 }),
                 itinerary: ["09:00 AM: Marvel at 3,500 geometrical steps of Chand Baori", "11:30 AM: Visit 8th century Harshat Mata Temple", "01:00 PM: Desi Ghee Thali", "03:30 PM: Terracotta pottery workshop with village artisans", "08:00 PM: Rest at Heritage Haveli"]
-              },
-              {
-                gemName: "Amer Elephant Village & Sagar Lake Stepwell",
-                state: "Rajasthan",
-                city: "Jaipur",
-                landmarkHub: "🏰 Hawa Mahal & Amer Fort Hub",
-                vibeTag: "Heritage & Crafts",
-                category: "Heritage & Crafts",
-                location: "Amer / Jaipur, Rajasthan",
-                lat: 26.9855,
-                lng: 75.8513,
-                distance: "12 km from Amer Fort Hub",
-                score: 94,
-                womenSafetyIndex: 96,
-                uniqueness: 96,
-                footfall: "Very Low (15% of Amer Fort)",
-                estCost: "₹1,200 / person",
-                desc: "A tranquil sanctuary at the foot of the Aravalli hills housing rescued elephants, next to the 17th-century hidden stepwell reservoir of Sagar.",
-                essentialFacilities: createGemFacilityData({
-                  hospName: "Amer Primary Health Center (PHC)", hospDist: "2.8 km", hospPhone: "+91 141 2530108",
-                  foodName: "Padmini Organic Village Kitchen", foodType: "Native Rajasthani Thali",
-                  stayName: "Aravalli Eco Heritage Homestay", stayTariff: "₹1,400/night",
-                  policeStationName: "Amer Tourist Police Post", policeStationDist: "1.8 km (4 mins response)", policeStationPhone: "+91 141 2530112", policePatrol: "24/7 Pink Police Mobile Van",
-                  taxiName: "Amer Village Auto Guild", taxiPhone: "+91 94140 88299",
-                  petrol: "2.4 km (Indian Oil)", atm: "1.1 km (SBI)", hq: "14 km (Jaipur City)", hw: "3.5 km (NH-48)",
-                  famousFood: "Rajasthani Dal Baati Churma, Pyaaz Kachori & Ghevar",
-                  famousCraft: "Sanganeri Hand-Block Print Kurtas, Blue Pottery & Bandhani Sarees"
-                }),
-                itinerary: ["08:30 AM: Sagar Lake stepwell walk", "10:30 AM: Hathi Gaon elephant painting workshop", "01:00 PM: Native Thali at Padmini Kitchen", "03:30 PM: Aravalli ridge sunset", "08:00 PM: Night Stay at Aravalli Homestay"]
               }
             ]
           }
@@ -439,35 +352,6 @@ export const destinationsDataset = [
                   famousCraft: "Mewar Miniature Paintings, Wooden Carved Puppets & Leather Mojris"
                 }),
                 itinerary: ["08:00 AM: Hike along 36km Great Wall of India", "11:30 AM: Exploration of Badal Mahal palace peak", "01:30 PM: Authentic Mewari Thali lunch", "04:30 PM: Aravalli ridge sunset photography", "08:00 PM: Light & Sound show at fort"]
-              },
-              {
-                gemName: "Rayta Hills & Aravalli Cloud Valley Trail",
-                state: "Rajasthan",
-                city: "Udaipur",
-                landmarkHub: "🏰 City Palace & Lake Pichola Hub",
-                vibeTag: "Mountain Trails",
-                category: "Mountain Trails",
-                location: "Rayta / Udaipur, Rajasthan",
-                lat: 24.5800,
-                lng: 73.6000,
-                distance: "22 km from Udaipur City",
-                score: 96,
-                womenSafetyIndex: 96,
-                uniqueness: 97,
-                footfall: "Very Low (10% of City Palace)",
-                estCost: "₹900 / person",
-                desc: "A breathtaking serpentine mountain ridge road offering panoramic views of lush green rolling Aravalli valleys, often floating above morning clouds.",
-                essentialFacilities: createGemFacilityData({
-                  hospName: "Kodiyat Health Center", hospDist: "6.0 km", hospPhone: "+91 294 2450110",
-                  foodName: "Rayta Hilltop Sunset Cafe", foodType: "Fresh Masala Chai, Maggi & Local Snacks",
-                  stayName: "Aravalli Cloud Ridge Homestay", stayTariff: "₹1,500/night",
-                  policeStationName: "Nai Police Station", policeStationDist: "8.0 km (8 mins response)", policeStationPhone: "+91 294 2450100", policePatrol: "Udaipur Rural Tourist PCR 112",
-                  taxiName: "Rayta Hill Scooter & Cab Guild", taxiPhone: "+91 94143 22109",
-                  petrol: "8.0 km", atm: "6.0 km (SBI)", hq: "22 km (Udaipur)", hw: "8.0 km (Kodiyat Highway)",
-                  famousFood: "Mewari Kulhad Chai, Mirchi Bada & Dal Baati",
-                  famousCraft: "Marble Handicrafts & Terracotta Water Vessels"
-                }),
-                itinerary: ["06:30 AM: Early morning drive up Rayta serpentine mountain ridge", "09:00 AM: Cloud valley photography at hilltop viewpoint", "01:00 PM: Mewari Mirchi Bada & Kulhad Chai lunch", "04:30 PM: Sunset walk across Aravalli pine trails", "08:00 PM: Rest at Cloud Ridge Homestay"]
               }
             ]
           }
@@ -616,35 +500,6 @@ export const destinationsDataset = [
             lng: 77.0595,
             hiddenGems: [
               {
-                gemName: "Anakkulam Wild Elephant Spring",
-                state: "Kerala",
-                city: "Munnar",
-                landmarkHub: "🌿 Munnar Town & Tea Hub",
-                vibeTag: "Eco Nature",
-                category: "Eco Nature",
-                location: "Munnar / Idukki, Kerala",
-                lat: 10.0892,
-                lng: 76.9606,
-                distance: "38 km from Munnar Hub",
-                score: 96,
-                womenSafetyIndex: 98,
-                uniqueness: 98,
-                footfall: "Low (10% of Munnar town)",
-                estCost: "₹1,800 / person",
-                desc: "A pristine tribal hamlet where wild elephant herds emerge from the forest to drink at the natural mineral water spring in the river bed.",
-                essentialFacilities: createGemFacilityData({
-                  hospName: "Adimali Community Hospital", hospDist: "12 km", hospPhone: "+91 4864 222044",
-                  foodName: "Mankulam Tribal Spice Cafe", foodType: "Kerala Sadya & Fresh Fish",
-                  stayName: "Anakkulam Riverbank Eco Lodge", stayTariff: "₹1,800/night",
-                  policeStationName: "Vellathooval Police Station", policeStationDist: "8.0 km (10 mins response)", policeStationPhone: "+91 4864 274022", policePatrol: "Kerala Pink Police Patrol Unit",
-                  taxiName: "Anakkulam Jeep Drivers Guild", taxiPhone: "+91 94951 77332",
-                  petrol: "6.5 km (BPCL)", atm: "4.2 km (Gramin ATM)", hq: "38 km (Munnar)", hw: "12 km (NH-85)",
-                  famousFood: "Kerala Banana Leaf Sadya, Karimeen Pollichathu & Hot Elaichi Tea",
-                  famousCraft: "Kasavu Gold Border Sarees, Hand-harvested Spices & Cocoa"
-                }),
-                itinerary: ["07:00 AM: Periyar river birdwatching", "11:00 AM: Organic cocoa plantation tour", "01:30 PM: Sadya on banana leaf", "04:30 PM: Wildlife watchtower sighting", "08:30 PM: Night stay at Eco Lodge"]
-              },
-              {
                 gemName: "Top Station & Echo Point High Ridge",
                 state: "Kerala",
                 city: "Munnar",
@@ -672,6 +527,64 @@ export const destinationsDataset = [
                   famousCraft: "Munnar Tea Leaves, Spices & Eucalyptus Oil"
                 }),
                 itinerary: ["06:00 AM: Early sunrise trek to Top Station cloud view point", "09:30 AM: Echo Point natural sound resonance walkthrough", "01:00 PM: Kerala Puttu & Kadala curry lunch", "04:00 PM: Tea garden walking trail trek", "08:00 PM: Night stay at Mist Valley Homestay"]
+              },
+              {
+                gemName: "Anamudi Shola National Park & Elephant Spring",
+                state: "Kerala",
+                city: "Munnar",
+                landmarkHub: "🌿 Munnar Town & Tea Hub",
+                vibeTag: "Eco Nature",
+                category: "Eco Nature",
+                location: "Anamudi Shola / Munnar, Kerala",
+                lat: 10.1989,
+                lng: 77.1706,
+                distance: "40 km from Munnar Hub",
+                score: 97,
+                womenSafetyIndex: 98,
+                uniqueness: 98,
+                footfall: "Low (10% of Munnar)",
+                estCost: "₹1,600 / person",
+                desc: "A protected high-altitude rainforest sanctuary housing rare endemic Shola flora, Nilgiri tahr mountain goats, and wild forest elephant springs.",
+                essentialFacilities: createGemFacilityData({
+                  hospName: "Marayoor Primary Health Center", hospDist: "12 km", hospPhone: "+91 4865 252044",
+                  foodName: "Shola Forest Cafe", foodType: "Kerala Sadya & Fresh Cardamom Tea",
+                  stayName: "Anamudi Shola Eco Huts", stayTariff: "₹1,900/night",
+                  policeStationName: "Marayoor Police Station", policeStationDist: "12 km (12 mins response)", policeStationPhone: "+91 4865 252033", policePatrol: "Kerala Forest & Tourist Patrol PCR",
+                  taxiName: "Marayoor Jeep Guild", taxiPhone: "+91 94951 88440",
+                  petrol: "12 km", atm: "12 km (SBI)", hq: "40 km (Munnar)", hw: "5.0 km (SH-17)",
+                  famousFood: "Marayoor Jaggery, Kerala Fish Curry & Cardamom Chai",
+                  famousCraft: "Pure Marayoor Sandalwood Products & Organic Honey"
+                }),
+                itinerary: ["07:30 AM: Shola rainforest nature trail trek", "11:00 AM: Wildlife watching for Nilgiri tahr & forest elephants", "01:30 PM: Kerala Banana Leaf Sadya", "04:30 PM: Marayoor sandalwood forest walk", "08:00 PM: Stay at Eco Huts"]
+              },
+              {
+                gemName: "Anakkulam Wild Elephant Spring",
+                state: "Kerala",
+                city: "Munnar",
+                landmarkHub: "🌿 Munnar Town & Tea Hub",
+                vibeTag: "Eco Nature",
+                category: "Eco Nature",
+                location: "Munnar / Idukki, Kerala",
+                lat: 10.0892,
+                lng: 76.9606,
+                distance: "38 km from Munnar Hub",
+                score: 96,
+                womenSafetyIndex: 98,
+                uniqueness: 98,
+                footfall: "Low (10% of Munnar town)",
+                estCost: "₹1,800 / person",
+                desc: "A pristine tribal hamlet where wild elephant herds emerge from the forest to drink at the natural mineral water spring in the river bed.",
+                essentialFacilities: createGemFacilityData({
+                  hospName: "Adimali Community Hospital", hospDist: "12 km", hospPhone: "+91 4864 222044",
+                  foodName: "Mankulam Tribal Spice Cafe", foodType: "Kerala Sadya & Fresh Fish",
+                  stayName: "Anakkulam Riverbank Eco Lodge", stayTariff: "₹1,800/night",
+                  policeStationName: "Vellathooval Police Station", policeStationDist: "8.0 km (10 mins response)", policeStationPhone: "+91 4864 274022", policePatrol: "Kerala Pink Police Patrol Unit",
+                  taxiName: "Anakkulam Jeep Drivers Guild", taxiPhone: "+91 94951 77332",
+                  petrol: "6.5 km (BPCL)", atm: "4.2 km (Gramin ATM)", hq: "38 km (Munnar)", hw: "12 km (NH-85)",
+                  famousFood: "Kerala Banana Leaf Sadya, Karimeen Pollichathu & Hot Elaichi Tea",
+                  famousCraft: "Kasavu Gold Border Sarees, Hand-harvested Spices & Cocoa"
+                }),
+                itinerary: ["07:00 AM: Periyar river birdwatching", "11:00 AM: Organic cocoa plantation tour", "01:30 PM: Sadya on banana leaf", "04:30 PM: Wildlife watchtower sighting", "08:30 PM: Night stay at Eco Lodge"]
               }
             ]
           }
@@ -725,33 +638,33 @@ export const destinationsDataset = [
                 itinerary: ["09:00 AM: Guided walk through 500-year-old Naggar Castle courtyards", "11:30 AM: Exploration of Roerich Himalayan Art Estate", "01:30 PM: Authentic Himachali Dham lunch", "04:30 PM: Sunset view over Beas river valley", "08:00 PM: Stay at Castle Heritage Lodge"]
               },
               {
-                gemName: "Shoja & Chehni Kothi Timber Tower",
+                gemName: "Jibhi Waterfall & Chehni Kothi Timber Tower",
                 state: "Himachal Pradesh",
                 city: "Manali",
                 landmarkHub: "🏔️ Manali Mall Road Hub",
                 vibeTag: "Mountain Trails",
                 category: "Mountain Trails",
-                location: "Banjar Valley, Himachal Pradesh",
+                location: "Jibhi / Banjar Valley, Himachal Pradesh",
                 lat: 31.6022,
                 lng: 77.3719,
                 distance: "45 km from Kullu Valley",
-                score: 95,
-                womenSafetyIndex: 97,
-                uniqueness: 97,
+                score: 96,
+                womenSafetyIndex: 98,
+                uniqueness: 98,
                 footfall: "Moderate-Low (25% of Manali)",
                 estCost: "₹1,500 / person",
-                desc: "A 1,500-year-old 10-storey wooden fort tower built in traditional Kath-Kuni architectural style, surrounded by dense apple orchards.",
+                desc: "A picturesque pine valley featuring hidden wooden bridge waterfalls and the 1,500-year-old 10-storey Chehni Kothi timber fort tower.",
                 essentialFacilities: createGemFacilityData({
                   hospName: "Banjar Civil Hospital", hospDist: "7.5 km", hospPhone: "+91 1902 268222",
                   foodName: "Pahadi Flavors Organic Cafe", foodType: "Hot Siddu, Ghee & Trout",
-                  stayName: "Chehni Kothi Timber Homestay", stayTariff: "₹1,600/night",
+                  stayName: "Jibhi Riverbank Wooden Homestay", stayTariff: "₹1,600/night",
                   policeStationName: "Banjar Police Station", policeStationDist: "7.2 km (10 mins response)", policeStationPhone: "+91 1902 268224", policePatrol: "HP Shakti Button PCR Unit",
                   taxiName: "Jibhi Sumo Taxi Union", taxiPhone: "+91 98055 22110",
                   petrol: "7.0 km (HP Fuel)", atm: "800m (Cooperative ATM)", hq: "45 km (Kullu HQ)", hw: "22 km (Aut NH-3)",
                   famousFood: "Pahadi Siddu with Desi Ghee, Kullu Trout Fish & Madra Curry",
                   famousCraft: "Kullu Woolen Shawls, Traditional Himachali Caps & Wooden Artifacts"
                 }),
-                itinerary: ["08:30 AM: Pine forest hike from Shringa Rishi Temple", "11:00 AM: Chehni Kothi timber tower walkthrough", "01:30 PM: Hot Siddu with ghee at Pahadi Flavors", "04:00 PM: Relax by freshwater stream", "08:30 PM: Cozy stay at Timber Homestay"]
+                itinerary: ["08:30 AM: Walk along Jibhi wooden bridge waterfall trail", "11:00 AM: Chehni Kothi timber tower walkthrough", "01:30 PM: Hot Siddu with ghee at Pahadi Flavors", "04:00 PM: Relax by freshwater stream", "08:30 PM: Cozy stay at Wooden Homestay"]
               }
             ]
           }
@@ -760,7 +673,7 @@ export const destinationsDataset = [
     ]
   },
 
-  /* ------------------- LADAKH / J&K ------------------- */
+  /* ------------------- LADAKH ------------------- */
   {
     state: "Ladakh",
     cities: [
