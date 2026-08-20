@@ -7,27 +7,11 @@ import { sampleHiddenGems, indianStatesList, famousLandmarkHubs } from '../data/
 import { API_BASE_URL } from '../config/api';
 import confetti from 'canvas-confetti';
 
-/* Custom Terracotta Orange Gem Pin Marker Icon */
-const customGemIcon = L.divIcon({
-  className: 'custom-gem-marker',
-  html: `
-    <div style="position: relative; display: flex; align-items: center; justify-content: center;">
-      <div className="custom-gem-pulse"></div>
-      <div className="custom-gem-pin">
-        <div className="custom-gem-pin-inner"></div>
-      </div>
-    </div>
-  `,
-  iconSize: [40, 40],
-  iconAnchor: [20, 36],
-  popupAnchor: [0, -32]
-});
-
 /* Map Recenter Controller using map.flyTo for smooth transitions */
 function MapFlyToController({ center, zoom = 11 }) {
   const map = useMap();
   useEffect(() => {
-    if (center && center[0] && center[1]) {
+    if (center && center[0] && center[1] && map) {
       map.flyTo(center, zoom, {
         duration: 1.5,
         easeLinearity: 0.25
@@ -35,6 +19,72 @@ function MapFlyToController({ center, zoom = 11 }) {
     }
   }, [center, zoom, map]);
   return null;
+}
+
+/* Bulletproof Client-Side Interactive Leaflet Map Component */
+function InteractiveLeafletMap({ lat, lng, gemName, location, score, womenSafetyIndex, height = "h-64 sm:h-72" }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const customGemIcon = useMemo(() => {
+    if (typeof window === 'undefined' || !L) return null;
+    return L.divIcon({
+      className: 'custom-gem-marker',
+      html: `
+        <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+          <div class="custom-gem-pulse"></div>
+          <div class="custom-gem-pin">
+            <div class="custom-gem-pin-inner"></div>
+          </div>
+        </div>
+      `,
+      iconSize: [40, 40],
+      iconAnchor: [20, 36],
+      popupAnchor: [0, -32]
+    });
+  }, []);
+
+  if (!mounted || !lat || !lng) {
+    return (
+      <div className={`${height} w-full rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center text-slate-400 text-xs font-mono`}>
+        Loading Spatial Map Radar...
+      </div>
+    );
+  }
+
+  return (
+    <div className={`${height} w-full rounded-2xl overflow-hidden border border-slate-800 shadow-2xl relative z-0`}>
+      <MapContainer
+        center={[lat, lng]}
+        zoom={11}
+        scrollWheelZoom={false}
+        className="h-full w-full"
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        />
+        {customGemIcon && (
+          <Marker position={[lat, lng]} icon={customGemIcon}>
+            <Popup>
+              <div className="space-y-1 p-1 text-xs">
+                <span className="font-bold text-terracotta-400 block text-sm">{gemName}</span>
+                <span className="text-slate-300 block">{location}</span>
+                <div className="pt-1 flex items-center justify-between gap-2 text-[10px] font-mono">
+                  <span className="text-amber-400 font-bold">Gem Score: {score}/100</span>
+                  <span className="text-cyan-400 font-bold">Safety: {womenSafetyIndex}/100</span>
+                </div>
+              </div>
+            </Popup>
+          </Marker>
+        )}
+        <MapFlyToController center={[lat, lng]} zoom={11} />
+      </MapContainer>
+    </div>
+  );
 }
 
 export default function GemSimulator({ customGems }) {
@@ -663,32 +713,15 @@ export default function GemSimulator({ customGems }) {
                       </span>
                     </div>
 
-                    <div className="h-72 w-full rounded-2xl overflow-hidden border-2 border-terracotta-500/50 shadow-2xl relative">
-                      <MapContainer
-                        center={[gemLat, gemLng]}
-                        zoom={11}
-                        scrollWheelZoom={false}
-                        className="h-full w-full"
-                      >
-                        <TileLayer
-                          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-                          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-                        />
-                        <Marker position={[gemLat, gemLng]} icon={customGemIcon}>
-                          <Popup>
-                            <div className="space-y-1 p-1 text-xs">
-                              <span className="font-bold text-terracotta-400 block text-sm">{currentGem.gemName}</span>
-                              <span className="text-slate-300 block">{currentGem.location}</span>
-                              <div className="pt-1 flex items-center justify-between gap-2 text-[10px] font-mono">
-                                <span className="text-amber-400 font-bold">Gem Score: {currentGem.score}/100</span>
-                                <span className="text-cyan-400 font-bold">Safety: {currentGem.womenSafetyIndex}/100</span>
-                              </div>
-                            </div>
-                          </Popup>
-                        </Marker>
-                        <MapFlyToController center={[gemLat, gemLng]} zoom={11} />
-                      </MapContainer>
-                    </div>
+                    <InteractiveLeafletMap 
+                      lat={gemLat} 
+                      lng={gemLng} 
+                      gemName={currentGem.gemName} 
+                      location={currentGem.location} 
+                      score={currentGem.score} 
+                      womenSafetyIndex={currentGem.womenSafetyIndex} 
+                      height="h-72" 
+                    />
                   </motion.div>
                 ) : activeTab === 'specialties' ? (
                   /* Famous Food & Native Clothes/Crafts Tab */
@@ -1095,32 +1128,15 @@ export default function GemSimulator({ customGems }) {
               </div>
 
               {/* Leaflet Map Box */}
-              <div className="h-64 sm:h-72 w-full rounded-2xl overflow-hidden border border-slate-800 shadow-inner relative">
-                <MapContainer
-                  center={[gemLat, gemLng]}
-                  zoom={11}
-                  scrollWheelZoom={false}
-                  className="h-full w-full"
-                >
-                  <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-                    url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-                  />
-                  <Marker position={[gemLat, gemLng]} icon={customGemIcon}>
-                    <Popup>
-                      <div className="space-y-1 p-1 text-xs">
-                        <span className="font-bold text-terracotta-400 block text-sm">{currentGem.gemName}</span>
-                        <span className="text-slate-300 block">{currentGem.location}</span>
-                        <div className="pt-1 flex items-center justify-between gap-2 text-[10px] font-mono">
-                          <span className="text-amber-400 font-bold">Gem Score: {currentGem.score}/100</span>
-                          <span className="text-cyan-400 font-bold">Safety: {currentGem.womenSafetyIndex}/100</span>
-                        </div>
-                      </div>
-                    </Popup>
-                  </Marker>
-                  <MapFlyToController center={[gemLat, gemLng]} zoom={11} />
-                </MapContainer>
-              </div>
+              <InteractiveLeafletMap 
+                lat={gemLat} 
+                lng={gemLng} 
+                gemName={currentGem.gemName} 
+                location={currentGem.location} 
+                score={currentGem.score} 
+                womenSafetyIndex={currentGem.womenSafetyIndex} 
+                height="h-64 sm:h-72" 
+              />
             </div>
 
           </motion.div>
