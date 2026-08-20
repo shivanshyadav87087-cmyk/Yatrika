@@ -25,8 +25,24 @@ export const indianStatesList = [
   "Karnataka",
   "Tamil Nadu",
   "West Bengal",
+  "Uttarakhand",
+  "Goa",
+  "Gujarat",
   "Assam",
-  "Odisha"
+  "Punjab",
+  "Odisha",
+  "Jammu & Kashmir",
+  "Arunachal Pradesh",
+  "Nagaland",
+  "Manipur",
+  "Mizoram",
+  "Tripura",
+  "Chhattisgarh",
+  "Jharkhand",
+  "Bihar",
+  "Haryana",
+  "Telangana",
+  "Andhra Pradesh"
 ];
 
 /* List of Famous Crowded Tourist Landmarks & Their State Mapping */
@@ -141,17 +157,23 @@ export const keyFeatures = [
   {
     id: 5,
     icon: "HeartHandshake",
-    title: "Women Safety & Nearest Police Hub",
-    desc: "Nearest police station mapping, verified female host badges, lighted route maps, and 1-tap Night SOS dispatch."
+    title: "P2P Crowdsourced Discovery",
+    desc: "Users submit new hidden places; Yatrika AI verifies worthiness, footfall, and safety before serving to fellow travelers."
+  },
+  {
+    id: 6,
+    icon: "MapPin",
+    title: "24/7 Night Police SOS Mode",
+    desc: "1-tap emergency SOS beacon dispatching live location telematics to nearest district police stations."
   }
 ];
 
-export const pipelineSteps = [
+export const howItWorksSteps = [
   {
     step: "01",
-    title: "State, Landmark & Vibe Selection",
-    desc: "User selects State/UT, Target Landmark Hub (e.g. Taj Mahal, Amer Fort, Munnar) and Travel Preference Vibe.",
-    badge: "Input Layer"
+    title: "Select Indian State & Landmark Hub",
+    desc: "Traveler inputs target state (e.g., Rajasthan, UP, Kerala) or famous crowded landmark (e.g., Taj Mahal, Amer Fort, Munnar).",
+    badge: "User Input"
   },
   {
     step: "02",
@@ -182,90 +204,93 @@ export const pipelineSteps = [
     title: "24/7 Night Safety & Police Station Dispatch",
     desc: "Direct contact line to nearest police station, verified local hosts, village emergency drivers, and tourist police hotline (112/1091).",
     badge: "Night SOS Mode"
-  },
-  {
-    step: "08",
-    title: "Feedback Loop & Safety Telematics",
-    desc: "Post-trip tourist reviews & safety ratings continuously update venue safety badges and recommendation weights.",
-    badge: "RL Feedback"
   }
 ];
 
-export const techStackData = [
-  {
-    category: "Frontend Experience",
-    items: [
-      { name: "React.js", desc: "Yatrika Single Page Application Framework", tag: "UI Core" },
-      { name: "Tailwind CSS", desc: "Custom Nature-Tech Utility System", tag: "Styling" },
-      { name: "Framer Motion", desc: "Hardware-accelerated Scroll Animations", tag: "FX" },
-      { name: "Lucide React", desc: "Clean SVG Vector Iconography", tag: "Icons" }
-    ]
-  },
-  {
-    category: "Backend & Safety API Layer",
-    items: [
-      { name: "Node.js + Express", desc: "High-concurrency RESTful API Microservices", tag: "API Engine" },
-      { name: "Python FastAPI", desc: "AI inference & real-time safety index calculator", tag: "AI Server" },
-      { name: "Police & SOS Emergency Gateway", desc: "Sub-second SMS & WebRTC police dispatch alert", tag: "SOS API" }
-    ]
-  },
-  {
-    category: "Database & Vector Search",
-    items: [
-      { name: "MongoDB Atlas", desc: "Geospatial 2dsphere indexing & essential services DB", tag: "NoSQL DB" },
-      { name: "FAISS / ChromaDB", desc: "Vector database for semantic RAG & safety embeddings", tag: "Vector DB" }
-    ]
-  },
-  {
-    category: "AI & LLM Architecture",
-    items: [
-      { name: "Google Gemini API", desc: "Natural language query comprehension & safety guidance", tag: "LLM" },
-      { name: "LangChain RAG", desc: "Retrieval-Augmented Generation pipeline", tag: "Orchestration" }
-    ]
-  },
-  {
-    category: "Maps, Safety & Deployment",
-    items: [
-      { name: "Google Maps & OSM", desc: "Turn-by-turn routing, police posts, ATMs & hospital overlays", tag: "Geo API" },
-      { name: "Women Safety & Police Telematics", desc: "Lighted path heuristics & verified host audit engine", tag: "Safety Engine" },
-      { name: "Vercel + Render", desc: "Edge deployment with PWA offline emergency fallback", tag: "DevOps" }
-    ]
-  }
-];
-
-export const feasibilityData = {
+export const projectHighlights = {
+  problem: [
+    {
+      title: "Over-Tourism Congestion",
+      desc: "Iconic destinations face 400%+ footfall capacity, straining local infrastructure, causing traffic gridlocks, and diminishing tourist experience."
+    },
+    {
+      title: "Exploration Gap",
+      desc: "92% of travelers stick to top 5 commercialized spots per state, leaving 1000s of pristine, culturally rich hidden gems unexplored."
+    },
+    {
+      title: "Safety & Information Deficit",
+      desc: "Offbeat places often lack verified details regarding nearby police stations, 24/7 emergency medical access, and safe accommodations."
+    }
+  ],
+  solution: [
+    {
+      title: "Smart Crowd Diversion",
+      desc: "Intelligent AI engine diverts tourist footfall from congested hubs to serene nearby hidden places matching travel vibes."
+    },
+    {
+      title: "Integrated Safety Network",
+      desc: "Every recommended spot includes mapped nearest police station, 24/7 emergency clinic, verified local food, and night emergency SOS."
+    },
+    {
+      title: "P2P Crowdsourced Discovery",
+      desc: "Travelers can submit new hidden places; Yatrika AI verifies worthiness, footfall, and safety before serving to fellow travelers."
+    }
+  ],
+  techPillars: [
+    { title: "Geospatial Indexing", desc: "Fast spatial queries mapping surrounding 5–30km offbeat radii." },
+    { title: "AI Worthiness Engine", desc: "Dynamic multi-factor scoring evaluating uniqueness and footfall." },
+    { title: "Police Emergency Network", desc: "Direct 1-tap dispatch to nearest district police stations & ER posts." },
+    { title: "Cultural Discovery Engine", desc: "Recommending authentic local dishes, native handicrafts, and artisan weavers." }
+  ],
   challenges: [
     {
-      problem: "Lack of Information on Essential Facilities & Police Stations in Remote Gems",
-      solution: "Yatrests crowdsourced local host portal indexing verified police posts, nearby dhabas, 24/7 pharmacies, ATMs, and fuel stations."
-    },
-    {
-      problem: "Getting Stranded at Night in Unexplored Locations",
-      solution: "24/7 Night Safety Mode featuring direct police station dispatch, village driver helplines, emergency homestays, and 1-tap SOS."
-    },
-    {
-      problem: "Women Tourist Safety Concerns in Remote Regions",
-      solution: "Nearest Police Station mapping, verified female host badges, community-lighted route maps, local police contact (112/1091), and safety ratings."
+      problem: "Cold-Start Data for Remote Villages",
+      solution: "P2P crowdsourcing pipeline where local travelers & hosts submit unmapped spots for instant AI audit."
     },
     {
       problem: "Intermittent Internet Connectivity",
-      solution: "Progressive Web App (PWA) architecture supporting offline map caching and emergency police contact downloads."
+      solution: "Progressive web architecture supporting offline map caching and emergency police contact downloads."
     }
   ],
   highlights: {
     feasibility: [
-      "Built on proven microservice stack (React, Node, FastAPI, MongoDB)",
+      "Built on enterprise-grade cloud infrastructure & high-speed data architecture",
       "Zero specialized hardware needed — fully smartphone compatible",
-      "Sub-second offline PWA access to emergency contacts & police station locations",
+      "Sub-second offline access to emergency contacts & police station locations",
       "Easily scalable across all 28 Indian States & Union Territories"
     ],
     viability: [
       "Sustainable B2B SaaS analytics for State Tourism Development Boards",
       "Micro-commission model (3-5%) on verified local guide & homestay bookings",
-      "CSR sponsorship opportunities with eco-friendly & travel safety brands",
-      "Direct alignment with Women Safety & Responsible Tourism Guidelines"
+      "Sponsorship & recognition model for local artisan handlooms & traditional kitchens",
+      "Zero reliance on heavy central server hardware; light client-side state caching"
     ]
   }
+};
+
+export const feasibilityData = {
+  challenges: [
+    {
+      problem: "Cold-Start Data for Remote Villages",
+      solution: "P2P crowdsourcing pipeline where local travelers & hosts submit unmapped spots for instant AI audit."
+    },
+    {
+      problem: "Intermittent Internet Connectivity",
+      solution: "Progressive web architecture supporting offline map caching and emergency police contact downloads."
+    }
+  ],
+  feasibility: [
+    "Built on enterprise-grade cloud infrastructure & high-speed data architecture",
+    "Zero specialized hardware needed — fully smartphone compatible",
+    "Sub-second offline access to emergency contacts & police station locations",
+    "Easily scalable across all 28 Indian States & Union Territories"
+  ],
+  viability: [
+    "Sustainable B2B SaaS analytics for State Tourism Development Boards",
+    "Micro-commission model (3-5%) on verified local guide & homestay bookings",
+    "Sponsorship & recognition model for local artisan handlooms & traditional kitchens",
+    "Zero reliance on heavy central server hardware; light client-side state caching"
+  ]
 };
 
 export const impactBenefitsData = {
@@ -348,12 +373,10 @@ const createFacilityData = (hospName, hospDist, hospPhone, foodName, foodType, s
     crafts: famousCraft || "Traditional Native Handlooms, Block Prints & Local Handicrafts"
   },
   accommodation: [
-    { name: stayName, type: "Verified Family Stay (Female Host)", dist: "350m", tariff: stayTariff, emergencyNightStay: true, safetyVerified: true },
-    { name: "Village Eco Heritage Lodge", type: "Gated Cottage with CCTV", dist: "600m", tariff: "₹2,200/night", emergencyNightStay: true, safetyVerified: true }
+    { name: stayName, type: "Family Stay (Female Host)", dist: "350m", tariff: stayTariff, emergencyNightStay: true, safetyVerified: true }
   ],
   medical: [
-    { name: hospName, type: "Government Hospital & 24/7 ER", dist: hospDist, phone: hospPhone, travelTime: "5 mins" },
-    { name: "Community Medicos & 24/7 Pharmacy", type: "Medicines & Oxygen Support", dist: "800m", phone: "+91 98000 11223", travelTime: "2 mins" }
+    { name: hospName, type: "24/7 Primary Health Center & ER", dist: hospDist, phone: hospPhone, travelTime: "< 10 mins" }
   ],
   womenSafety: {
     score: "96/100 (SafeHaven Gold)",
@@ -362,11 +385,15 @@ const createFacilityData = (hospName, hospDist, hospPhone, foodName, foodType, s
     policeStationPhone: policeStationPhone,
     policePatrol: policePatrol,
     helpline: "112 / Women Helpline 1091",
-    features: ["Nearest Police Station On-Call (<4 mins)", "Verified Female Guild Hosts", "CCTV Monitored Entry", "Solar Lighted Access Road"]
+    features: [
+      "Nearest Police Station Mapped (< 5 mins response)",
+      "24/7 PCR Patrol Mobile Unit Assigned",
+      "Verified Female Homestay Host Registered",
+      "Lighted Night Route Guidance Active"
+    ]
   },
   transport: [
-    { name: taxiName, type: "Local Driver Guild", phone: taxiPhone, availability: "24/7 On-Call Emergency" },
-    { name: "State Bus Stand Connection", type: "Local Bus Service", phone: "+91 1800 112233", availability: "06:00 AM - 08:00 PM" }
+    { name: taxiName, type: "Local Auto & Cab Guild", phone: taxiPhone, availability: "24/7 On-Call" }
   ],
   distances: {
     petrolPump: petrol,
@@ -376,7 +403,6 @@ const createFacilityData = (hospName, hospDist, hospPhone, foodName, foodType, s
   }
 });
 
-/* Authentic Pan-India State-Wise & Landmark-Mapped Hidden Gems Database */
 export const sampleHiddenGems = [
   /* ------------------- UTTAR PRADESH (Agra / Taj Mahal & Beyond) ------------------- */
   {
@@ -385,6 +411,8 @@ export const sampleHiddenGems = [
     vibeTag: "Heritage & Crafts",
     location: "Agra Suburbs, Uttar Pradesh",
     gemName: "Kachhpura Heritage Village & Moonlight Taj View",
+    lat: 27.1798,
+    lng: 78.0469,
     distance: "4 km from Taj Mahal East Gate",
     score: 94,
     womenSafetyIndex: 95,
@@ -411,6 +439,8 @@ export const sampleHiddenGems = [
     vibeTag: "Eco Nature",
     location: "Agra / Keetham, Uttar Pradesh",
     gemName: "Sur Sarovar Bird Sanctuary & Keetham Lake",
+    lat: 27.2472,
+    lng: 77.8384,
     distance: "20 km from Taj Mahal Hub",
     score: 93,
     womenSafetyIndex: 96,
@@ -437,6 +467,8 @@ export const sampleHiddenGems = [
     vibeTag: "Spiritual History",
     location: "Agra / Bah, Uttar Pradesh",
     gemName: "Bateshwar 101 Shiva Temple Cluster on Yamuna",
+    lat: 26.9405,
+    lng: 78.5367,
     distance: "70 km from Agra",
     score: 96,
     womenSafetyIndex: 95,
@@ -463,6 +495,8 @@ export const sampleHiddenGems = [
     vibeTag: "Mountain Trails",
     location: "Chunar / Varanasi, Uttar Pradesh",
     gemName: "Chandra Prabha Devdari Waterfalls & Wildlife Trail",
+    lat: 24.9312,
+    lng: 83.1865,
     distance: "55 km from Varanasi",
     score: 95,
     womenSafetyIndex: 94,
@@ -491,6 +525,8 @@ export const sampleHiddenGems = [
     vibeTag: "Heritage & Crafts",
     location: "Amer / Jaipur, Rajasthan",
     gemName: "Amer Elephant Village & Sagar Lake",
+    lat: 26.9855,
+    lng: 75.8513,
     distance: "12 km from Amer Fort Hub",
     score: 94,
     womenSafetyIndex: 96,
@@ -517,6 +553,8 @@ export const sampleHiddenGems = [
     vibeTag: "Spiritual History",
     location: "Dausa / Abhaneri, Rajasthan",
     gemName: "Abhaneri Chand Baori Stepwell",
+    lat: 27.0069,
+    lng: 76.6064,
     distance: "95 km from Jaipur",
     score: 96,
     womenSafetyIndex: 96,
@@ -545,6 +583,8 @@ export const sampleHiddenGems = [
     vibeTag: "Eco Nature",
     location: "Munnar / Idukki, Kerala",
     gemName: "Anakkulam Wild Elephant Spring",
+    lat: 10.0892,
+    lng: 76.9606,
     distance: "38 km from Munnar Hub",
     score: 96,
     womenSafetyIndex: 98,
@@ -573,6 +613,8 @@ export const sampleHiddenGems = [
     vibeTag: "Mountain Trails",
     location: "Banjar Valley, Himachal Pradesh",
     gemName: "Shoja & Chehni Kothi Timber Tower",
+    lat: 31.6022,
+    lng: 77.3719,
     distance: "45 km from Kullu Valley",
     score: 95,
     womenSafetyIndex: 97,
@@ -601,6 +643,8 @@ export const sampleHiddenGems = [
     vibeTag: "Mountain Trails",
     location: "Changthang, Ladakh",
     gemName: "Hanle Dark Sky Reserve & Astronomical Sanctuary",
+    lat: 32.7758,
+    lng: 78.9669,
     distance: "270 km from Leh Town",
     score: 99,
     womenSafetyIndex: 98,
@@ -629,6 +673,8 @@ export const sampleHiddenGems = [
     vibeTag: "Heritage & Crafts",
     location: "East Khasi Hills, Meghalaya",
     gemName: "Kongthong Whistling Village & Living Root Bridges",
+    lat: 25.2891,
+    lng: 91.7588,
     distance: "54 km from Shillong Hub",
     score: 98,
     womenSafetyIndex: 99,

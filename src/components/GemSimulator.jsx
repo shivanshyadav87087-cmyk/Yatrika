@@ -1,9 +1,41 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, MapPin, Compass, Clock, Wallet, ShieldCheck, Route, ArrowRight, RefreshCw, CheckCircle2, Utensils, Home, Stethoscope, ShieldAlert, PhoneCall, Bus, Navigation, Moon, AlertTriangle, X, Search, Globe, Shield, Phone, Siren, Tag, Mountain, Flame, Activity, Building2, Landmark, ShoppingBag, UtensilsCrossed } from 'lucide-react';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import L from 'leaflet';
+import { Sparkles, MapPin, Compass, Clock, Wallet, ShieldCheck, Route, ArrowRight, RefreshCw, CheckCircle2, Utensils, Home, Stethoscope, ShieldAlert, PhoneCall, Bus, Navigation, Moon, AlertTriangle, X, Search, Globe, Shield, Phone, Siren, Tag, Mountain, Flame, Activity, Building2, Landmark, ShoppingBag, UtensilsCrossed, Layers, Eye } from 'lucide-react';
 import { sampleHiddenGems, indianStatesList, famousLandmarkHubs } from '../data/content';
 import { API_BASE_URL } from '../config/api';
 import confetti from 'canvas-confetti';
+
+/* Custom Terracotta Orange Gem Pin Marker Icon */
+const customGemIcon = L.divIcon({
+  className: 'custom-gem-marker',
+  html: `
+    <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+      <div className="custom-gem-pulse"></div>
+      <div className="custom-gem-pin">
+        <div className="custom-gem-pin-inner"></div>
+      </div>
+    </div>
+  `,
+  iconSize: [40, 40],
+  iconAnchor: [20, 36],
+  popupAnchor: [0, -32]
+});
+
+/* Map Recenter Controller using map.flyTo for smooth transitions */
+function MapFlyToController({ center, zoom = 11 }) {
+  const map = useMap();
+  useEffect(() => {
+    if (center && center[0] && center[1]) {
+      map.flyTo(center, zoom, {
+        duration: 1.5,
+        easeLinearity: 0.25
+      });
+    }
+  }, [center, zoom, map]);
+  return null;
+}
 
 export default function GemSimulator({ customGems }) {
   const activeGems = customGems || sampleHiddenGems;
@@ -112,6 +144,9 @@ export default function GemSimulator({ customGems }) {
     crafts: "Native Handlooms, Block Prints & Traditional Crafts"
   };
 
+  const gemLat = currentGem.lat || 27.1798;
+  const gemLng = currentGem.lng || 78.0469;
+
   const handleSelectState = (st) => {
     setSelectedState(st);
     setSelectedLandmark('all');
@@ -180,7 +215,7 @@ export default function GemSimulator({ customGems }) {
       
       {/* Decorative Floating Topo Contour Elements */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-terracotta-500/10 rounded-full blur-3xl pointer-events-none -z-0" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-forest-900/10 rounded-full blur-3xl pointer-events-none -z-0" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-slate-900/10 rounded-full blur-3xl pointer-events-none -z-0" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
@@ -202,7 +237,7 @@ export default function GemSimulator({ customGems }) {
           </h2>
 
           <p className="text-base sm:text-lg text-sand-700 leading-relaxed font-sans">
-            If you are traveling to a famous tourist spot (like <strong className="text-forest-900 font-bold">Taj Mahal, Amer Fort, Munnar, Shimla, Leh</strong>), select it below! Yatrika will automatically display <strong className="text-forest-900 font-bold">uncrowded offbeat places nearby in that region</strong>, plus famous local food & native clothes/handicrafts—backed by 24/7 nearest police station mapping & emergency SOS support.
+            If you are traveling to a famous tourist spot (like <strong className="font-bold text-slate-900">Taj Mahal, Amer Fort, Munnar, Shimla, Leh</strong>), select it below! Yatrika will automatically display <strong className="font-bold text-slate-900">uncrowded offbeat places nearby in that region</strong>, plus famous local food & native clothes/handicrafts—backed by 24/7 nearest police station mapping & emergency SOS support.
           </p>
         </motion.div>
 
@@ -247,7 +282,7 @@ export default function GemSimulator({ customGems }) {
               </span>
               <span className="text-[11px] font-mono bg-slate-900 text-amber-300 px-3 py-1 rounded-full flex items-center gap-1.5 border border-slate-800">
                 <Activity className="w-3 h-3 text-cyan-400 animate-pulse" />
-                API: {apiHealth?.status === 'ONLINE' ? 'Render Live' : 'Connected'}
+                API: Connected
               </span>
             </div>
 
@@ -440,10 +475,11 @@ export default function GemSimulator({ customGems }) {
             className="lg:col-span-7 space-y-4"
           >
             
-            {/* Result Tabs Navigation with Animated Indicator */}
+            {/* Result Tabs Navigation */}
             <div className="flex flex-wrap items-center gap-1.5 bg-white p-1.5 rounded-2xl border border-sand-200 shadow-sm relative">
               {[
                 { id: 'result', label: 'Overview' },
+                { id: 'map', label: 'Interactive Map', icon: MapPin, color: 'text-terracotta-500' },
                 { id: 'specialties', label: 'Famous Food & Clothes', icon: ShoppingBag, color: 'text-amber-500' },
                 { id: 'essential', label: 'Food & Homestays', icon: Utensils, color: 'text-terracotta-500' },
                 { id: 'medical', label: 'Hospitals & Medical', icon: Stethoscope, color: 'text-red-400' },
@@ -603,6 +639,56 @@ export default function GemSimulator({ customGems }) {
                       </div>
                     </div>
 
+                  </motion.div>
+                ) : activeTab === 'map' ? (
+                  /* Dedicated Interactive Map Tab View */
+                  <motion.div
+                    key="map-tab"
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -12 }}
+                    transition={{ duration: 0.3 }}
+                    className="space-y-4"
+                  >
+                    <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                      <div>
+                        <h4 className="font-serif font-bold text-lg text-sand-50 flex items-center gap-2">
+                          <MapPin className="w-5 h-5 text-terracotta-400 animate-bounce" />
+                          Interactive Spatial Radar Map ({currentGem.gemName})
+                        </h4>
+                        <span className="text-xs text-slate-300 font-mono">CartoDB Dark Matter Tile Engine • Smooth flyTo Location Mapping</span>
+                      </div>
+                      <span className="bg-terracotta-950/80 text-terracotta-300 border border-terracotta-800 text-xs px-3 py-1 rounded-full font-mono font-bold">
+                        Lat: {gemLat.toFixed(4)}, Lng: {gemLng.toFixed(4)}
+                      </span>
+                    </div>
+
+                    <div className="h-72 w-full rounded-2xl overflow-hidden border-2 border-terracotta-500/50 shadow-2xl relative">
+                      <MapContainer
+                        center={[gemLat, gemLng]}
+                        zoom={11}
+                        scrollWheelZoom={false}
+                        className="h-full w-full"
+                      >
+                        <TileLayer
+                          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                        />
+                        <Marker position={[gemLat, gemLng]} icon={customGemIcon}>
+                          <Popup>
+                            <div className="space-y-1 p-1 text-xs">
+                              <span className="font-bold text-terracotta-400 block text-sm">{currentGem.gemName}</span>
+                              <span className="text-slate-300 block">{currentGem.location}</span>
+                              <div className="pt-1 flex items-center justify-between gap-2 text-[10px] font-mono">
+                                <span className="text-amber-400 font-bold">Gem Score: {currentGem.score}/100</span>
+                                <span className="text-cyan-400 font-bold">Safety: {currentGem.womenSafetyIndex}/100</span>
+                              </div>
+                            </div>
+                          </Popup>
+                        </Marker>
+                        <MapFlyToController center={[gemLat, gemLng]} zoom={11} />
+                      </MapContainer>
+                    </div>
                   </motion.div>
                 ) : activeTab === 'specialties' ? (
                   /* Famous Food & Native Clothes/Crafts Tab */
@@ -859,7 +945,7 @@ export default function GemSimulator({ customGems }) {
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          onClick={handleTriggerSOS}
+                          onClick={() => handleTriggerSOS(false)}
                           className={`w-full py-3 rounded-xl font-bold text-xs shadow-lg flex items-center justify-center gap-2 transition-all cursor-pointer ${
                             sosSent 
                               ? 'bg-emerald-600 text-white' 
@@ -874,7 +960,7 @@ export default function GemSimulator({ customGems }) {
                           ) : (
                             <>
                               <PhoneCall className="w-4 h-4" />
-                              <span>Dispatch SOS to {police.policeStationName} (Render API)</span>
+                              <span>Dispatch SOS to {police.policeStationName}</span>
                             </>
                           )}
                         </motion.button>
@@ -982,16 +1068,59 @@ export default function GemSimulator({ customGems }) {
 
               {/* Footer inside result card */}
               <div className="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-300 font-sans">
-                <span>API Endpoint: {API_BASE_URL}</span>
+                <span>Coordinates: {gemLat.toFixed(4)}, {gemLng.toFixed(4)}</span>
                 <button
-                  onClick={() => setActiveTab('safety')}
-                  className="text-cyan-400 font-semibold hover:underline flex items-center gap-1 font-mono cursor-pointer"
+                  onClick={() => setActiveTab('map')}
+                  className="text-terracotta-400 font-semibold hover:underline flex items-center gap-1 font-mono cursor-pointer"
                 >
-                  <span>Police Post: {police.policeStationName}</span>
+                  <span>View CartoDB Dark Map</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
 
+            </div>
+
+            {/* Permanent Side-by-Side / Stacked Interactive CartoDB Leaflet Dark Matter Map View */}
+            <div className="bg-slate-900 text-white p-5 sm:p-6 rounded-3xl border border-slate-800 shadow-2xl space-y-3">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-terracotta-400 animate-bounce" />
+                  <h4 className="font-serif font-bold text-sm text-sand-50">
+                    Live Spatial Radar Map — {currentGem.gemName}
+                  </h4>
+                </div>
+                <span className="text-[10px] font-mono bg-slate-950 text-terracotta-400 px-3 py-1 rounded-full border border-slate-800 font-bold">
+                  CartoDB Dark Matter
+                </span>
+              </div>
+
+              {/* Leaflet Map Box */}
+              <div className="h-64 sm:h-72 w-full rounded-2xl overflow-hidden border border-slate-800 shadow-inner relative">
+                <MapContainer
+                  center={[gemLat, gemLng]}
+                  zoom={11}
+                  scrollWheelZoom={false}
+                  className="h-full w-full"
+                >
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                    url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                  />
+                  <Marker position={[gemLat, gemLng]} icon={customGemIcon}>
+                    <Popup>
+                      <div className="space-y-1 p-1 text-xs">
+                        <span className="font-bold text-terracotta-400 block text-sm">{currentGem.gemName}</span>
+                        <span className="text-slate-300 block">{currentGem.location}</span>
+                        <div className="pt-1 flex items-center justify-between gap-2 text-[10px] font-mono">
+                          <span className="text-amber-400 font-bold">Gem Score: {currentGem.score}/100</span>
+                          <span className="text-cyan-400 font-bold">Safety: {currentGem.womenSafetyIndex}/100</span>
+                        </div>
+                      </div>
+                    </Popup>
+                  </Marker>
+                  <MapFlyToController center={[gemLat, gemLng]} zoom={11} />
+                </MapContainer>
+              </div>
             </div>
 
           </motion.div>
@@ -1070,7 +1199,7 @@ export default function GemSimulator({ customGems }) {
 
               <div className="pt-2 flex items-center justify-between">
                 <button
-                  onClick={handleTriggerSOS}
+                  onClick={() => handleTriggerSOS(false)}
                   className="px-6 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-lg flex items-center gap-2 cursor-pointer"
                 >
                   <PhoneCall className="w-4 h-4" />
