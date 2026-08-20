@@ -161,8 +161,8 @@ export const pipelineSteps = [
   },
   {
     step: "03",
-    title: "AI Vector Ranking & Preference Filtering",
-    desc: "FAISS/ChromaDB dynamically filters and ranks candidate hidden spots matching selected vibe, budget & safety threshold.",
+    title: "AI Ranking & Preference Filtering",
+    desc: "Yatrika AI dynamically filters and ranks candidate hidden spots matching selected vibe, budget & safety threshold.",
     badge: "AI Core"
   },
   {
@@ -173,18 +173,12 @@ export const pipelineSteps = [
   },
   {
     step: "05",
-    title: "6-Layer Essential Facilities & Native Shopping",
-    desc: "Maps nearest verified organic dhabas, famous regional food, native clothes/crafts, homestays, 24/7 clinics, and police posts.",
-    badge: "Facility Radar"
+    title: "Itinerary & Route Optimization",
+    desc: "Generates step-by-step day plans minimizing travel time, fuel consumption, and carbon emissions.",
+    badge: "Route Opt"
   },
   {
     step: "06",
-    title: "Dynamic Itinerary & Offline Navigation",
-    desc: "Graph-based routing orders stops sequentially with turn-by-turn offline GPS caching.",
-    badge: "Navigation"
-  },
-  {
-    step: "07",
     title: "24/7 Night Safety & Police Station Dispatch",
     desc: "Direct contact line to nearest police station, verified local hosts, village emergency drivers, and tourist police hotline (112/1091).",
     badge: "Night SOS Mode"

@@ -7,7 +7,6 @@ import HowItWorks from './components/HowItWorks';
 import Features from './components/Features';
 import GemSimulator from './components/GemSimulator';
 import GemSubmission from './components/GemSubmission';
-import TechStack from './components/TechStack';
 import Feasibility from './components/Feasibility';
 import ImpactBenefits from './components/ImpactBenefits';
 import Research from './components/Research';
@@ -37,7 +36,6 @@ export default function App() {
         {/* User Submission & AI Worthiness Verification Portal */}
         <GemSubmission onAddGemToDatabase={handleAddGemToDatabase} />
         
-        <TechStack />
         <Feasibility />
         <ImpactBenefits />
         <Research />

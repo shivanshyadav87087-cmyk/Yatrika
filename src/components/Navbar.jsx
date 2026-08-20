@@ -61,7 +61,6 @@ export default function Navbar() {
               <Sparkles className="w-3.5 h-3.5" />
               <span>AI Simulator</span>
             </a>
-            <a href="#tech-stack" className="hover:text-terracotta-400 transition-colors">Tech Architecture</a>
             <a href="#impact" className="hover:text-terracotta-400 transition-colors">Impact & Safety</a>
           </nav>
 
@@ -124,13 +123,6 @@ export default function Navbar() {
             >
               <Sparkles className="w-4 h-4" />
               <span>AI Recommender Simulator</span>
-            </a>
-            <a 
-              href="#tech-stack" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="block hover:text-terracotta-400 py-1"
-            >
-              Tech Architecture
             </a>
             <a 
               href="#impact" 
