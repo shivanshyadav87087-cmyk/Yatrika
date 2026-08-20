@@ -84,10 +84,7 @@ export default function GemSimulator({ customGems }) {
     }
 
     if (selectedVibe !== 'All Vibes') {
-      const vibeMatches = pool.filter(g => g.vibeTag === selectedVibe);
-      if (vibeMatches.length > 0) {
-        return vibeMatches;
-      }
+      pool = pool.filter(g => g.vibeTag === selectedVibe);
     }
 
     return pool;
@@ -406,8 +403,12 @@ export default function GemSimulator({ customGems }) {
                 </div>
               ) : (
                 <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-sans text-center space-y-1">
-                  <span className="font-bold block">More destinations for {selectedState} coming soon!</span>
-                  <span className="text-[11px] text-amber-700 block">The community audit is expanding. You can submit a new hidden place below!</span>
+                  <span className="font-bold block">
+                    {selectedVibe !== 'All Vibes' ? `No '${selectedVibe}' places found in ${selectedState}` : `More destinations for ${selectedState} coming soon!`}
+                  </span>
+                  <span className="text-[11px] text-amber-700 block">
+                    {selectedVibe !== 'All Vibes' ? `Try selecting 'All Vibes' to view all available places for this state.` : `The community audit is expanding. You can submit a new hidden place below!`}
+                  </span>
                 </div>
               )}
             </div>
@@ -494,13 +495,26 @@ export default function GemSimulator({ customGems }) {
                   </div>
                   <div className="space-y-2 max-w-md mx-auto">
                     <h4 className="font-serif font-bold text-xl text-sand-50">
-                      More destinations for {selectedState} coming soon!
+                      {selectedVibe !== 'All Vibes' 
+                        ? `No places matching '${selectedVibe}' in ${selectedState}`
+                        : `More destinations for ${selectedState} coming soon!`}
                     </h4>
                     <p className="text-xs text-slate-300 font-sans leading-relaxed">
-                      The Yatrika community audit is currently expanding coverage to <strong className="text-amber-300 font-bold">{selectedState}</strong>. You can submit a new hidden place for this state using the submission form below!
+                      {selectedVibe !== 'All Vibes'
+                        ? `There are currently no offbeat places registered under '${selectedVibe}' for this specific selection. Try selecting 'All Vibes' or choose another vibe category to view available places!`
+                        : `The Yatrika community audit is currently expanding coverage to ${selectedState}. You can submit a new hidden place for this state using the submission form below!`}
                     </p>
                   </div>
-                  <div className="pt-2">
+                  <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
+                    {selectedVibe !== 'All Vibes' && (
+                      <button
+                        onClick={() => setSelectedVibe('All Vibes')}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold text-xs shadow border border-slate-700 transition-all cursor-pointer"
+                      >
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span>Switch to 'All Vibes'</span>
+                      </button>
+                    )}
                     <a
                       href="#gem-submission"
                       className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-xs shadow-lg transition-all"
