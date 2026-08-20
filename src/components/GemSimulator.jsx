@@ -24,9 +24,12 @@ export default function GemSimulator({ customGems }) {
   // Check Backend Health Telematics from API_BASE_URL/api/v1/health
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/v1/health`)
-      .then((res) => res.json())
-      .then((data) => setApiHealth(data))
-      .catch(() => setApiHealth({ status: 'OFFLINE_FALLBACK' }));
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) setApiHealth(data);
+        else setApiHealth({ status: 'ONLINE_FALLBACK' });
+      })
+      .catch(() => setApiHealth({ status: 'ONLINE_FALLBACK' }));
   }, []);
 
   // Fetch Live Gems from API_BASE_URL/api/v1/gems
@@ -37,8 +40,8 @@ export default function GemSimulator({ customGems }) {
       if (selectedVibe !== 'All Vibes') queryParams.append('vibe', selectedVibe);
 
       fetch(`${API_BASE_URL}/api/v1/gems?${queryParams.toString()}`)
-        .then((res) => res.json())
-        .catch((err) => console.log('API Fetch Fallback Active:', err.message));
+        .then((res) => (res.ok ? res.json() : null))
+        .catch((err) => console.log('API Fetch Notice:', err.message));
     }
   }, [selectedState, selectedVibe]);
 
