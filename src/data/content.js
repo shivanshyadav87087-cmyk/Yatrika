@@ -290,7 +290,21 @@ export const feasibilityData = {
     "Micro-commission model (3-5%) on verified local guide & homestay bookings",
     "Sponsorship & recognition model for local artisan handlooms & traditional kitchens",
     "Zero reliance on heavy central server hardware; light client-side state caching"
-  ]
+  ],
+  highlights: {
+    feasibility: [
+      "Built on enterprise-grade cloud infrastructure & high-speed data architecture",
+      "Zero specialized hardware needed — fully smartphone compatible",
+      "Sub-second offline access to emergency contacts & police station locations",
+      "Easily scalable across all 28 Indian States & Union Territories"
+    ],
+    viability: [
+      "Sustainable B2B SaaS analytics for State Tourism Development Boards",
+      "Micro-commission model (3-5%) on verified local guide & homestay bookings",
+      "Sponsorship & recognition model for local artisan handlooms & traditional kitchens",
+      "Zero reliance on heavy central server hardware; light client-side state caching"
+    ]
+  }
 };
 
 export const impactBenefitsData = {

@@ -1,9 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ShieldCheck, AlertCircle, CheckCircle2, TrendingUp, Cpu, Coins, Lock, Sparkles } from 'lucide-react';
-import { feasibilityData } from '../data/content';
+import { feasibilityData } from '../data/content.js';
 
 export default function Feasibility() {
+  const challengesList = feasibilityData?.challenges || [];
+  const feasibilityList = feasibilityData?.feasibility || feasibilityData?.highlights?.feasibility || [];
+  const viabilityList = feasibilityData?.viability || feasibilityData?.highlights?.viability || [];
+
   return (
     <section id="feasibility" className="py-24 bg-sand-50 text-sand-900 relative topo-pattern-light">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -35,7 +39,7 @@ export default function Feasibility() {
             </h3>
 
             <div className="space-y-4">
-              {feasibilityData.challenges.map((cItem, idx) => (
+              {challengesList.map((cItem, idx) => (
                 <motion.div
                   key={idx}
                   initial={{ opacity: 0, y: 15 }}
@@ -94,7 +98,7 @@ export default function Feasibility() {
               </div>
 
               <ul className="space-y-3">
-                {feasibilityData.highlights.feasibility.map((item, idx) => (
+                {feasibilityList.map((item, idx) => (
                   <li key={idx} className="flex items-start gap-3 text-xs sm:text-sm text-forest-100">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                     <span>{item}</span>
@@ -122,7 +126,7 @@ export default function Feasibility() {
               </div>
 
               <ul className="space-y-3">
-                {feasibilityData.highlights.viability.map((item, idx) => (
+                {viabilityList.map((item, idx) => (
                   <li key={idx} className="flex items-start gap-3 text-xs sm:text-sm text-sand-800">
                     <CheckCircle2 className="w-4 h-4 text-terracotta-500 shrink-0 mt-0.5" />
                     <span>{item}</span>
