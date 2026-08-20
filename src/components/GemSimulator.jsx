@@ -74,8 +74,11 @@ export default function GemSimulator({ customGems }) {
     }
 
     if (selectedLandmark !== 'all') {
+      const allLandmarksList = Array.isArray(destinationsDataset) 
+        ? destinationsDataset.flatMap(s => s.cities.flatMap(c => c.landmarks))
+        : getLandmarksForStateAndCity(selectedState, selectedCity);
       const landmarkObj = famousLandmarkHubs.find(l => l.id === selectedLandmark) || 
-                          destinationsDataset.flatMap(s => s.cities.flatMap(c => c.landmarks)).find(l => l.id === selectedLandmark);
+                          allLandmarksList.find(l => l.id === selectedLandmark || l.name === selectedLandmark);
       if (landmarkObj) {
         const landmarkMatches = pool.filter(g => g.landmarkHub && g.landmarkHub.toLowerCase().includes(landmarkObj.name.toLowerCase().replace(/^[^\w]+/, '').trim()));
         if (landmarkMatches.length > 0) {

@@ -1,4 +1,4 @@
-import { flattenDestinationsToGems } from './destinations.js';
+import { flattenDestinationsToGems, yatrikaSeedDataFull } from './destinations.js';
 
 export const projectDetails = {
   teamName: "Yatrika",
@@ -8,60 +8,30 @@ export const projectDetails = {
   category: "Software",
   tagline: "Empowering people. Enriching places. Enhancing journeys. Together for Safe & Responsible Tourism across all Indian States.",
   heroHeadline: "Pan-India Hidden Gem Discovery with Yatrika.",
-  heroSubheadline: "Yatrika is an intelligent travel platform covering all 28 Indian States & Union Territories—diverting crowds from over-touristed hubs (like Taj Mahal, Shimla, Munnar) to pristine hidden gems while recommending famous local food, native handicrafts/clothes, 24/7 nearby medical, transport, nearest police stations, and night emergency support.",
+  heroSubheadline: "Yatrika is an intelligent travel platform covering all 29 Indian States & Union Territories—diverting crowds from over-touristed hubs (like Taj Mahal, Shimla, Munnar) to pristine hidden gems while recommending famous local food, native handicrafts/clothes, 24/7 nearby medical, transport, nearest police stations, and night emergency support.",
   githubUrl: "https://github.com/yatrika-travel/yatrika-app",
   demoUrl: "#gem-simulator"
 };
 
 export const indianStatesList = [
   "All States",
-  "Uttar Pradesh",
-  "Rajasthan",
-  "West Bengal",
-  "Kerala",
-  "Himachal Pradesh",
-  "Ladakh",
-  "Goa",
-  "Karnataka",
-  "Tamil Nadu",
-  "Meghalaya",
-  "Sikkim",
-  "Madhya Pradesh",
-  "Maharashtra",
-  "Uttarakhand",
-  "Gujarat",
-  "Assam",
-  "Punjab",
-  "Odisha",
-  "Jammu & Kashmir",
-  "Arunachal Pradesh",
-  "Nagaland",
-  "Manipur",
-  "Mizoram",
-  "Tripura",
-  "Chhattisgarh",
-  "Jharkhand",
-  "Bihar",
-  "Haryana",
-  "Telangana",
-  "Andhra Pradesh"
+  ...Object.keys(yatrikaSeedDataFull)
 ];
 
 /* List of Famous Crowded Tourist Landmarks & Their State Mapping */
 export const famousLandmarkHubs = [
   { id: "all", name: "✨ All Landmarks & Cities", state: "All States" },
-  { id: "taj", name: "🕌 Taj Mahal & Agra Hub", state: "Uttar Pradesh" },
-  { id: "kashi-vishwanath", name: "🛕 Kashi Vishwanath & Varanasi Ghats", state: "Uttar Pradesh" },
-  { id: "hawa-mahal", name: "🏰 Hawa Mahal & Amer Fort Hub", state: "Rajasthan" },
-  { id: "city-palace-udaipur", name: "🏰 City Palace & Lake Pichola Hub", state: "Rajasthan" },
-  { id: "darjeeling-mall", name: "🌲 Darjeeling Mall Road Hub", state: "West Bengal" },
-  { id: "victoria-memorial", name: "🏛️ Victoria Memorial & Kolkata Hub", state: "West Bengal" },
-  { id: "munnar-tea", name: "🌿 Munnar Town & Tea Hub", state: "Kerala" },
-  { id: "manali-mall", name: "🏔️ Manali Mall Road Hub", state: "Himachal Pradesh" },
-  { id: "leh-town", name: "🏔️ Leh Town & Pangong Hub", state: "Ladakh" },
-  { id: "baga-beach", name: "🏖️ Baga & Calangute Beach Hub", state: "Goa" },
-  { id: "hampi-temple", name: "🛕 Hampi Main Temple Ruins", state: "Karnataka" },
-  { id: "mahabalipuram-shore", name: "🛕 Mahabalipuram Shore Temple", state: "Tamil Nadu" }
+  { id: "taj-mahal", name: "Taj Mahal", state: "Uttar Pradesh" },
+  { id: "kashi-vishwanath-temple", name: "Kashi Vishwanath Temple", state: "Uttar Pradesh" },
+  { id: "hawa-mahal", name: "Hawa Mahal", state: "Rajasthan" },
+  { id: "city-palace", name: "City Palace", state: "Udaipur" },
+  { id: "darjeeling-mall-road", name: "Darjeeling Mall Road", state: "West Bengal" },
+  { id: "munnar-tea-gardens", name: "Munnar Tea Gardens", state: "Kerala" },
+  { id: "manali-mall-road", name: "Manali Mall Road", state: "Himachal Pradesh" },
+  { id: "pangong-lake", name: "Pangong Lake", state: "Ladakh" },
+  { id: "baga-beach", name: "Baga Beach", state: "Goa" },
+  { id: "hampi-virupaksha-temple", name: "Hampi Virupaksha Temple", state: "Karnataka" },
+  { id: "mahabalipuram-shore-temple", name: "Mahabalipuram Shore Temple", state: "Tamil Nadu" }
 ];
 
 export const problemData = {
@@ -70,7 +40,7 @@ export const problemData = {
   description: "While 80% of domestic tourists concentrate in just 5% of famous hubs across India (like Taj Mahal or Shimla), travelers hesitate to explore pristine hidden gems due to fear of missing essential facilities—food, night accommodation, medical care, women safety, nearest police stations, and reliable transit. Yatrika solves this paradox.",
   stats: [
     { label: "Decongestion Investment", value: "₹3,295 Cr", subtext: "National tourism infrastructure expansion" },
-    { label: "States & UTs Covered", value: "28 States", subtext: "Pan-India State-wise Hidden Spot Database" },
+    { label: "States & UTs Covered", value: "29 States", subtext: "Pan-India State-wise Hidden Spot Database" },
     { label: "Remote Hesitation", value: "74%", subtext: "Tourists avoid remote spots due to facility uncertainty" },
     { label: "Women Safety First", value: "100%", subtext: "Nearest Police Station, Female Hosts & 24/7 SOS" }
   ],
@@ -87,7 +57,7 @@ export const problemData = {
     },
     hiddenGem: {
       title: "Yatrika Discovered Gem + SafeHaven Hub",
-      location: "Shoja, Anakkulam, Mawlynnong & Chunar",
+      location: "Jibhi, Top Station, Mawlynnong & Kachhpura",
       benefits: [
         "Serene, untouched pine forest trails & tribal rivers",
         "Authentic native wooden homestays & local cuisine",
@@ -103,7 +73,7 @@ export const solutionPillars = [
     id: "ai-recommendations",
     icon: "Sparkles",
     title: "Yatrika Pan-India State Discovery",
-    shortDesc: "Vector embeddings match travel preferences across all 28 Indian States & UTs with high-affinity hidden spots.",
+    shortDesc: "Vector embeddings match travel preferences across all 29 Indian States & UTs with high-affinity hidden spots.",
     details: "Utilizes retrieval-augmented generation (RAG) and semantic similarity search to discover remote gems in Meghalaya, Ladakh, Rajasthan, Kerala, and beyond."
   },
   {
@@ -134,7 +104,7 @@ export const keyFeatures = [
     id: 1,
     icon: "Search",
     title: "State & Landmark Offbeat Radar",
-    desc: "Seamless exploration covering all 28 States & UTs around famous landmarks with filterable interests and budget levels."
+    desc: "Seamless exploration covering all 29 States & UTs around famous landmarks with filterable interests and budget levels."
   },
   {
     id: 2,
@@ -172,7 +142,7 @@ export const howItWorksSteps = [
   {
     step: "01",
     title: "Select Indian State & Landmark Hub",
-    desc: "Traveler inputs target state (e.g., Rajasthan, UP, Kerala) or famous crowded landmark (e.g., Taj Mahal, Amer Fort, Munnar).",
+    desc: "Traveler inputs target state (e.g., Rajasthan, UP, Kerala) or famous crowded landmark (e.g., Taj Mahal, Hawa Mahal, Munnar).",
     badge: "User Input"
   },
   {
@@ -257,7 +227,7 @@ export const projectHighlights = {
       "Built on enterprise-grade cloud infrastructure & high-speed data architecture",
       "Zero specialized hardware needed — fully smartphone compatible",
       "Sub-second offline access to emergency contacts & police station locations",
-      "Easily scalable across all 28 Indian States & Union Territories"
+      "Easily scalable across all 29 Indian States & Union Territories"
     ],
     viability: [
       "Sustainable B2B SaaS analytics for State Tourism Development Boards",
@@ -283,7 +253,7 @@ export const feasibilityData = {
     "Built on enterprise-grade cloud infrastructure & high-speed data architecture",
     "Zero specialized hardware needed — fully smartphone compatible",
     "Sub-second offline access to emergency contacts & police station locations",
-    "Easily scalable across all 28 Indian States & Union Territories"
+    "Easily scalable across all 29 Indian States & Union Territories"
   ],
   viability: [
     "Sustainable B2B SaaS analytics for State Tourism Development Boards",
@@ -296,7 +266,7 @@ export const feasibilityData = {
       "Built on enterprise-grade cloud infrastructure & high-speed data architecture",
       "Zero specialized hardware needed — fully smartphone compatible",
       "Sub-second offline access to emergency contacts & police station locations",
-      "Easily scalable across all 28 Indian States & Union Territories"
+      "Easily scalable across all 29 Indian States & Union Territories"
     ],
     viability: [
       "Sustainable B2B SaaS analytics for State Tourism Development Boards",
@@ -311,7 +281,7 @@ export const impactBenefitsData = {
   impacts: [
     {
       title: "Promotes Sustainable Eco-Tourism Nationwide",
-      desc: "Distributes environmental footfall across wider geography in all 28 states, preventing ecological stress."
+      desc: "Distributes environmental footfall across wider geography in all 29 states, preventing ecological stress."
     },
     {
       title: "Guarantees Tourist Safety & Police Protection",
