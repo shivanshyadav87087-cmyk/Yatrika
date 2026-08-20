@@ -5,6 +5,7 @@ import { sampleHiddenGems, indianStatesList, famousLandmarkHubs } from '../data/
 import { destinationsDataset, getCitiesForState, getLandmarksForStateAndCity } from '../data/destinations.js';
 import { API_BASE_URL } from '../config/api.js';
 import confetti from 'canvas-confetti';
+import InteractiveMap from './InteractiveMap.jsx';
 
 export default function GemSimulator({ customGems }) {
   const activeGems = customGems || sampleHiddenGems;
@@ -1051,6 +1052,17 @@ export default function GemSimulator({ customGems }) {
               )}
 
             </div>
+
+            {/* Interactive Leaflet Map View */}
+            {currentGem && (
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+              >
+                <InteractiveMap currentGem={currentGem} />
+              </motion.div>
+            )}
 
           </motion.div>
 
