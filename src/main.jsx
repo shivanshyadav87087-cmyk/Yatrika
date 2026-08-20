@@ -3,26 +3,6 @@ import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
 import './index.css';
 
-// Global listener for stale Vite chunk load failures after new Vercel deployments
-window.addEventListener('error', (event) => {
-  const message = event?.message || '';
-  const isChunkError = 
-    message.includes('Failed to fetch dynamically imported module') ||
-    message.includes('Importing a module script failed') ||
-    message.includes('Unexpected token \'<\'') ||
-    message.includes('ChunkLoadError');
-
-  if (isChunkError) {
-    const lastReload = sessionStorage.getItem('yatrika_chunk_reload');
-    const now = Date.now();
-    // Allow auto-reload once per 15 seconds to prevent infinite loops
-    if (!lastReload || now - parseInt(lastReload, 10) > 15000) {
-      sessionStorage.setItem('yatrika_chunk_reload', now.toString());
-      window.location.reload();
-    }
-  }
-});
-
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -34,96 +14,39 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error("Yatrika Application Error Caught:", error, errorInfo);
-
-    // Auto-recovery for chunk load errors inside ErrorBoundary
-    const errorMessage = error?.message || '';
-    const isChunkError = 
-      error?.name === 'ChunkLoadError' ||
-      errorMessage.includes('Failed to fetch dynamically imported module') ||
-      errorMessage.includes('Importing a module script failed') ||
-      errorMessage.includes('Unexpected token \'<\'');
-
-    if (isChunkError) {
-      const lastReload = sessionStorage.getItem('yatrika_chunk_reload');
-      const now = Date.now();
-      if (!lastReload || now - parseInt(lastReload, 10) > 15000) {
-        sessionStorage.setItem('yatrika_chunk_reload', now.toString());
-        window.location.reload();
-      }
-    }
+    console.error("Yatrika Application Exception:", error, errorInfo);
   }
 
-  handleClearCacheAndReload = () => {
-    sessionStorage.clear();
-    if ('caches' in window) {
-      caches.keys().then((names) => {
-        names.forEach((name) => caches.delete(name));
-      });
-    }
-    window.location.reload();
+  handleReset = () => {
+    this.setState({ hasError: false, error: null });
   };
 
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{
-          padding: '40px 20px',
-          textAlign: 'center',
-          fontFamily: 'Inter, sans-serif',
-          backgroundColor: '#070b14',
-          color: '#fff',
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justify: 'center'
-        }}>
-          <div style={{
-            maxWidth: '500px',
-            width: '100%',
-            backgroundColor: '#0f172a',
-            border: '1px solid #334155',
-            borderRadius: '24px',
-            padding: '32px',
-            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)'
-          }}>
-            <h2 style={{ fontSize: '22px', color: '#e8734a', marginBottom: '12px', fontWeight: 'bold' }}>
-              Yatrika Application Recovery
+        <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 text-center font-sans">
+          <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-terracotta-500/20 text-terracotta-400 border border-terracotta-500/40 flex items-center justify-center mx-auto text-xl font-bold">
+              ⚠️
+            </div>
+            <h2 className="text-xl font-serif font-bold text-sand-50">
+              Something went wrong
             </h2>
-            <p style={{ color: '#94a3b8', fontSize: '14px', marginBottom: '24px', lineHeight: '1.6' }}>
-              A new deployment or asset update was detected. Click below to refresh your session and load the latest version.
+            <p className="text-xs text-slate-300 leading-relaxed">
+              An unexpected display issue occurred. Click below to reset or refresh.
             </p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <div className="pt-2 flex items-center justify-center gap-3">
               <button
-                onClick={() => window.location.reload()}
-                style={{
-                  padding: '12px 24px',
-                  borderRadius: '12px',
-                  backgroundColor: '#e8734a',
-                  color: '#fff',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                  fontSize: '13px'
-                }}
+                onClick={this.handleReset}
+                className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sand-100 font-bold text-xs border border-slate-700 transition-all cursor-pointer"
               >
-                Reload Application
+                Try Again
               </button>
               <button
-                onClick={this.handleClearCacheAndReload}
-                style={{
-                  padding: '12px 24px',
-                  borderRadius: '12px',
-                  backgroundColor: '#1e293b',
-                  color: '#f59e0b',
-                  border: '1px solid #475569',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                  fontSize: '13px'
-                }}
+                onClick={() => window.location.reload()}
+                className="px-5 py-2.5 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-xs shadow-lg transition-all cursor-pointer"
               >
-                Clear Cache & Refresh
+                Refresh Page
               </button>
             </div>
           </div>

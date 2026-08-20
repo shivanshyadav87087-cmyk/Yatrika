@@ -1,18 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
-import { MapPin, Navigation, ExternalLink, ShieldCheck, Siren, Stethoscope, Bus, Sparkles } from 'lucide-react';
+import { MapPin, Navigation, ExternalLink, ShieldCheck, Siren, Stethoscope, Bus, Sparkles, AlertCircle } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
+
+// Component ErrorBoundary for Leaflet Map isolation
+class MapErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(err) {
+    console.warn("Leaflet Map Component Notice:", err);
+  }
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
 
 // Helper component to smoothly fly map view when destination changes
 function MapFlyController({ center, zoom = 12 }) {
   const map = useMap();
   useEffect(() => {
     if (center && center[0] && center[1]) {
-      map.flyTo(center, zoom, {
-        animate: true,
-        duration: 1.5
-      });
+      try {
+        map.flyTo(center, zoom, {
+          animate: true,
+          duration: 1.5
+        });
+      } catch (e) {
+        // fallback
+      }
     }
   }, [center, zoom, map]);
   return null;
@@ -73,6 +97,29 @@ export default function InteractiveMap({ currentGem }) {
 
   const googleMapsDirectionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
 
+  const mapFallbackCard = (
+    <div className="w-full h-full bg-slate-950 flex flex-col items-center justify-center p-6 text-center space-y-3">
+      <div className="w-12 h-12 rounded-full bg-terracotta-500/20 text-terracotta-400 border border-terracotta-500/40 flex items-center justify-center">
+        <MapPin className="w-6 h-6" />
+      </div>
+      <div className="space-y-1">
+        <h5 className="font-serif font-bold text-sm text-sand-50">{currentGem.gemName}</h5>
+        <span className="text-xs font-mono text-terracotta-400 block">📍 {currentGem.location}</span>
+        <span className="text-[11px] font-mono text-slate-400 block">Coordinates: {lat.toFixed(4)}, {lng.toFixed(4)}</span>
+      </div>
+      <a
+        href={googleMapsDirectionsUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-xs shadow-md transition-all"
+      >
+        <Navigation className="w-3.5 h-3.5" />
+        <span>Open in Google Maps</span>
+        <ExternalLink className="w-3 h-3" />
+      </a>
+    </div>
+  );
+
   return (
     <div className="bg-slate-900 border border-slate-700 rounded-3xl p-5 shadow-2xl space-y-4 text-white relative overflow-hidden topo-pattern-dark">
       
@@ -104,7 +151,7 @@ export default function InteractiveMap({ currentGem }) {
         </a>
       </div>
 
-      {/* Map Canvas Container */}
+      {/* Map Canvas Container with Local ErrorBoundary */}
       <div className="relative w-full h-[360px] sm:h-[400px] rounded-2xl overflow-hidden border border-slate-800 shadow-inner bg-slate-950">
         {!isMounted ? (
           /* Loading Skeleton Shimmer */
@@ -113,71 +160,73 @@ export default function InteractiveMap({ currentGem }) {
             <span className="text-xs font-mono text-slate-400">Loading Interactive Tile Layer...</span>
           </div>
         ) : (
-          <MapContainer
-            center={center}
-            zoom={12}
-            scrollWheelZoom={true}
-            style={{ width: '100%', height: '100%', backgroundColor: '#090d16' }}
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-              url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-              maxZoom={19}
-            />
+          <MapErrorBoundary fallback={mapFallbackCard}>
+            <MapContainer
+              center={center}
+              zoom={12}
+              scrollWheelZoom={true}
+              style={{ width: '100%', height: '100%', backgroundColor: '#090d16' }}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                maxZoom={19}
+              />
 
-            <MapFlyController center={center} zoom={12} />
+              <MapFlyController center={center} zoom={12} />
 
-            {/* Primary Gem Marker */}
-            <Marker position={center} icon={gemIcon}>
-              <Popup className="custom-leaflet-popup">
-                <div className="p-2 space-y-1 text-slate-900 font-sans text-xs">
-                  <span className="font-bold font-serif text-sm block text-slate-950">{currentGem.gemName}</span>
-                  <div className="text-[11px] text-terracotta-600 font-bold font-mono">📍 {currentGem.location}</div>
-                  <div className="text-[10px] text-slate-600 font-mono">Score: {currentGem.score}/100 • Safety: {currentGem.womenSafetyIndex}/100</div>
-                </div>
-              </Popup>
-            </Marker>
-
-            {/* Secondary Marker: Nearest Police Station */}
-            {police && (
-              <Marker position={policeCenter} icon={policeIcon}>
-                <Popup>
+              {/* Primary Gem Marker */}
+              <Marker position={center} icon={gemIcon}>
+                <Popup className="custom-leaflet-popup">
                   <div className="p-2 space-y-1 text-slate-900 font-sans text-xs">
-                    <span className="font-bold flex items-center gap-1 text-cyan-700">🚨 {police.policeStationName}</span>
-                    <div className="text-[11px] text-slate-600 font-mono">Distance: {police.policeStationDist}</div>
-                    <div className="text-[10px] text-slate-500">24/7 Police Patrol Unit Mapped</div>
+                    <span className="font-bold font-serif text-sm block text-slate-950">{currentGem.gemName}</span>
+                    <div className="text-[11px] text-terracotta-600 font-bold font-mono">📍 {currentGem.location}</div>
+                    <div className="text-[10px] text-slate-600 font-mono">Score: {currentGem.score}/100 • Safety: {currentGem.womenSafetyIndex}/100</div>
                   </div>
                 </Popup>
               </Marker>
-            )}
 
-            {/* Secondary Marker: Nearest Hospital / Clinic */}
-            {medical && (
-              <Marker position={medicalCenter} icon={medicalIcon}>
-                <Popup>
-                  <div className="p-2 space-y-1 text-slate-900 font-sans text-xs">
-                    <span className="font-bold flex items-center gap-1 text-red-600">🏥 {medical.name}</span>
-                    <div className="text-[11px] text-slate-600 font-mono">Distance: {medical.dist} ({medical.travelTime})</div>
-                    <div className="text-[10px] text-slate-500">24/7 ER Emergency Clinic</div>
-                  </div>
-                </Popup>
-              </Marker>
-            )}
+              {/* Secondary Marker: Nearest Police Station */}
+              {police && (
+                <Marker position={policeCenter} icon={policeIcon}>
+                  <Popup>
+                    <div className="p-2 space-y-1 text-slate-900 font-sans text-xs">
+                      <span className="font-bold flex items-center gap-1 text-cyan-700">🚨 {police.policeStationName}</span>
+                      <div className="text-[11px] text-slate-600 font-mono">Distance: {police.policeStationDist}</div>
+                      <div className="text-[10px] text-slate-500">24/7 Police Patrol Unit Mapped</div>
+                    </div>
+                  </Popup>
+                </Marker>
+              )}
 
-            {/* Secondary Marker: Local Transport Hub */}
-            {transport && (
-              <Marker position={transportCenter} icon={transportIcon}>
-                <Popup>
-                  <div className="p-2 space-y-1 text-slate-900 font-sans text-xs">
-                    <span className="font-bold flex items-center gap-1 text-amber-600">🚕 {transport.name}</span>
-                    <div className="text-[11px] text-slate-600 font-mono">Phone: {transport.phone}</div>
-                    <div className="text-[10px] text-slate-500">24/7 Local Auto & Driver Guild</div>
-                  </div>
-                </Popup>
-              </Marker>
-            )}
+              {/* Secondary Marker: Nearest Hospital / Clinic */}
+              {medical && (
+                <Marker position={medicalCenter} icon={medicalIcon}>
+                  <Popup>
+                    <div className="p-2 space-y-1 text-slate-900 font-sans text-xs">
+                      <span className="font-bold flex items-center gap-1 text-red-600">🏥 {medical.name}</span>
+                      <div className="text-[11px] text-slate-600 font-mono">Distance: {medical.dist} ({medical.travelTime})</div>
+                      <div className="text-[10px] text-slate-500">24/7 ER Emergency Clinic</div>
+                    </div>
+                  </Popup>
+                </Marker>
+              )}
 
-          </MapContainer>
+              {/* Secondary Marker: Local Transport Hub */}
+              {transport && (
+                <Marker position={transportCenter} icon={transportIcon}>
+                  <Popup>
+                    <div className="p-2 space-y-1 text-slate-900 font-sans text-xs">
+                      <span className="font-bold flex items-center gap-1 text-amber-600">🚕 {transport.name}</span>
+                      <div className="text-[11px] text-slate-600 font-mono">Phone: {transport.phone}</div>
+                      <div className="text-[10px] text-slate-500">24/7 Local Auto & Driver Guild</div>
+                    </div>
+                  </Popup>
+                </Marker>
+              )}
+
+            </MapContainer>
+          </MapErrorBoundary>
         )}
       </div>
 
