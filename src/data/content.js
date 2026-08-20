@@ -1,4 +1,4 @@
-import { flattenDestinationsToGems } from './destinations';
+import { flattenDestinationsToGems } from './destinations.js';
 
 export const projectDetails = {
   teamName: "Yatrika",

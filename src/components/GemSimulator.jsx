@@ -974,19 +974,19 @@ export default function GemSimulator({ customGems }) {
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-[11px]">
                               <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
                                 <span className="text-slate-400 block text-[10px]">Petrol Pump</span>
-                                <span className="text-sand-100 font-bold">{facilities.distances.petrolPump}</span>
+                                <span className="text-sand-100 font-bold">{facilities?.distances?.petrolPump || "2.0 km"}</span>
                               </div>
                               <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
                                 <span className="text-slate-400 block text-[10px]">ATM</span>
-                                <span className="text-sand-100 font-bold">{facilities.distances.atm}</span>
+                                <span className="text-sand-100 font-bold">{facilities?.distances?.atm || "1.0 km"}</span>
                               </div>
                               <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
                                 <span className="text-slate-400 block text-[10px]">District HQ</span>
-                                <span className="text-sand-100 font-bold">{facilities.distances.districtHQ}</span>
+                                <span className="text-sand-100 font-bold">{facilities?.distances?.districtHQ || "10 km"}</span>
                               </div>
                               <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
                                 <span className="text-slate-400 block text-[10px]">National Highway</span>
-                                <span className="text-sand-100 font-bold">{facilities.distances.nationalHighway}</span>
+                                <span className="text-sand-100 font-bold">{facilities?.distances?.nationalHighway || "5.0 km"}</span>
                               </div>
                             </div>
                           </div>
