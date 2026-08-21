@@ -134,14 +134,14 @@ export default function Hero() {
 
           </div>
 
-          {/* 100% Truly Transparent See-Through Historic Monument Box (NO BLUR / NO TRANSLUCENCY) */}
+          {/* Translucent Glassmorphism Historic Monument Card */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.95, x: 20 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
             className="lg:col-span-5 relative"
           >
-            <div className="bg-transparent p-6 sm:p-7 rounded-3xl border-2 border-white/30 space-y-5 relative overflow-hidden">
+            <div className="bg-slate-950/40 backdrop-blur-xl p-6 sm:p-7 rounded-3xl border border-white/20 shadow-2xl space-y-5 relative overflow-hidden">
               
               {/* Dynamic Content Matched to Active Photo */}
               <AnimatePresence mode="wait">
@@ -153,30 +153,30 @@ export default function Hero() {
                   transition={{ duration: 0.35 }}
                   className="space-y-3"
                 >
-                  <div className="flex items-center gap-2 text-terracotta-300 font-mono text-xs font-bold uppercase tracking-wider [text-shadow:_0_1px_5px_rgba(0,0,0,0.95)]">
+                  <div className="flex items-center gap-2 text-terracotta-400 font-mono text-xs font-bold uppercase tracking-wider">
                     <MapPin className="w-4 h-4 text-terracotta-400 shrink-0" />
                     <span>{heroSlides[currentSlide].location}</span>
                   </div>
 
-                  <h3 className="text-2xl sm:text-3xl font-serif font-extrabold text-white tracking-tight leading-snug [text-shadow:_0_2px_10px_rgba(0,0,0,0.95)]">
+                  <h3 className="text-2xl sm:text-3xl font-serif font-extrabold text-white tracking-tight leading-snug">
                     {heroSlides[currentSlide].title}
                   </h3>
 
-                  <p className="text-xs sm:text-sm text-slate-100 leading-relaxed font-sans pt-1 [text-shadow:_0_1px_8px_rgba(0,0,0,0.95)]">
+                  <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans pt-1">
                     {heroSlides[currentSlide].description}
                   </p>
                 </motion.div>
               </AnimatePresence>
 
               {/* Slideshow Manual Controls & Indicators */}
-              <div className="flex items-center justify-between pt-4 border-t border-white/20">
+              <div className="flex items-center justify-between pt-4 border-t border-white/15">
                 <div className="flex items-center gap-1.5">
                   {heroSlides.map((slide, idx) => (
                     <button
                       key={slide.id}
                       onClick={() => setCurrentSlide(idx)}
                       className={`h-2 rounded-full transition-all cursor-pointer ${
-                        currentSlide === idx ? 'w-6 bg-terracotta-400' : 'w-2 bg-white/40 hover:bg-white/70'
+                        currentSlide === idx ? 'w-6 bg-terracotta-500' : 'w-2 bg-white/30 hover:bg-white/50'
                       }`}
                     />
                   ))}
@@ -185,13 +185,13 @@ export default function Hero() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={prevSlide}
-                    className="p-2 rounded-xl bg-transparent hover:bg-black/30 border border-white/30 text-white transition-colors cursor-pointer"
+                    className="p-2 rounded-xl bg-slate-900/60 hover:bg-slate-800/80 border border-white/20 text-white transition-colors cursor-pointer"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
                   <button
                     onClick={nextSlide}
-                    className="p-2 rounded-xl bg-transparent hover:bg-black/30 border border-white/30 text-white transition-colors cursor-pointer"
+                    className="p-2 rounded-xl bg-slate-900/60 hover:bg-slate-800/80 border border-white/20 text-white transition-colors cursor-pointer"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
