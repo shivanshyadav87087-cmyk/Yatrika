@@ -5,7 +5,6 @@ import Hero from './components/Hero';
 import Problem from './components/Problem';
 import Solution from './components/Solution';
 import HowItWorks from './components/HowItWorks';
-import Features from './components/Features';
 import GemSimulator from './components/GemSimulator';
 import GemSubmission from './components/GemSubmission';
 import Feasibility from './components/Feasibility';
@@ -119,7 +118,7 @@ export default function App() {
             </motion.div>
           )}
 
-          {/* DEDICATED PAGE VIEW: How It Works & AI Search Engine */}
+          {/* DEDICATED PAGE VIEW: How It Works */}
           {currentView === 'how-it-works' && (
             <motion.div
               key="view-how-it-works"
@@ -129,7 +128,6 @@ export default function App() {
               transition={{ duration: 0.25 }}
             >
               <HowItWorks />
-              <Features />
             </motion.div>
           )}
 
