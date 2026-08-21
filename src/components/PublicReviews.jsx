@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, ThumbsUp, MessageSquare, Send, CheckCircle2, User, MapPin, Sparkles, Filter, Award, ShieldCheck, Heart } from 'lucide-react';
+import { Star, ThumbsUp, MessageSquare, Send, CheckCircle2, MapPin, Sparkles, Filter, ShieldCheck } from 'lucide-react';
+import { sampleHiddenGems } from '../data/content.js';
 
 const INITIAL_REVIEWS = [
   {
     id: 'rev-1',
     name: 'Ananya Deshmukh',
     location: 'Mumbai, Maharashtra',
-    destination: 'Jibhi & Tirthan Valley, Himachal Pradesh',
+    destination: 'Jibhi (Manali, Himachal Pradesh)',
     rating: 5,
     title: 'Complete peace of mind as a solo female traveler!',
     comment: 'Bypassed overcrowded Manali for Jibhi using Yatrika. The mapped nearest police station (< 8 mins response) and verified female-hosted homestay gave me complete safety assurance. The local Pahadi Siddu was incredible!',
-    travelerType: 'Solo Female Traveler',
     date: '2 days ago',
     helpful: 48,
     verified: true
@@ -20,11 +20,10 @@ const INITIAL_REVIEWS = [
     id: 'rev-2',
     name: 'Rohan & Neha Gupta',
     location: 'Bengaluru, Karnataka',
-    destination: 'Anegundi Village, Karnataka',
+    destination: 'Anegundi Village (Hampi, Karnataka)',
     rating: 5,
     title: 'Discovered authentic heritage far from Hampi crowds',
     comment: 'Instead of standing in long queues at Hampi main ruins, Yatrika recommended Anegundi coracle village across the river. The banana fiber craft workshop and organic thali were the highlights of our trip!',
-    travelerType: 'Couple Retreat',
     date: '5 days ago',
     helpful: 35,
     verified: true
@@ -33,11 +32,10 @@ const INITIAL_REVIEWS = [
     id: 'rev-3',
     name: 'Dr. Vikramaditya Sen',
     location: 'Kolkata, West Bengal',
-    destination: 'Lamahatta Eco Village, Darjeeling',
+    destination: 'Lamahatta Eco Village (Darjeeling, West Bengal)',
     rating: 5,
     title: 'Untouched pine forests and pristine Kanchenjunga view',
     comment: 'Escaped Darjeeling Mall Road traffic for Lamahatta sacred pine trails. The 24/7 medical contact info on Yatrika was reassuring for my senior parents. Truly a 5-star experience!',
-    travelerType: 'Family Vacation',
     date: '1 week ago',
     helpful: 29,
     verified: true
@@ -46,11 +44,10 @@ const INITIAL_REVIEWS = [
     id: 'rev-4',
     name: 'Pooja & Sameer Verma',
     location: 'New Delhi',
-    destination: 'Kachhpura Heritage Village, Agra',
+    destination: 'Kachhpura Heritage Village (Agra, Uttar Pradesh)',
     rating: 5,
     title: 'Crowd-free Taj Mahal view over Yamuna River',
     comment: 'Yatrika directed us to Kachhpura village opposite Taj Mahal. We got breathtaking sunset views from Mehtab Bagh with zero crowds, plus tasted authentic Bedai & Jalebi from local village vendors.',
-    travelerType: 'Couple Retreat',
     date: '2 weeks ago',
     helpful: 42,
     verified: true
@@ -59,11 +56,10 @@ const INITIAL_REVIEWS = [
     id: 'rev-5',
     name: 'Kavita Krishnan',
     location: 'Chennai, Tamil Nadu',
-    destination: 'Kovalam Backwaters, Tamil Nadu',
+    destination: 'Kovalam Backwaters (Mahabalipuram, Tamil Nadu)',
     rating: 5,
     title: 'Serene surfing & fresh seafood near Mahabalipuram',
     comment: 'Loved the quiet fishing hamlet in Kovalam. The verified driver guild hotline and local seafood recommendations on Yatrika were 100% accurate and helpful.',
-    travelerType: 'Backpacker / Trekker',
     date: '3 weeks ago',
     helpful: 19,
     verified: true
@@ -72,11 +68,10 @@ const INITIAL_REVIEWS = [
     id: 'rev-6',
     name: 'Stanzin Norbu',
     location: 'Leh, Ladakh',
-    destination: 'Hanle Dark Sky Reserve, Ladakh',
+    destination: 'Hanle Dark Sky Reserve (Leh, Ladakh)',
     rating: 5,
     title: 'Stargazing sanctuary at 14,300 ft!',
     comment: 'As a Ladakhi local, I am impressed by how Yatrika guides travelers to Hanle dark sky reserve while encouraging responsible homestay tourism and night safety preparedness.',
-    travelerType: 'Backpacker / Trekker',
     date: '1 month ago',
     helpful: 56,
     verified: true
@@ -95,17 +90,23 @@ export default function PublicReviews() {
   const [ratingFilter, setRatingFilter] = useState('all');
   const [votedHelpful, setVotedHelpful] = useState({});
 
+  // Verified Places list for autocomplete & quick selection
+  const verifiedPlaces = useMemo(() => {
+    return sampleHiddenGems.map(g => `${g.gemName} (${g.city}, ${g.state})`);
+  }, []);
+
   // Form State
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
-  const [destination, setDestination] = useState('');
+  const [selectedPresetDestination, setSelectedPresetDestination] = useState('');
+  const [customDestination, setCustomDestination] = useState('');
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
   const [title, setTitle] = useState('');
   const [comment, setComment] = useState('');
-  const [travelerType, setTravelerType] = useState('Solo Female Traveler');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [destinationError, setDestinationError] = useState(false);
 
   // Sync to localStorage
   useEffect(() => {
@@ -134,6 +135,21 @@ export default function PublicReviews() {
 
   const handleSubmitReview = (e) => {
     e.preventDefault();
+
+    // Determine final destination string
+    let finalDestination = '';
+    if (selectedPresetDestination && selectedPresetDestination !== 'OTHER') {
+      finalDestination = selectedPresetDestination;
+    } else {
+      finalDestination = customDestination.trim();
+    }
+
+    if (!finalDestination) {
+      setDestinationError(true);
+      return;
+    }
+    setDestinationError(false);
+
     if (!name.trim() || !comment.trim() || !title.trim()) return;
 
     setIsSubmitting(true);
@@ -143,11 +159,10 @@ export default function PublicReviews() {
         id: `rev-${Date.now()}`,
         name: name.trim(),
         location: location.trim() || 'India',
-        destination: destination.trim() || 'Yatrika Offbeat Gem',
+        destination: finalDestination,
         rating: Number(rating),
         title: title.trim(),
         comment: comment.trim(),
-        travelerType: travelerType,
         date: 'Just now',
         helpful: 1,
         verified: true
@@ -160,7 +175,8 @@ export default function PublicReviews() {
       // Reset form
       setName('');
       setLocation('');
-      setDestination('');
+      setSelectedPresetDestination('');
+      setCustomDestination('');
       setRating(5);
       setTitle('');
       setComment('');
@@ -362,36 +378,51 @@ export default function PublicReviews() {
                 </div>
               </div>
 
-              {/* Destination & Traveler Type */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">
-                    Destination Visited
-                  </label>
+              {/* Verified Destination Selection / Input */}
+              <div>
+                <label className="block text-xs font-medium text-slate-300 mb-1">
+                  Destination / Place Visited <span className="text-terracotta-400">*</span>
+                </label>
+                
+                {/* Select from 29-State Verified Places */}
+                <select
+                  value={selectedPresetDestination}
+                  onChange={(e) => {
+                    setSelectedPresetDestination(e.target.value);
+                    if (e.target.value && e.target.value !== 'OTHER') {
+                      setDestinationError(false);
+                    }
+                  }}
+                  className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-terracotta-500 transition-colors mb-2"
+                >
+                  <option value="">-- Choose a Verified Destination (29 States) --</option>
+                  {verifiedPlaces.map((place, idx) => (
+                    <option key={idx} value={place}>{place}</option>
+                  ))}
+                  <option value="OTHER">✍️ Enter Another Offbeat Place Manually...</option>
+                </select>
+
+                {/* Custom text input if "OTHER" or no preset selected */}
+                {(!selectedPresetDestination || selectedPresetDestination === 'OTHER') && (
                   <input
                     type="text"
-                    placeholder="e.g. Jibhi / Top Station"
-                    value={destination}
-                    onChange={(e) => setDestination(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-terracotta-500 transition-colors"
+                    placeholder="Type exact place name (e.g. Chopta, Uttarakhand)"
+                    value={customDestination}
+                    onChange={(e) => {
+                      setCustomDestination(e.target.value);
+                      if (e.target.value.trim()) setDestinationError(false);
+                    }}
+                    className={`w-full px-3.5 py-2.5 bg-slate-900 border ${
+                      destinationError ? 'border-red-500/80 bg-red-500/5' : 'border-slate-800'
+                    } rounded-xl text-xs text-slate-200 focus:outline-none focus:border-terracotta-500 transition-colors`}
                   />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">
-                    Traveler Type
-                  </label>
-                  <select
-                    value={travelerType}
-                    onChange={(e) => setTravelerType(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-terracotta-500 transition-colors"
-                  >
-                    <option value="Solo Female Traveler">Solo Female Traveler</option>
-                    <option value="Family Vacation">Family Vacation</option>
-                    <option value="Couple Retreat">Couple Retreat</option>
-                    <option value="Backpacker / Trekker">Backpacker / Trekker</option>
-                    <option value="Senior Citizens Group">Senior Citizens Group</option>
-                  </select>
-                </div>
+                )}
+
+                {destinationError && (
+                  <p className="text-[11px] text-red-400 mt-1 font-medium">
+                    ⚠️ Please select or type the exact destination visited before submitting.
+                  </p>
+                )}
               </div>
 
               {/* Review Title */}
@@ -520,14 +551,11 @@ export default function PublicReviews() {
                       </div>
                     </div>
 
-                    {/* Destination & Category Badges */}
+                    {/* Destination Badge */}
                     <div className="flex flex-wrap items-center gap-2 mb-3">
-                      <span className="px-2.5 py-1 rounded-md bg-slate-900 text-slate-300 text-[11px] font-medium border border-slate-800 flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-terracotta-400" />
-                        Visited: <strong className="text-slate-200">{rev.destination}</strong>
-                      </span>
-                      <span className="px-2.5 py-1 rounded-md bg-terracotta-500/10 text-terracotta-300 text-[11px] font-medium border border-terracotta-500/20">
-                        {rev.travelerType}
+                      <span className="px-3 py-1 rounded-md bg-slate-900 text-slate-200 text-[11px] font-medium border border-slate-800 flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-terracotta-400" />
+                        Destination Visited: <strong className="text-amber-400">{rev.destination}</strong>
                       </span>
                     </div>
 
