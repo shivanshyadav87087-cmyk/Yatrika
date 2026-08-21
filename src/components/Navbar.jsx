@@ -114,16 +114,6 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
             </button>
 
             <button 
-              onClick={(e) => handleNavClick(e, 'gem-simulator')} 
-              className={`px-2.5 py-1 rounded-lg flex items-center gap-1.5 transition-all duration-200 hover:scale-105 hover:text-amber-800 hover:drop-shadow-[0_0_8px_rgba(245,158,11,0.3)] ${
-                currentView === 'gem-simulator' ? 'text-amber-700 font-bold border-b-2 border-amber-500 pb-0.5' : 'text-amber-700 font-bold'
-              }`}
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>AI Simulator</span>
-            </button>
-
-            <button 
               onClick={(e) => handleNavClick(e, 'impact')} 
               className={`px-2.5 py-1 rounded-lg transition-all duration-200 hover:scale-105 hover:text-terracotta-600 hover:drop-shadow-[0_0_8px_rgba(232,115,74,0.3)] ${
                 currentView === 'impact' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''
@@ -205,13 +195,6 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
               className="block w-full text-left hover:text-terracotta-600 py-1 font-medium"
             >
               How It Works
-            </button>
-            <button 
-              onClick={(e) => handleNavClick(e, 'gem-simulator')}
-              className="block w-full text-left text-amber-700 font-bold py-1 flex items-center gap-1.5"
-            >
-              <Sparkles className="w-4 h-4" />
-              <span>AI Recommender Simulator</span>
             </button>
             <button 
               onClick={(e) => handleNavClick(e, 'submit-gem')}
