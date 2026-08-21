@@ -67,7 +67,7 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
             </span>
           </a>
 
-          {/* Desktop Navigation Links (Attractive Light Mode Palette) */}
+          {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-7 text-xs font-sans font-semibold text-slate-700">
             <button 
               onClick={(e) => handleNavClick(e, 'problem')} 
@@ -103,13 +103,6 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
               className={`transition-colors hover:text-terracotta-600 ${currentView === 'impact' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
             >
               Impact & Safety
-            </button>
-
-            <button 
-              onClick={(e) => handleNavClick(e, 'reviews')} 
-              className={`transition-colors hover:text-terracotta-600 ${currentView === 'reviews' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
-            >
-              Public Reviews
             </button>
           </nav>
 
@@ -176,12 +169,6 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
               className="block w-full text-left hover:text-terracotta-600 py-1 font-medium"
             >
               Impact & Safety
-            </button>
-            <button 
-              onClick={(e) => handleNavClick(e, 'reviews')}
-              className="block w-full text-left hover:text-terracotta-600 py-1 font-medium"
-            >
-              Public Reviews
             </button>
           </motion.div>
         )}

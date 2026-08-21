@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Compass, Sparkles, MapPin, ArrowRight, ShieldCheck, Route, Users, Globe, ChevronDown, Siren, Activity, ChevronLeft, ChevronRight } from 'lucide-react';
-import { projectDetails } from '../data/content';
+import { Compass, Sparkles, MapPin, ArrowRight, ShieldCheck, Route, Users, Globe, Siren, Activity, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const heroSlides = [
   {
@@ -65,7 +64,7 @@ export default function Hero() {
   };
 
   return (
-    <section id="hero" className="relative min-h-screen w-full text-white overflow-hidden flex items-center justify-center">
+    <section id="hero" className="relative min-h-[90vh] w-full text-white overflow-hidden flex items-center justify-center">
       
       {/* 100% Vivid High-Resolution Edge-to-Edge Background Photo Slideshow */}
       <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
@@ -81,12 +80,12 @@ export default function Hero() {
           />
         </AnimatePresence>
 
-        {/* Clean Balanced Overlay: Dark Midnight Navy on left behind text, 100% Bright & Vibrant on right! */}
+        {/* Clean Balanced Overlay */}
         <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-slate-950/90 via-slate-950/50 to-transparent z-10 pointer-events-none" />
         <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-slate-950/95 via-transparent to-black/40 z-10 pointer-events-none" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 w-full pt-20 pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 w-full pt-16 pb-16">
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
@@ -115,7 +114,7 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-4xl sm:text-5xl lg:text-6xl font-serif font-extrabold text-white tracking-tight leading-tight [text-shadow:_0_2px_10px_rgba(0,0,0,0.8)]"
             >
-              Discover Hidden Gems Across <span className="text-terracotta-400 italic">28 Indian States</span> Safely with <span className="text-[#f4f1e8] font-medium">Yatrika</span>.
+              Discover Hidden Gems Across <span className="text-terracotta-400 italic">29 Indian States</span> Safely with <span className="text-[#f4f1e8] font-medium">Yatrika</span>.
             </motion.h1>
 
             {/* Tagline & Subheadline */}
@@ -125,7 +124,7 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-base sm:text-lg text-slate-200 leading-relaxed font-sans max-w-2xl [text-shadow:_0_1px_5px_rgba(0,0,0,0.8)]"
             >
-              Traveling to iconic landmarks like <strong className="text-white">Taj Mahal, Amer Fort, Munnar, or Shimla</strong>? Yatrika diverts crowd congestion by discovering serene offbeat places nearby—recommending famous local food, native clothes/crafts, <strong className="text-white">nearest police stations</strong>, and 24/7 night emergency SOS support!
+              Traveling to iconic landmarks like <strong className="text-white">Taj Mahal, Amer Fort, Munnar, or Shimla</strong>? Yatrika diverts crowd congestion by discovering serene offbeat places nearby—recommending famous local food, native clothes/crafts, <strong className="text-white">nearest police stations</strong>, and emergency SOS support!
             </motion.p>
 
             {/* CTA Action Buttons */}
@@ -162,7 +161,7 @@ export default function Hero() {
             >
               <div className="flex items-center gap-2 bg-slate-900/85 p-2.5 rounded-xl border border-slate-700/80 backdrop-blur-md shadow-lg">
                 <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>28 States & UTs</span>
+                <span>29 States & UTs</span>
               </div>
               <div className="flex items-center gap-2 bg-slate-900/85 p-2.5 rounded-xl border border-slate-700/80 backdrop-blur-md shadow-lg">
                 <MapPin className="w-4 h-4 text-terracotta-400 shrink-0" />
@@ -174,7 +173,7 @@ export default function Hero() {
               </div>
               <div className="flex items-center gap-2 bg-slate-900/85 p-2.5 rounded-xl border border-slate-700/80 backdrop-blur-md shadow-lg">
                 <Activity className="w-4 h-4 text-terracotta-400 shrink-0" />
-                <span>24/7 Night SOS</span>
+                <span>24/7 Emergency SOS</span>
               </div>
             </motion.div>
 
@@ -268,7 +267,7 @@ export default function Hero() {
                 href="#gem-simulator"
                 className="w-full py-3.5 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-xs shadow-lg flex items-center justify-center gap-2 transition-all block text-center cursor-pointer"
               >
-                <span>Explore All 28 States in Simulator &rarr;</span>
+                <span>Explore All 29 States in Simulator &rarr;</span>
               </a>
 
             </div>

@@ -12,8 +12,6 @@ import GemSubmission from './components/GemSubmission';
 import Feasibility from './components/Feasibility';
 import ImpactBenefits from './components/ImpactBenefits';
 import Research from './components/Research';
-import PublicReviews from './components/PublicReviews';
-import ConciseRatingSummary from './components/ConciseRatingSummary';
 import Footer from './components/Footer';
 import { sampleHiddenGems } from './data/content';
 
@@ -23,8 +21,7 @@ const SECTION_TITLES = {
   solution: 'Yatrika Core Solution Pillars (4 Pillars)',
   'how-it-works': 'How Yatrika AI & Search Engine Works',
   'gem-simulator': 'AI Hidden Gem Recommender & Simulator',
-  impact: 'Pan-India Impact, Feasibility & Safety Infrastructure',
-  reviews: 'Public Traveler Reviews & Community Ratings'
+  impact: 'Pan-India Impact, Feasibility & Safety Infrastructure'
 };
 
 export default function App() {
@@ -111,7 +108,7 @@ export default function App() {
         {/* Dynamic Content Views */}
         <AnimatePresence mode="wait">
           
-          {/* VIEW: HOMEPAGE (High-Impact Hero Photo Slideshow + End Concise Public Rating Summary) */}
+          {/* VIEW: HOMEPAGE (Streamlined Hero Photo Slideshow Landing Page) */}
           {currentView === 'home' && (
             <motion.div
               key="view-home"
@@ -122,9 +119,6 @@ export default function App() {
             >
               {/* Hero Section with Full Edge-to-Edge Photo Slideshow & Headline Copy */}
               <Hero />
-              
-              {/* Concise Public Rating & Reviews Summary Bar at End of Homepage */}
-              <ConciseRatingSummary onNavigate={handleNavigateView} />
             </motion.div>
           )}
 
@@ -194,19 +188,6 @@ export default function App() {
               <ImpactBenefits />
               <Feasibility />
               <Research />
-            </motion.div>
-          )}
-
-          {/* DEDICATED PAGE VIEW: Public Reviews */}
-          {currentView === 'reviews' && (
-            <motion.div
-              key="view-reviews"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.25 }}
-            >
-              <PublicReviews />
             </motion.div>
           )}
 
