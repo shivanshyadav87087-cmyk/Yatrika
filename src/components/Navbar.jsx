@@ -62,6 +62,7 @@ export default function Navbar() {
               <span>AI Simulator</span>
             </a>
             <a href="#impact" className="hover:text-terracotta-400 transition-colors">Impact & Safety</a>
+            <a href="#reviews" className="hover:text-terracotta-400 transition-colors">Reviews</a>
           </nav>
 
           {/* Desktop CTA Button */}
@@ -130,6 +131,13 @@ export default function Navbar() {
               className="block hover:text-terracotta-400 py-1"
             >
               Impact & Safety
+            </a>
+            <a 
+              href="#reviews" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="block hover:text-terracotta-400 py-1"
+            >
+              Public Reviews
             </a>
           </motion.div>
         )}

@@ -10,6 +10,7 @@ import GemSubmission from './components/GemSubmission';
 import Feasibility from './components/Feasibility';
 import ImpactBenefits from './components/ImpactBenefits';
 import Research from './components/Research';
+import PublicReviews from './components/PublicReviews';
 import Footer from './components/Footer';
 import { sampleHiddenGems } from './data/content';
 
@@ -39,6 +40,9 @@ export default function App() {
         <Feasibility />
         <ImpactBenefits />
         <Research />
+
+        {/* Public Reviews & Community Feedback Section */}
+        <PublicReviews />
       </main>
       <Footer />
     </div>
