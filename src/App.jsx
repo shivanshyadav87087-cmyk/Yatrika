@@ -21,6 +21,7 @@ const SECTION_TITLES = {
   solution: 'Yatrika Core Solution Pillars (4 Pillars)',
   'how-it-works': 'How Yatrika AI & Search Engine Works',
   'gem-simulator': 'AI Hidden Gem Recommender & Simulator',
+  'submit-gem': 'User-Submitted Gem & AI Worthiness Verification Portal',
   impact: 'Pan-India Impact, Feasibility & Safety Infrastructure'
 };
 
@@ -172,6 +173,18 @@ export default function App() {
               transition={{ duration: 0.25 }}
             >
               <GemSimulator customGems={gemsDatabase} />
+            </motion.div>
+          )}
+
+          {/* DEDICATED PAGE VIEW: User-Submitted Gem & AI Verification Portal */}
+          {currentView === 'submit-gem' && (
+            <motion.div
+              key="view-submit-gem"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.25 }}
+            >
               <GemSubmission onAddGemToDatabase={handleAddGemToDatabase} />
             </motion.div>
           )}
