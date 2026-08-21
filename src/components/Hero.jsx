@@ -1,47 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Compass, Sparkles, MapPin, ArrowRight, ShieldCheck, Route, Users, Globe, Siren, Activity, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Compass, Sparkles, MapPin, ArrowRight, Activity, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const heroSlides = [
   {
     id: 1,
-    title: "Taj Mahal & Agra Suburbs",
-    subtitle: "Kachhpura Heritage Village & Moonlight Yamuna View",
+    title: "Taj Mahal, Agra",
     state: "Uttar Pradesh",
-    image: "https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1920&q=90",
-    vibe: "Heritage & Mughal History"
+    image: "https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1920&q=90"
   },
   {
     id: 2,
-    title: "Munnar Tea Hills & Springs",
-    subtitle: "Anakkulam Wild Elephant Mineral Spring",
-    state: "Kerala",
-    image: "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=1920&q=90",
-    vibe: "Eco Nature & Tribal Springs"
+    title: "Amer Fort & Hawa Mahal, Jaipur",
+    state: "Rajasthan",
+    image: "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1920&q=90"
   },
   {
     id: 3,
-    title: "Amer Fort & Aravalli Ridge",
-    subtitle: "Sagar Stepwell & Elephant Village",
-    state: "Rajasthan",
-    image: "https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?auto=format&fit=crop&w=1920&q=90",
-    vibe: "Ancient Royal Architecture"
+    title: "Munnar Tea Hills",
+    state: "Kerala",
+    image: "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=1920&q=90"
   },
   {
     id: 4,
-    title: "Hanle High Altitude Reserve",
-    subtitle: "India's 1st Dark Sky Astronomical Sanctuary",
-    state: "Ladakh",
-    image: "https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?auto=format&fit=crop&w=1920&q=90",
-    vibe: "Mountain Trails & Stargazing"
+    title: "Varanasi Ganges Ghats",
+    state: "Uttar Pradesh",
+    image: "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1920&q=90"
   },
   {
     id: 5,
-    title: "Varanasi Ganges & Chunar",
-    subtitle: "Ancient Fortresses & River Confluences",
-    state: "Uttar Pradesh",
-    image: "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1920&q=90",
-    vibe: "Spiritual History & Sacred Ghats"
+    title: "Golden Temple, Amritsar",
+    state: "Punjab",
+    image: "https://images.unsplash.com/photo-1514222709107-a180c68d72b4?auto=format&fit=crop&w=1920&q=90"
   }
 ];
 
@@ -139,62 +129,49 @@ export default function Hero() {
 
           </div>
 
-          {/* Visual Interactive Glassmorphism Card Preview with Live Slideshow Location Telematics */}
+          {/* Clean, Minimal Glassmorphism Destination Card (Displays Name & State Only) */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.95, x: 20 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
             className="lg:col-span-5 relative"
           >
-            <div className="bg-slate-900/90 backdrop-blur-xl p-6 sm:p-8 rounded-3xl border-2 border-amber-500/40 shadow-2xl space-y-6 relative overflow-hidden">
+            <div className="bg-slate-900/90 backdrop-blur-xl p-6 sm:p-7 rounded-3xl border-2 border-amber-500/40 shadow-2xl space-y-5 relative overflow-hidden">
               
-              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3.5">
                 <div className="flex items-center gap-2 font-mono text-xs text-slate-300">
                   <Activity className="w-4 h-4 text-amber-400 animate-pulse" />
                   <span>SLIDESHOW FEATURED DESTINATION</span>
                 </div>
-                <span className="text-[10px] font-mono bg-amber-950/80 text-amber-300 px-3 py-1 rounded-full border border-amber-700 font-bold">
+                <span className="text-[11px] font-mono bg-amber-950/90 text-amber-300 px-3 py-1 rounded-full border border-amber-700 font-bold">
                   {heroSlides[currentSlide].state}
                 </span>
               </div>
 
-              {/* Active Slide Information Telematics */}
+              {/* Clean Destination Name Only */}
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentSlide}
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.4 }}
-                  className="space-y-4"
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.3 }}
+                  className="py-2"
                 >
-                  <div className="p-4 rounded-2xl bg-slate-950/90 border border-terracotta-500/40 space-y-1.5 shadow-inner">
-                    <span className="text-[10px] font-mono text-terracotta-400 uppercase tracking-widest block font-bold">
-                      {heroSlides[currentSlide].vibe}
+                  <div className="flex items-center gap-2.5 mb-1.5">
+                    <MapPin className="w-5 h-5 text-terracotta-400 shrink-0" />
+                    <span className="text-xs font-mono text-amber-400 uppercase tracking-widest font-bold">
+                      {heroSlides[currentSlide].state}
                     </span>
-                    <h3 className="text-xl font-serif font-bold text-white">
-                      {heroSlides[currentSlide].title}
-                    </h3>
-                    <p className="text-xs text-slate-300 font-sans">
-                      {heroSlides[currentSlide].subtitle}
-                    </p>
                   </div>
-
-                  <div className="p-4 rounded-2xl bg-slate-950/90 border border-cyan-500/40 space-y-2 text-xs font-mono shadow-inner">
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-300">Police Safety Audit:</span>
-                      <span className="text-cyan-400 font-bold">Verified On-Call (&lt;4 mins)</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-300">Famous Regional Food:</span>
-                      <span className="text-white font-bold">Local Authentic Cuisine</span>
-                    </div>
-                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-serif font-extrabold text-white pl-7 tracking-tight">
+                    {heroSlides[currentSlide].title}
+                  </h3>
                 </motion.div>
               </AnimatePresence>
 
               {/* Slideshow Manual Controls & Indicators */}
-              <div className="flex items-center justify-between pt-2 border-t border-slate-800">
+              <div className="flex items-center justify-between pt-3 border-t border-slate-800">
                 <div className="flex items-center gap-1.5">
                   {heroSlides.map((slide, idx) => (
                     <button
