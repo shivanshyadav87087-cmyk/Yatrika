@@ -53,13 +53,13 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
         : 'bg-white/90 backdrop-blur-sm py-3.5 border-b border-sand-200 text-slate-900 shadow-sm'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-4 lg:gap-8">
           
           {/* Distinct, Highlighted Brand Logo Block: Yatrika */}
           <a 
             href="#" 
             onClick={(e) => handleNavClick(e, 'home')}
-            className="flex items-center gap-3 group transition-transform hover:scale-105"
+            className="flex items-center gap-3 group transition-transform hover:scale-105 shrink-0"
           >
             <div className="relative p-1 rounded-2xl bg-gradient-to-br from-terracotta-500/20 via-amber-500/10 to-transparent border border-terracotta-500/30 shadow-sm">
               <YatrikaLogoIcon className="w-9 h-9 transition-transform group-hover:rotate-45" />
@@ -74,13 +74,13 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
             </div>
           </a>
 
-          {/* Wisely Proportioned Desktop Navigation Links with Glowing Pointer States */}
-          <nav className="hidden md:flex items-center gap-5 text-xs font-sans font-semibold text-slate-700">
+          {/* Wisely Balanced Desktop Navigation Links */}
+          <nav className="hidden md:flex items-center justify-center gap-3 lg:gap-6 text-xs font-sans font-semibold text-slate-700 flex-1 px-4">
             {/* Home Navigation Link */}
             <button 
               onClick={(e) => handleNavClick(e, 'home')} 
-              className={`px-2.5 py-1 rounded-lg transition-all duration-200 hover:scale-105 hover:text-terracotta-600 hover:drop-shadow-[0_0_8px_rgba(232,115,74,0.3)] ${
-                currentView === 'home' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''
+              className={`px-3 py-1.5 rounded-xl transition-all duration-200 hover:scale-105 hover:text-terracotta-600 hover:drop-shadow-[0_0_8px_rgba(232,115,74,0.3)] ${
+                currentView === 'home' ? 'text-terracotta-600 font-bold bg-terracotta-500/10 border border-terracotta-500/30' : ''
               }`}
             >
               Home
@@ -88,8 +88,8 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
 
             <button 
               onClick={(e) => handleNavClick(e, 'problem')} 
-              className={`px-2.5 py-1 rounded-lg transition-all duration-200 hover:scale-105 hover:text-terracotta-600 hover:drop-shadow-[0_0_8px_rgba(232,115,74,0.3)] ${
-                currentView === 'problem' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''
+              className={`px-3 py-1.5 rounded-xl transition-all duration-200 hover:scale-105 hover:text-terracotta-600 hover:drop-shadow-[0_0_8px_rgba(232,115,74,0.3)] ${
+                currentView === 'problem' ? 'text-terracotta-600 font-bold bg-terracotta-500/10 border border-terracotta-500/30' : ''
               }`}
             >
               The Challenge
@@ -97,8 +97,8 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
             
             <button 
               onClick={(e) => handleNavClick(e, 'solution')} 
-              className={`px-2.5 py-1 rounded-lg transition-all duration-200 hover:scale-105 hover:text-terracotta-600 hover:drop-shadow-[0_0_8px_rgba(232,115,74,0.3)] ${
-                currentView === 'solution' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''
+              className={`px-3 py-1.5 rounded-xl transition-all duration-200 hover:scale-105 hover:text-terracotta-600 hover:drop-shadow-[0_0_8px_rgba(232,115,74,0.3)] ${
+                currentView === 'solution' ? 'text-terracotta-600 font-bold bg-terracotta-500/10 border border-terracotta-500/30' : ''
               }`}
             >
               Solution Pillars
@@ -106,8 +106,8 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
 
             <button 
               onClick={(e) => handleNavClick(e, 'how-it-works')} 
-              className={`px-2.5 py-1 rounded-lg transition-all duration-200 hover:scale-105 hover:text-terracotta-600 hover:drop-shadow-[0_0_8px_rgba(232,115,74,0.3)] ${
-                currentView === 'how-it-works' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''
+              className={`px-3 py-1.5 rounded-xl transition-all duration-200 hover:scale-105 hover:text-terracotta-600 hover:drop-shadow-[0_0_8px_rgba(232,115,74,0.3)] ${
+                currentView === 'how-it-works' ? 'text-terracotta-600 font-bold bg-terracotta-500/10 border border-terracotta-500/30' : ''
               }`}
             >
               How It Works
@@ -115,8 +115,8 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
 
             <button 
               onClick={(e) => handleNavClick(e, 'gem-simulator')} 
-              className={`px-2.5 py-1 rounded-lg flex items-center gap-1.5 transition-all duration-200 hover:scale-105 hover:text-amber-800 hover:drop-shadow-[0_0_8px_rgba(245,158,11,0.3)] ${
-                currentView === 'gem-simulator' ? 'text-amber-700 font-bold border-b-2 border-amber-500 pb-0.5' : 'text-amber-700 font-bold'
+              className={`px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-all duration-200 hover:scale-105 hover:text-amber-800 hover:drop-shadow-[0_0_8px_rgba(245,158,11,0.3)] ${
+                currentView === 'gem-simulator' ? 'text-amber-700 font-bold bg-amber-500/10 border border-amber-500/30' : 'text-amber-700 font-bold'
               }`}
             >
               <Sparkles className="w-3.5 h-3.5" />
@@ -125,18 +125,18 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
 
             <button 
               onClick={(e) => handleNavClick(e, 'impact')} 
-              className={`px-2.5 py-1 rounded-lg transition-all duration-200 hover:scale-105 hover:text-terracotta-600 hover:drop-shadow-[0_0_8px_rgba(232,115,74,0.3)] ${
-                currentView === 'impact' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''
+              className={`px-3 py-1.5 rounded-xl transition-all duration-200 hover:scale-105 hover:text-terracotta-600 hover:drop-shadow-[0_0_8px_rgba(232,115,74,0.3)] ${
+                currentView === 'impact' ? 'text-terracotta-600 font-bold bg-terracotta-500/10 border border-terracotta-500/30' : ''
               }`}
             >
               Impact & Safety
             </button>
           </nav>
 
-          {/* Desktop Right Highlighted Action Buttons (Glowing Pointer States) */}
-          <div className="hidden md:flex items-center gap-2.5">
+          {/* Desktop Right Highlighted Action Buttons */}
+          <div className="hidden md:flex items-center gap-2.5 shrink-0">
             
-            {/* Highlighted Submit Gem CTA Button (placed right next to Explore AI Simulator) */}
+            {/* Highlighted Submit Gem CTA Button */}
             <button
               onClick={(e) => handleNavClick(e, 'submit-gem')}
               className={`px-3.5 py-2 rounded-xl font-bold text-xs shadow-md flex items-center gap-1.5 transition-all duration-200 hover:scale-105 border ${
