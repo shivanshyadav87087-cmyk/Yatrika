@@ -64,7 +64,7 @@ export default function Hero() {
   };
 
   return (
-    <section id="hero" className="relative min-h-[90vh] w-full text-white overflow-hidden flex items-center justify-center">
+    <section id="hero" className="relative min-h-[85vh] w-full text-white overflow-hidden flex items-center justify-center">
       
       {/* 100% Vivid High-Resolution Edge-to-Edge Background Photo Slideshow */}
       <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
@@ -80,7 +80,7 @@ export default function Hero() {
           />
         </AnimatePresence>
 
-        {/* Clean Balanced Overlay */}
+        {/* Clean Balanced Overlay: Dark Midnight Navy on left behind text, 100% Bright & Vibrant on right! */}
         <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-slate-950/90 via-slate-950/50 to-transparent z-10 pointer-events-none" />
         <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-slate-950/95 via-transparent to-black/40 z-10 pointer-events-none" />
       </div>
@@ -91,21 +91,6 @@ export default function Hero() {
           
           {/* Main Headline & Call to Action */}
           <div className="lg:col-span-7 space-y-6 text-left">
-            
-            {/* Top Badge */}
-            <motion.div 
-              initial={{ opacity: 0, y: -15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-slate-900/90 backdrop-blur-md border border-amber-400/50 text-amber-300 text-xs font-semibold uppercase tracking-wider shadow-2xl"
-            >
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-400"></span>
-              </span>
-              <Globe className="w-4 h-4 text-terracotta-400" />
-              <span>Yatrika • AI-Powered Safe Offbeat Tourism Platform</span>
-            </motion.div>
 
             {/* Main Title */}
             <motion.h1 
@@ -150,31 +135,6 @@ export default function Hero() {
                 <Compass className="w-4 h-4 text-amber-400" />
                 <span>How Yatrika Works</span>
               </a>
-            </motion.div>
-
-            {/* Micro Feature Badges */}
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-white/20 text-xs font-mono text-slate-200"
-            >
-              <div className="flex items-center gap-2 bg-slate-900/85 p-2.5 rounded-xl border border-slate-700/80 backdrop-blur-md shadow-lg">
-                <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>29 States & UTs</span>
-              </div>
-              <div className="flex items-center gap-2 bg-slate-900/85 p-2.5 rounded-xl border border-slate-700/80 backdrop-blur-md shadow-lg">
-                <MapPin className="w-4 h-4 text-terracotta-400 shrink-0" />
-                <span>Zero Crowd Density</span>
-              </div>
-              <div className="flex items-center gap-2 bg-slate-900/85 p-2.5 rounded-xl border border-slate-700/80 backdrop-blur-md shadow-lg">
-                <Siren className="w-4 h-4 text-cyan-400 shrink-0" />
-                <span>Nearest Police Post</span>
-              </div>
-              <div className="flex items-center gap-2 bg-slate-900/85 p-2.5 rounded-xl border border-slate-700/80 backdrop-blur-md shadow-lg">
-                <Activity className="w-4 h-4 text-terracotta-400 shrink-0" />
-                <span>24/7 Emergency SOS</span>
-              </div>
             </motion.div>
 
           </div>
