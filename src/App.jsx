@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Problem from './components/Problem';
@@ -77,35 +76,6 @@ export default function App() {
       />
       
       <main className="pt-20">
-        
-        {/* Dedicated Section Page Breadcrumb Bar (shown on dedicated section views) */}
-        {currentView !== 'home' && (
-          <div className="bg-white text-slate-900 border-b border-sand-300 py-3.5 px-4 sm:px-8 shadow-sm">
-            <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs">
-              
-              {/* Back to Home Page button */}
-              <button
-                onClick={() => handleNavigateView('home')}
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg font-bold bg-sand-100 hover:bg-sand-200 border border-sand-300 text-terracotta-600 transition-all hover:scale-105"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Back to Homepage</span>
-              </button>
-
-              {/* Active Dedicated Page Title Badge */}
-              <div className="flex items-center gap-2">
-                <span className="text-slate-600 font-medium">
-                  Viewing Dedicated Page:
-                </span>
-                <span className="font-serif font-bold text-amber-700 bg-amber-500/10 px-2.5 py-1 rounded-md border border-amber-500/30">
-                  {SECTION_TITLES[currentView] || currentView}
-                </span>
-              </div>
-
-            </div>
-          </div>
-        )}
-
         {/* Dynamic Content Views */}
         <AnimatePresence mode="wait">
           

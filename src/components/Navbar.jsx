@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Compass, Sparkles, Menu, X, ArrowRight, ShieldCheck, PlusCircle } from 'lucide-react';
+import { Compass, Sparkles, Menu, X, ArrowRight, ShieldCheck, PlusCircle, Home } from 'lucide-react';
 
 /* Custom Yatrika Logo: Compass Ring with N/S/E/W Ticks & Terracotta Orange Diamond Gem */
 function YatrikaLogoIcon({ className = "w-10 h-10" }) {
@@ -69,6 +69,14 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
 
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-7 text-xs font-sans font-semibold text-slate-700">
+            {/* Home Navigation Link */}
+            <button 
+              onClick={(e) => handleNavClick(e, 'home')} 
+              className={`transition-colors hover:text-terracotta-600 ${currentView === 'home' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
+            >
+              Home
+            </button>
+
             <button 
               onClick={(e) => handleNavClick(e, 'problem')} 
               className={`transition-colors hover:text-terracotta-600 ${currentView === 'problem' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
@@ -106,7 +114,7 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
             </button>
           </nav>
 
-          {/* Desktop Right Highlighted Action Buttons (Submit Gem right next to Explore AI Simulator) */}
+          {/* Desktop Right Highlighted Action Buttons */}
           <div className="hidden md:flex items-center gap-3">
             
             {/* Highlighted Submit Gem CTA Button */}
@@ -155,6 +163,12 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden bg-white border-b border-sand-200 px-4 py-6 space-y-3 font-sans text-sm text-slate-800 shadow-xl"
           >
+            <button 
+              onClick={(e) => handleNavClick(e, 'home')}
+              className="block w-full text-left hover:text-terracotta-600 py-1 font-medium"
+            >
+              Home
+            </button>
             <button 
               onClick={(e) => handleNavClick(e, 'problem')}
               className="block w-full text-left hover:text-terracotta-600 py-1 font-medium"
