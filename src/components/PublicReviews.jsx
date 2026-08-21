@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, ThumbsUp, MessageSquare, Send, CheckCircle2, MapPin, Sparkles, Filter, ShieldCheck } from 'lucide-react';
+import { Star, ThumbsUp, MessageSquare, Send, MapPin, Sparkles, Filter, ShieldCheck } from 'lucide-react';
 import { sampleHiddenGems } from '../data/content.js';
 
 const INITIAL_REVIEWS = [
@@ -13,8 +13,7 @@ const INITIAL_REVIEWS = [
     title: 'Complete peace of mind as a solo female traveler!',
     comment: 'Bypassed overcrowded Manali for Jibhi using Yatrika. The mapped nearest police station (< 8 mins response) and verified female-hosted homestay gave me complete safety assurance. The local Pahadi Siddu was incredible!',
     date: '2 days ago',
-    helpful: 48,
-    verified: true
+    helpful: 48
   },
   {
     id: 'rev-2',
@@ -25,8 +24,7 @@ const INITIAL_REVIEWS = [
     title: 'Discovered authentic heritage far from Hampi crowds',
     comment: 'Instead of standing in long queues at Hampi main ruins, Yatrika recommended Anegundi coracle village across the river. The banana fiber craft workshop and organic thali were the highlights of our trip!',
     date: '5 days ago',
-    helpful: 35,
-    verified: true
+    helpful: 35
   },
   {
     id: 'rev-3',
@@ -37,8 +35,7 @@ const INITIAL_REVIEWS = [
     title: 'Untouched pine forests and pristine Kanchenjunga view',
     comment: 'Escaped Darjeeling Mall Road traffic for Lamahatta sacred pine trails. The 24/7 medical contact info on Yatrika was reassuring for my senior parents. Truly a 5-star experience!',
     date: '1 week ago',
-    helpful: 29,
-    verified: true
+    helpful: 29
   },
   {
     id: 'rev-4',
@@ -49,8 +46,7 @@ const INITIAL_REVIEWS = [
     title: 'Crowd-free Taj Mahal view over Yamuna River',
     comment: 'Yatrika directed us to Kachhpura village opposite Taj Mahal. We got breathtaking sunset views from Mehtab Bagh with zero crowds, plus tasted authentic Bedai & Jalebi from local village vendors.',
     date: '2 weeks ago',
-    helpful: 42,
-    verified: true
+    helpful: 42
   },
   {
     id: 'rev-5',
@@ -61,8 +57,7 @@ const INITIAL_REVIEWS = [
     title: 'Serene surfing & fresh seafood near Mahabalipuram',
     comment: 'Loved the quiet fishing hamlet in Kovalam. The verified driver guild hotline and local seafood recommendations on Yatrika were 100% accurate and helpful.',
     date: '3 weeks ago',
-    helpful: 19,
-    verified: true
+    helpful: 19
   },
   {
     id: 'rev-6',
@@ -73,8 +68,7 @@ const INITIAL_REVIEWS = [
     title: 'Stargazing sanctuary at 14,300 ft!',
     comment: 'As a Ladakhi local, I am impressed by how Yatrika guides travelers to Hanle dark sky reserve while encouraging responsible homestay tourism and night safety preparedness.',
     date: '1 month ago',
-    helpful: 56,
-    verified: true
+    helpful: 56
   }
 ];
 
@@ -136,7 +130,6 @@ export default function PublicReviews() {
   const handleSubmitReview = (e) => {
     e.preventDefault();
 
-    // Determine final destination string
     let finalDestination = '';
     if (selectedPresetDestination && selectedPresetDestination !== 'OTHER') {
       finalDestination = selectedPresetDestination;
@@ -164,15 +157,13 @@ export default function PublicReviews() {
         title: title.trim(),
         comment: comment.trim(),
         date: 'Just now',
-        helpful: 1,
-        verified: true
+        helpful: 1
       };
 
       setReviews(prev => [newRev, ...prev]);
       setIsSubmitting(false);
       setShowSuccessToast(true);
 
-      // Reset form
       setName('');
       setLocation('');
       setSelectedPresetDestination('');
@@ -192,11 +183,11 @@ export default function PublicReviews() {
 
   const getStarLabel = (score) => {
     switch (score) {
-      case 5: return 'Exceptional (5 Stars)';
-      case 4: return 'Great Experience (4 Stars)';
-      case 3: return 'Average Stay (3 Stars)';
-      case 2: return 'Fair (2 Stars)';
-      case 1: return 'Needs Improvement (1 Star)';
+      case 5: return '5 Stars (Exceptional)';
+      case 4: return '4 Stars (Great)';
+      case 3: return '3 Stars (Average)';
+      case 2: return '2 Stars (Fair)';
+      case 1: return '1 Star (Poor)';
       default: return '';
     }
   };
@@ -237,11 +228,11 @@ export default function PublicReviews() {
               ))}
             </div>
             <p className="text-xs text-slate-400 font-medium">
-              Based on <span className="text-slate-200 font-bold">{totalReviewsCount} Verified Public Reviews</span>
+              Based on <span className="text-slate-200 font-bold">{totalReviewsCount} Community Reviews</span>
             </p>
             <div className="mt-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium border border-emerald-500/20">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>100% Verified Community Feedback</span>
+              <span>Real Traveler Feedback</span>
             </div>
           </div>
 
@@ -302,28 +293,21 @@ export default function PublicReviews() {
             </p>
 
             {showSuccessToast && (
-              <motion.div 
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-6 p-4 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs flex items-center gap-3"
-              >
-                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-                <div>
-                  <p className="font-bold">Review Published Successfully!</p>
-                  <p className="text-emerald-400/90">Thank you for contributing to the Yatrika travel community.</p>
-                </div>
-              </motion.div>
+              <div className="mb-6 p-4 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs">
+                <p className="font-bold">Review Published Successfully!</p>
+                <p className="text-emerald-400/90">Thank you for contributing to the Yatrika travel community.</p>
+              </div>
             )}
 
             <form onSubmit={handleSubmitReview} className="space-y-4">
               
-              {/* Interactive 5-Star Selection */}
+              {/* Compact & Clean 5-Star Selector */}
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-2">
-                  Select Rating out of 5 Stars <span className="text-terracotta-400">*</span>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                  Your Rating <span className="text-terracotta-400">*</span>
                 </label>
-                <div className="flex items-center gap-2 bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                  <div className="flex items-center gap-1.5">
+                <div className="flex items-center justify-between bg-slate-900 px-4 py-2.5 rounded-xl border border-slate-800">
+                  <div className="flex items-center gap-1">
                     {[1, 2, 3, 4, 5].map((starNum) => (
                       <button
                         type="button"
@@ -331,19 +315,19 @@ export default function PublicReviews() {
                         onClick={() => setRating(starNum)}
                         onMouseEnter={() => setHoverRating(starNum)}
                         onMouseLeave={() => setHoverRating(0)}
-                        className="p-1 transition-transform hover:scale-125 focus:outline-none"
+                        className="p-1 transition-transform hover:scale-110 focus:outline-none"
                       >
                         <Star 
-                          className={`w-7 h-7 transition-colors ${
+                          className={`w-6 h-6 transition-colors ${
                             starNum <= (hoverRating || rating)
-                              ? 'fill-amber-400 text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]'
-                              : 'text-slate-600 fill-slate-800'
+                              ? 'fill-amber-400 text-amber-400'
+                              : 'text-slate-700 fill-slate-800'
                           }`}
                         />
                       </button>
                     ))}
                   </div>
-                  <span className="ml-auto text-xs font-semibold text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-md border border-amber-400/20">
+                  <span className="text-xs font-bold text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-md border border-amber-400/20">
                     {getStarLabel(hoverRating || rating)}
                   </span>
                 </div>
@@ -384,7 +368,6 @@ export default function PublicReviews() {
                   Destination / Place Visited <span className="text-terracotta-400">*</span>
                 </label>
                 
-                {/* Select from 29-State Verified Places */}
                 <select
                   value={selectedPresetDestination}
                   onChange={(e) => {
@@ -402,7 +385,6 @@ export default function PublicReviews() {
                   <option value="OTHER">✍️ Enter Another Offbeat Place Manually...</option>
                 </select>
 
-                {/* Custom text input if "OTHER" or no preset selected */}
                 {(!selectedPresetDestination || selectedPresetDestination === 'OTHER') && (
                   <input
                     type="text"
@@ -518,14 +500,7 @@ export default function PublicReviews() {
                           {rev.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
                         </div>
                         <div>
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-serif font-bold text-sm text-slate-100">{rev.name}</h4>
-                            {rev.verified && (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-semibold border border-emerald-500/20">
-                                <CheckCircle2 className="w-3 h-3" /> Verified
-                              </span>
-                            )}
-                          </div>
+                          <h4 className="font-serif font-bold text-sm text-slate-100">{rev.name}</h4>
                           <p className="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5">
                             <span className="flex items-center gap-1">
                               <MapPin className="w-3 h-3 text-terracotta-400" />
