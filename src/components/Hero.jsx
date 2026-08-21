@@ -80,7 +80,7 @@ export default function Hero() {
           />
         </AnimatePresence>
 
-        {/* Clean Balanced Overlay: Dark Midnight Navy on left behind text, 100% Bright & Vibrant on right! */}
+        {/* Clean Balanced Overlay: Dark Midnight Navy on left behind text */}
         <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-slate-950/90 via-slate-950/50 to-transparent z-10 pointer-events-none" />
         <div className="absolute inset-0 w-full h-full bg-gradient-to-t from-slate-950/95 via-transparent to-black/40 z-10 pointer-events-none" />
       </div>
@@ -109,7 +109,7 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-base sm:text-lg text-slate-200 leading-relaxed font-sans max-w-2xl [text-shadow:_0_1px_5px_rgba(0,0,0,0.8)]"
             >
-              Traveling to iconic landmarks like <strong className="text-white">Taj Mahal, Amer Fort, Munnar, or Shimla</strong>? Yatrika diverts crowd congestion by discovering serene offbeat places nearby—recommending famous local food, native clothes/crafts, <strong className="text-white">nearest police stations</strong>, and emergency SOS support!
+              Discover lesser-known places, local culture and safer routes — powered by AI.
             </motion.p>
 
             {/* CTA Action Buttons */}

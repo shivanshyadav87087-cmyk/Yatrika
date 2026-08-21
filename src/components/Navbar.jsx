@@ -2,23 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Compass, Sparkles, Menu, X, ArrowRight, ShieldCheck, PlusCircle, Home } from 'lucide-react';
 
-/* Custom Yatrika Logo: Compass Ring with N/S/E/W Ticks & Terracotta Orange Diamond Gem */
+/* Distinct, Highlighted Custom Yatrika Logo Icon */
 function YatrikaLogoIcon({ className = "w-10 h-10" }) {
   return (
     <svg className={className} viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Outer Compass Ring */}
-      <circle cx="22" cy="22" r="19" stroke="#e8734a" strokeWidth="2.5" strokeOpacity="0.8" />
-      <circle cx="22" cy="22" r="15" stroke="#1e293b" strokeWidth="1" strokeOpacity="0.25" strokeDasharray="3 3" />
+      {/* Outer Glowing Compass Ring */}
+      <circle cx="22" cy="22" r="19" stroke="#e8734a" strokeWidth="2.5" strokeOpacity="0.9" />
+      <circle cx="22" cy="22" r="15" stroke="#f59e0b" strokeWidth="1" strokeOpacity="0.4" strokeDasharray="3 3" />
       
-      {/* N / S / E / W Ticks */}
+      {/* N / S / E / W Compass Ticks */}
       <line x1="22" y1="3" x2="22" y2="8" stroke="#e8734a" strokeWidth="2.5" strokeLinecap="round" />
       <line x1="22" y1="36" x2="22" y2="41" stroke="#e8734a" strokeWidth="2.5" strokeLinecap="round" />
       <line x1="3" y1="22" x2="8" y2="22" stroke="#e8734a" strokeWidth="2.5" strokeLinecap="round" />
       <line x1="36" y1="22" x2="41" y2="22" stroke="#e8734a" strokeWidth="2.5" strokeLinecap="round" />
       
-      {/* Center Terracotta Diamond / Gem */}
+      {/* Center Terracotta Gem Core */}
       <path d="M22 12 L29 22 L22 32 L15 22 Z" fill="#e8734a" />
-      <path d="M22 12 L29 22 L22 22 Z" fill="#ffffff" fillOpacity="0.4" />
+      <path d="M22 12 L29 22 L22 22 Z" fill="#ffffff" fillOpacity="0.45" />
     </svg>
   );
 }
@@ -49,58 +49,75 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       scrolled 
-        ? 'bg-white/95 backdrop-blur-md border-b border-sand-300 shadow-md py-3 text-slate-900' 
-        : 'bg-white/90 backdrop-blur-sm py-4 border-b border-sand-200 text-slate-900 shadow-sm'
+        ? 'bg-white/95 backdrop-blur-md border-b border-sand-300 shadow-md py-2.5 text-slate-900' 
+        : 'bg-white/90 backdrop-blur-sm py-3.5 border-b border-sand-200 text-slate-900 shadow-sm'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           
-          {/* Top-Left Brand Logo Block: Yatrika */}
+          {/* Distinct, Highlighted Brand Logo Block: Yatrika */}
           <a 
             href="#" 
             onClick={(e) => handleNavClick(e, 'home')}
             className="flex items-center gap-3 group transition-transform hover:scale-105"
           >
-            <YatrikaLogoIcon className="w-10 h-10 transition-transform group-hover:rotate-45" />
-            <span className="font-serif font-bold text-2xl tracking-tight text-slate-900">
-              Yatrika
-            </span>
+            <div className="relative p-1 rounded-2xl bg-gradient-to-br from-terracotta-500/20 via-amber-500/10 to-transparent border border-terracotta-500/30 shadow-sm">
+              <YatrikaLogoIcon className="w-9 h-9 transition-transform group-hover:rotate-45" />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-serif font-extrabold text-2xl tracking-tight bg-gradient-to-r from-terracotta-600 via-amber-700 to-terracotta-500 bg-clip-text text-transparent drop-shadow-sm">
+                Yatrika
+              </span>
+              <span className="text-[9px] font-mono text-terracotta-600 font-bold tracking-widest uppercase -mt-1">
+                AI Travel Platform
+              </span>
+            </div>
           </a>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-7 text-xs font-sans font-semibold text-slate-700">
+          {/* Wisely Proportioned Desktop Navigation Links with Glowing Pointer States */}
+          <nav className="hidden md:flex items-center gap-5 text-xs font-sans font-semibold text-slate-700">
             {/* Home Navigation Link */}
             <button 
               onClick={(e) => handleNavClick(e, 'home')} 
-              className={`transition-colors hover:text-terracotta-600 ${currentView === 'home' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
+              className={`px-2.5 py-1 rounded-lg transition-all duration-200 hover:scale-105 hover:text-terracotta-600 hover:drop-shadow-[0_0_8px_rgba(232,115,74,0.3)] ${
+                currentView === 'home' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''
+              }`}
             >
               Home
             </button>
 
             <button 
               onClick={(e) => handleNavClick(e, 'problem')} 
-              className={`transition-colors hover:text-terracotta-600 ${currentView === 'problem' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
+              className={`px-2.5 py-1 rounded-lg transition-all duration-200 hover:scale-105 hover:text-terracotta-600 hover:drop-shadow-[0_0_8px_rgba(232,115,74,0.3)] ${
+                currentView === 'problem' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''
+              }`}
             >
               The Challenge
             </button>
             
             <button 
               onClick={(e) => handleNavClick(e, 'solution')} 
-              className={`transition-colors hover:text-terracotta-600 ${currentView === 'solution' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
+              className={`px-2.5 py-1 rounded-lg transition-all duration-200 hover:scale-105 hover:text-terracotta-600 hover:drop-shadow-[0_0_8px_rgba(232,115,74,0.3)] ${
+                currentView === 'solution' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''
+              }`}
             >
               Solution Pillars
             </button>
 
             <button 
               onClick={(e) => handleNavClick(e, 'how-it-works')} 
-              className={`transition-colors hover:text-terracotta-600 ${currentView === 'how-it-works' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
+              className={`px-2.5 py-1 rounded-lg transition-all duration-200 hover:scale-105 hover:text-terracotta-600 hover:drop-shadow-[0_0_8px_rgba(232,115,74,0.3)] ${
+                currentView === 'how-it-works' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''
+              }`}
             >
               How It Works
             </button>
 
             <button 
               onClick={(e) => handleNavClick(e, 'gem-simulator')} 
-              className={`flex items-center gap-1.5 transition-colors ${currentView === 'gem-simulator' ? 'text-amber-700 font-bold border-b-2 border-amber-500 pb-0.5' : 'text-amber-700 font-bold hover:text-amber-800'}`}
+              className={`px-2.5 py-1 rounded-lg flex items-center gap-1.5 transition-all duration-200 hover:scale-105 hover:text-amber-800 hover:drop-shadow-[0_0_8px_rgba(245,158,11,0.3)] ${
+                currentView === 'gem-simulator' ? 'text-amber-700 font-bold border-b-2 border-amber-500 pb-0.5' : 'text-amber-700 font-bold'
+              }`}
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>AI Simulator</span>
@@ -108,32 +125,34 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
 
             <button 
               onClick={(e) => handleNavClick(e, 'impact')} 
-              className={`transition-colors hover:text-terracotta-600 ${currentView === 'impact' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
+              className={`px-2.5 py-1 rounded-lg transition-all duration-200 hover:scale-105 hover:text-terracotta-600 hover:drop-shadow-[0_0_8px_rgba(232,115,74,0.3)] ${
+                currentView === 'impact' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''
+              }`}
             >
               Impact & Safety
             </button>
           </nav>
 
-          {/* Desktop Right Highlighted Action Buttons */}
-          <div className="hidden md:flex items-center gap-3">
+          {/* Desktop Right Highlighted Action Buttons (Glowing Pointer States) */}
+          <div className="hidden md:flex items-center gap-2.5">
             
-            {/* Highlighted Submit Gem CTA Button */}
+            {/* Highlighted Submit Gem CTA Button (placed right next to Explore AI Simulator) */}
             <button
               onClick={(e) => handleNavClick(e, 'submit-gem')}
-              className={`px-4 py-2.5 rounded-xl font-bold text-xs shadow-md flex items-center gap-2 transition-all hover:scale-105 border ${
+              className={`px-3.5 py-2 rounded-xl font-bold text-xs shadow-md flex items-center gap-1.5 transition-all duration-200 hover:scale-105 border ${
                 currentView === 'submit-gem'
-                  ? 'bg-amber-600 text-white border-amber-500 shadow-amber-600/30'
-                  : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border-slate-700'
+                  ? 'bg-amber-600 text-white border-amber-500 shadow-amber-600/40 drop-shadow-[0_0_10px_rgba(245,158,11,0.4)]'
+                  : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border-slate-700 hover:shadow-amber-500/20'
               }`}
             >
-              <PlusCircle className="w-4 h-4 text-amber-400" />
+              <PlusCircle className="w-3.5 h-3.5 text-amber-400" />
               <span>Submit Gem</span>
             </button>
 
             {/* Explore AI Simulator CTA Button */}
             <button
               onClick={(e) => handleNavClick(e, 'gem-simulator')}
-              className="px-5 py-2.5 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-xs shadow-md shadow-terracotta-500/20 flex items-center gap-2 transition-all hover:scale-105"
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-terracotta-500 to-amber-600 hover:from-terracotta-600 hover:to-amber-700 text-white font-bold text-xs shadow-md shadow-terracotta-500/30 flex items-center gap-1.5 transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-terracotta-500/40"
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-200" />
               <span>Explore AI Simulator</span>
