@@ -52,14 +52,14 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
         ? 'bg-white/95 backdrop-blur-md border-b border-sand-300 shadow-md py-2.5 text-slate-900' 
         : 'bg-white/90 backdrop-blur-sm py-3.5 border-b border-sand-200 text-slate-900 shadow-sm'
     }`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           
-          {/* Distinct, Highlighted Brand Logo Block: Yatrika */}
+          {/* Distinct, Highlighted Brand Logo Block (Shifted gracefully to the left) */}
           <a 
             href="#" 
             onClick={(e) => handleNavClick(e, 'home')}
-            className="flex items-center gap-3 group transition-transform hover:scale-105"
+            className="flex items-center gap-3 group transition-transform hover:scale-105 shrink-0"
           >
             <div className="relative p-1 rounded-2xl bg-gradient-to-br from-terracotta-500/20 via-amber-500/10 to-transparent border border-terracotta-500/30 shadow-sm">
               <YatrikaLogoIcon className="w-9 h-9 transition-transform group-hover:rotate-45" />
@@ -133,10 +133,10 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
             </button>
           </nav>
 
-          {/* Desktop Right Highlighted Action Buttons (Glowing Pointer States) */}
-          <div className="hidden md:flex items-center gap-2.5">
+          {/* Desktop Right Highlighted Action Buttons */}
+          <div className="hidden md:flex items-center gap-2.5 shrink-0">
             
-            {/* Highlighted Submit Gem CTA Button (placed right next to Explore AI Simulator) */}
+            {/* Highlighted Submit Gem CTA Button */}
             <button
               onClick={(e) => handleNavClick(e, 'submit-gem')}
               className={`px-3.5 py-2 rounded-xl font-bold text-xs shadow-md flex items-center gap-1.5 transition-all duration-200 hover:scale-105 border ${
