@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Compass, Sparkles, Menu, X, ArrowRight, ShieldCheck, PlusCircle } from 'lucide-react';
+import { Compass, Sparkles, Menu, X, ArrowRight, ShieldCheck } from 'lucide-react';
 
 /* Custom Yatrika Logo: Compass Ring with N/S/E/W Ticks & Terracotta Orange Diamond Gem */
 function YatrikaLogoIcon({ className = "w-10 h-10" }) {
@@ -98,15 +98,6 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
               <span>AI Simulator</span>
             </button>
 
-            {/* Dedicated Navigation Button: Submit Hidden Gem */}
-            <button 
-              onClick={(e) => handleNavClick(e, 'submit-gem')} 
-              className={`flex items-center gap-1.5 transition-colors ${currentView === 'submit-gem' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : 'text-slate-700 hover:text-terracotta-600 font-semibold'}`}
-            >
-              <PlusCircle className="w-3.5 h-3.5 text-terracotta-500" />
-              <span>Submit Gem</span>
-            </button>
-
             <button 
               onClick={(e) => handleNavClick(e, 'impact')} 
               className={`transition-colors hover:text-terracotta-600 ${currentView === 'impact' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
@@ -115,19 +106,11 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
             </button>
           </nav>
 
-          {/* Desktop Right Action Buttons */}
+          {/* Desktop Right CTA Button */}
           <div className="hidden md:flex items-center gap-3">
             <button
-              onClick={(e) => handleNavClick(e, 'submit-gem')}
-              className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs shadow-md flex items-center gap-2 transition-all hover:scale-105"
-            >
-              <PlusCircle className="w-3.5 h-3.5 text-amber-400" />
-              <span>Submit Gem Portal</span>
-            </button>
-
-            <button
               onClick={(e) => handleNavClick(e, 'gem-simulator')}
-              className="px-4 py-2 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-xs shadow-md shadow-terracotta-500/20 flex items-center gap-2 transition-all hover:scale-105"
+              className="px-5 py-2.5 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-xs shadow-md shadow-terracotta-500/20 flex items-center gap-2 transition-all hover:scale-105"
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-200" />
               <span>Explore AI Simulator</span>
@@ -180,13 +163,6 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
             >
               <Sparkles className="w-4 h-4" />
               <span>AI Recommender Simulator</span>
-            </button>
-            <button 
-              onClick={(e) => handleNavClick(e, 'submit-gem')}
-              className="block w-full text-left text-terracotta-600 font-bold py-1 flex items-center gap-1.5"
-            >
-              <PlusCircle className="w-4 h-4 text-terracotta-500" />
-              <span>Submit New Offbeat Gem</span>
             </button>
             <button 
               onClick={(e) => handleNavClick(e, 'impact')}
