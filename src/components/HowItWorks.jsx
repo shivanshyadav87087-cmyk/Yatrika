@@ -1,119 +1,136 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Compass, ShieldCheck, MapPin, ArrowRight } from 'lucide-react';
+import { MapPin, Sparkles, ShoppingBag, ShieldCheck, ArrowRight, CheckCircle2, Globe, Heart, Siren, Compass } from 'lucide-react';
 
-const STEPS = [
-  {
-    step: '01',
-    title: 'Tell Yatrika your preferences',
-    desc: 'Select your starting city, travel group (solo, couple, family), experience vibe, and crowd preference.',
-    icon: '📍'
-  },
-  {
-    step: '02',
-    title: 'AI discovers relevant hidden gems',
-    desc: 'Our AI discovery engine scans 29 Indian states to find lesser-known places nearby with low footfall congestion.',
-    icon: '🤖'
-  },
-  {
-    step: '03',
-    title: 'Explore with local insights & safety',
-    desc: 'Access verified nearby police stations, medical readiness, regional food specialties, and native crafts.',
-    icon: '🛡️'
-  }
-];
-
-export default function HowItWorks({ onNavigate }) {
-  const handleSimClick = (e) => {
-    e.preventDefault();
-    if (onNavigate) {
-      onNavigate('gem-simulator');
-    } else {
-      window.location.hash = 'gem-simulator';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+export default function HowItWorks() {
+  const steps = [
+    {
+      id: "01",
+      title: "Choose State or Famous Landmark",
+      icon: MapPin,
+      color: "bg-terracotta-500 text-white",
+      badge: "Step 1",
+      desc: "Select any Indian State or a famous crowded landmark you're visiting (like Taj Mahal, Amer Fort, Munnar, or Shimla)."
+    },
+    {
+      id: "02",
+      title: "AI Finds Nearby Offbeat Hidden Gems",
+      icon: Sparkles,
+      color: "bg-amber-500 text-slate-950",
+      badge: "Step 2",
+      desc: "Yatrika AI instantly scans surrounding 5-30km regions to recommend untouched, low-footfall hidden places worth visiting."
+    },
+    {
+      id: "03",
+      title: "Famous Regional Food & Native Clothes",
+      icon: ShoppingBag,
+      color: "bg-cyan-500 text-slate-950",
+      badge: "Step 3",
+      desc: "Discover verified local dhabas serving famous regional dishes alongside native handloom clothes and artisan village crafts."
+    },
+    {
+      id: "04",
+      title: "Travel Safely with 24/7 Police & SOS",
+      icon: ShieldCheck,
+      color: "bg-emerald-500 text-slate-950",
+      badge: "Step 4",
+      desc: "Every offbeat spot is mapped to its nearest police station, 24/7 ER hospital, verified female homestay host, and 1-tap Night SOS."
     }
-  };
+  ];
 
   return (
-    <section id="how-it-works" className="py-20 bg-[#090d16] text-slate-100 relative overflow-hidden border-t border-slate-800/80">
+    <section id="how-it-works" className="py-24 bg-slate-900 text-white relative overflow-hidden topo-pattern-dark border-b border-slate-800">
       
-      {/* Background Orbs */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Decorative Orbs */}
+      <div className="absolute top-0 left-1/3 w-96 h-96 bg-terracotta-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 right-1/3 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-14">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-16">
         
-        {/* Title Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 text-amber-400 text-xs font-mono font-bold uppercase tracking-wider border border-amber-500/20">
+        {/* Section Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center max-w-3xl mx-auto space-y-4"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-amber-300 text-xs font-semibold uppercase tracking-wider shadow-sm">
             <Compass className="w-4 h-4 text-terracotta-400" />
-            <span>3-Step Simple Flow</span>
+            <span>Simple 4-Step Experience</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-extrabold text-white tracking-tight">
-            How Yatrika Works
+
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-white tracking-tight">
+            How Yatrika Works For You
           </h2>
-          <p className="text-slate-400 text-base leading-relaxed font-sans">
-            From preference input to safe offbeat destination exploration in seconds.
+
+          <p className="text-base sm:text-lg text-slate-300 leading-relaxed font-sans">
+            From discovering uncrowded spots near famous landmarks to enjoying authentic local food and 24/7 police safety protection—here is how Yatrika transforms your travel journey.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Connected Travel Route 3-Step Visual Flow */}
-        <div className="relative max-w-5xl mx-auto">
-          
-          {/* Dotted Travel Route Connector Line for Desktop */}
-          <div className="hidden md:block absolute top-1/2 left-12 right-12 -translate-y-1/2 h-0.5 border-t-2 border-dashed border-terracotta-500/40 z-0 pointer-events-none" />
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
-            {STEPS.map((item, idx) => (
+        {/* 4 Clean Consumer Feature Step Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {steps.map((item, idx) => {
+            const IconComponent = item.icon;
+            return (
               <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.15 }}
-                className="bg-slate-950/90 border border-slate-800 hover:border-slate-700 p-7 rounded-3xl shadow-xl space-y-4 text-center relative flex flex-col justify-between"
+                whileHover={{ y: -6 }}
+                key={item.id}
+                className="bg-slate-950/90 p-6 rounded-3xl border border-slate-800 shadow-2xl flex flex-col justify-between space-y-4 relative overflow-hidden"
               >
-                <div className="space-y-4">
-                  {/* Step Number Badge & Icon */}
+                <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-serif font-extrabold text-terracotta-400 font-mono">
-                      {item.step}
-                    </span>
-                    <span className="text-2xl p-2 rounded-2xl bg-slate-900 border border-slate-800 shadow-inner">
-                      {item.icon}
+                    <div className={`w-12 h-12 rounded-2xl ${item.color} flex items-center justify-center font-bold shadow-lg`}>
+                      <IconComponent className="w-6 h-6" />
+                    </div>
+                    <span className="text-xs font-mono bg-slate-900 text-amber-300 px-3 py-1 rounded-full border border-slate-800 font-bold">
+                      {item.badge}
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-serif font-bold text-white leading-snug">
+                  <h3 className="font-serif font-bold text-lg text-white pt-2">
                     {item.title}
                   </h3>
 
-                  <p className="text-xs text-slate-400 leading-relaxed font-sans">
+                  <p className="text-xs text-slate-300 leading-relaxed font-sans">
                     {item.desc}
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-slate-900 text-[11px] font-mono text-amber-400 font-semibold">
-                  Step {idx + 1} of 3
+                <div className="pt-3 border-t border-slate-800 flex items-center gap-1.5 text-xs text-amber-400 font-mono">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <span>Verified & Active</span>
                 </div>
               </motion.div>
-            ))}
-          </div>
-
+            );
+          })}
         </div>
 
-        {/* CTA */}
-        <div className="text-center pt-4">
-          <button
-            onClick={handleSimClick}
-            className="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-terracotta-500 to-amber-600 hover:from-terracotta-600 hover:to-amber-700 text-white font-bold text-xs shadow-xl inline-flex items-center gap-2 transition-all hover:scale-105 cursor-pointer"
+        {/* Bottom Callout Banner */}
+        <div className="p-8 rounded-3xl bg-slate-950 border-2 border-amber-500/40 shadow-2xl flex flex-wrap items-center justify-between gap-6">
+          <div className="space-y-1">
+            <h4 className="text-xl font-serif font-bold text-white flex items-center gap-2">
+              <Siren className="w-5 h-5 text-cyan-400" />
+              Ready to Explore India Beyond the Crowds?
+            </h4>
+            <p className="text-xs sm:text-sm text-slate-300 font-sans">
+              Select your state or landmark in the simulator below to discover instant hidden places nearby!
+            </p>
+          </div>
+
+          <a
+            href="#gem-simulator"
+            className="px-6 py-3.5 rounded-2xl bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-xs shadow-xl flex items-center gap-2 transition-all hover:scale-105"
           >
-            <Sparkles className="w-4 h-4 text-amber-200" />
-            <span>Try Yatrika AI Simulator Now</span>
+            <Sparkles className="w-4 h-4 text-amber-300" />
+            <span>Launch AI Recommender</span>
             <ArrowRight className="w-4 h-4" />
-          </button>
+          </a>
         </div>
 
       </div>
+
     </section>
   );
 }
