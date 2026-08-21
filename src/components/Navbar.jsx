@@ -23,7 +23,7 @@ function YatrikaLogoIcon({ className = "w-10 h-10" }) {
   );
 }
 
-export default function Navbar() {
+export default function Navbar({ currentView = 'home', onNavigate }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -35,17 +35,32 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleNavClick = (e, viewKey) => {
+    e.preventDefault();
+    if (onNavigate) {
+      onNavigate(viewKey);
+    } else {
+      window.location.hash = viewKey === 'home' ? '' : viewKey;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    setMobileMenuOpen(false);
+  };
+
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       scrolled 
         ? 'bg-slate-950/90 backdrop-blur-md border-b border-slate-800 shadow-xl py-3' 
-        : 'bg-transparent py-5'
+        : 'bg-slate-950/80 backdrop-blur-sm py-4 border-b border-slate-900'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           
           {/* Top-Left Brand Logo Block: Yatrika */}
-          <a href="#" className="flex items-center gap-3 group transition-transform hover:scale-105">
+          <a 
+            href="#" 
+            onClick={(e) => handleNavClick(e, 'home')}
+            className="flex items-center gap-3 group transition-transform hover:scale-105"
+          >
             <YatrikaLogoIcon className="w-10 h-10 text-white transition-transform group-hover:rotate-45" />
             <span className="font-serif font-medium text-2xl tracking-tight text-[#f4f1e8]">
               Yatrika
@@ -53,27 +68,60 @@ export default function Navbar() {
           </a>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-8 text-xs font-sans font-medium text-slate-300">
-            <a href="#problem" className="hover:text-terracotta-400 transition-colors">The Challenge</a>
-            <a href="#solution" className="hover:text-terracotta-400 transition-colors">Solution Pillars</a>
-            <a href="#how-it-works" className="hover:text-terracotta-400 transition-colors">How It Works</a>
-            <a href="#gem-simulator" className="hover:text-terracotta-400 transition-colors flex items-center gap-1 text-amber-400 font-semibold">
+          <nav className="hidden md:flex items-center gap-7 text-xs font-sans font-medium text-slate-300">
+            <button 
+              onClick={(e) => handleNavClick(e, 'problem')} 
+              className={`transition-colors hover:text-terracotta-400 ${currentView === 'problem' ? 'text-terracotta-400 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
+            >
+              The Challenge
+            </button>
+            
+            <button 
+              onClick={(e) => handleNavClick(e, 'solution')} 
+              className={`transition-colors hover:text-terracotta-400 ${currentView === 'solution' ? 'text-terracotta-400 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
+            >
+              Solution Pillars
+            </button>
+
+            <button 
+              onClick={(e) => handleNavClick(e, 'how-it-works')} 
+              className={`transition-colors hover:text-terracotta-400 ${currentView === 'how-it-works' ? 'text-terracotta-400 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
+            >
+              How It Works
+            </button>
+
+            <button 
+              onClick={(e) => handleNavClick(e, 'gem-simulator')} 
+              className={`flex items-center gap-1.5 transition-colors ${currentView === 'gem-simulator' ? 'text-amber-400 font-bold border-b-2 border-amber-400 pb-0.5' : 'text-amber-400 font-semibold hover:text-amber-300'}`}
+            >
               <Sparkles className="w-3.5 h-3.5" />
               <span>AI Simulator</span>
-            </a>
-            <a href="#impact" className="hover:text-terracotta-400 transition-colors">Impact & Safety</a>
-            <a href="#reviews" className="hover:text-terracotta-400 transition-colors">Reviews</a>
+            </button>
+
+            <button 
+              onClick={(e) => handleNavClick(e, 'impact')} 
+              className={`transition-colors hover:text-terracotta-400 ${currentView === 'impact' ? 'text-terracotta-400 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
+            >
+              Impact & Safety
+            </button>
+
+            <button 
+              onClick={(e) => handleNavClick(e, 'reviews')} 
+              className={`transition-colors hover:text-terracotta-400 ${currentView === 'reviews' ? 'text-terracotta-400 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
+            >
+              Public Reviews
+            </button>
           </nav>
 
           {/* Desktop CTA Button */}
           <div className="hidden md:flex items-center gap-3">
-            <a
-              href="#gem-simulator"
+            <button
+              onClick={(e) => handleNavClick(e, 'gem-simulator')}
               className="px-4 py-2 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-xs shadow-lg flex items-center gap-2 transition-all hover:scale-105"
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>Explore Yatrika</span>
-            </a>
+              <span>Explore AI Simulator</span>
+            </button>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -94,51 +142,45 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-slate-900 border-b border-slate-800 px-4 py-6 space-y-4 font-sans text-sm text-slate-200"
+            className="md:hidden bg-slate-900 border-b border-slate-800 px-4 py-6 space-y-3 font-sans text-sm text-slate-200"
           >
-            <a 
-              href="#problem" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="block hover:text-terracotta-400 py-1"
+            <button 
+              onClick={(e) => handleNavClick(e, 'problem')}
+              className="block w-full text-left hover:text-terracotta-400 py-1"
             >
               The Challenge
-            </a>
-            <a 
-              href="#solution" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="block hover:text-terracotta-400 py-1"
+            </button>
+            <button 
+              onClick={(e) => handleNavClick(e, 'solution')}
+              className="block w-full text-left hover:text-terracotta-400 py-1"
             >
               Solution Pillars
-            </a>
-            <a 
-              href="#how-it-works" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="block hover:text-terracotta-400 py-1"
+            </button>
+            <button 
+              onClick={(e) => handleNavClick(e, 'how-it-works')}
+              className="block w-full text-left hover:text-terracotta-400 py-1"
             >
               How It Works
-            </a>
-            <a 
-              href="#gem-simulator" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="block text-amber-400 font-semibold py-1 flex items-center gap-1.5"
+            </button>
+            <button 
+              onClick={(e) => handleNavClick(e, 'gem-simulator')}
+              className="block w-full text-left text-amber-400 font-semibold py-1 flex items-center gap-1.5"
             >
               <Sparkles className="w-4 h-4" />
               <span>AI Recommender Simulator</span>
-            </a>
-            <a 
-              href="#impact" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="block hover:text-terracotta-400 py-1"
+            </button>
+            <button 
+              onClick={(e) => handleNavClick(e, 'impact')}
+              className="block w-full text-left hover:text-terracotta-400 py-1"
             >
               Impact & Safety
-            </a>
-            <a 
-              href="#reviews" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="block hover:text-terracotta-400 py-1"
+            </button>
+            <button 
+              onClick={(e) => handleNavClick(e, 'reviews')}
+              className="block w-full text-left hover:text-terracotta-400 py-1"
             >
               Public Reviews
-            </a>
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
