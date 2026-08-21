@@ -3,6 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import WhyYatrika from './components/WhyYatrika';
+import SkipCrowds from './components/SkipCrowds';
+import IndiaMapSection from './components/IndiaMapSection';
+import SafetyIntelligence from './components/SafetyIntelligence';
+import CommunitySubmitSection from './components/CommunitySubmitSection';
 import Problem from './components/Problem';
 import Solution from './components/Solution';
 import HowItWorks from './components/HowItWorks';
@@ -69,7 +74,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen font-sans antialiased selection:bg-terracotta-500 selection:text-white bg-sand-50 text-slate-900">
+    <div className="min-h-screen font-sans antialiased selection:bg-terracotta-500 selection:text-white bg-[#090d16] text-slate-100">
       {/* Navbar with active view handler */}
       <Navbar 
         currentView={currentView} 
@@ -80,13 +85,13 @@ export default function App() {
         
         {/* Dedicated Section Page Breadcrumb Bar (shown on dedicated section views) */}
         {currentView !== 'home' && (
-          <div className="bg-white text-slate-900 border-b border-sand-300 py-3.5 px-4 sm:px-8 shadow-sm">
+          <div className="bg-[#090d16] text-slate-100 border-b border-slate-800 py-3.5 px-4 sm:px-8 shadow-md">
             <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs">
               
               {/* Back to Home Page button */}
               <button
                 onClick={() => handleNavigateView('home')}
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg font-bold bg-sand-100 hover:bg-sand-200 border border-sand-300 text-terracotta-600 transition-all hover:scale-105"
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg font-bold bg-slate-900 hover:bg-slate-800 border border-slate-700 text-terracotta-400 transition-all hover:scale-105"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Back to Homepage</span>
@@ -94,10 +99,10 @@ export default function App() {
 
               {/* Active Dedicated Page Title Badge */}
               <div className="flex items-center gap-2">
-                <span className="text-slate-600 font-medium">
+                <span className="text-slate-400 font-medium">
                   Viewing Dedicated Page:
                 </span>
-                <span className="font-serif font-bold text-amber-700 bg-amber-500/10 px-2.5 py-1 rounded-md border border-amber-500/30">
+                <span className="font-serif font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-md border border-amber-500/30">
                   {SECTION_TITLES[currentView] || currentView}
                 </span>
               </div>
@@ -109,7 +114,7 @@ export default function App() {
         {/* Dynamic Content Views */}
         <AnimatePresence mode="wait">
           
-          {/* VIEW: HOMEPAGE (Streamlined Hero Photo Slideshow Landing Page) */}
+          {/* VIEW: HOMEPAGE (Redesigned Premium India AI Travel Platform) */}
           {currentView === 'home' && (
             <motion.div
               key="view-home"
@@ -118,8 +123,26 @@ export default function App() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              {/* Hero Section with Full Edge-to-Edge Photo Slideshow & Headline Copy */}
-              <Hero />
+              {/* 1. Hero Section (Discover India's Hidden Side + AI Panel + AI Brief + 3 Feature Cards) */}
+              <Hero onNavigate={handleNavigateView} />
+
+              {/* 2. Why Yatrika (Not Another Tourist Guide) */}
+              <WhyYatrika />
+
+              {/* 3. Skip the Crowds Comparison Section */}
+              <SkipCrowds onNavigate={handleNavigateView} />
+
+              {/* 4. India Map Section (29 States. Thousands of Stories) */}
+              <IndiaMapSection onNavigate={handleNavigateView} />
+
+              {/* 5. Safety Intelligence Section (Before You Explore, Yatrika Checks) */}
+              <SafetyIntelligence />
+
+              {/* 6. Community / Submit a Gem Section */}
+              <CommunitySubmitSection onNavigate={handleNavigateView} />
+
+              {/* 7. How Yatrika Works Section */}
+              <HowItWorks onNavigate={handleNavigateView} />
             </motion.div>
           )}
 
@@ -158,7 +181,7 @@ export default function App() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.25 }}
             >
-              <HowItWorks />
+              <HowItWorks onNavigate={handleNavigateView} />
               <Features />
             </motion.div>
           )}
@@ -198,6 +221,7 @@ export default function App() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.25 }}
             >
+              <SafetyIntelligence />
               <ImpactBenefits />
               <Feasibility />
               <Research />
