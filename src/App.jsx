@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Sparkles, Home, Layers, Compass, ShieldCheck, MessageSquare, Route, ShieldAlert, Award } from 'lucide-react';
+import { ArrowLeft, Sparkles } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Problem from './components/Problem';
@@ -17,10 +17,10 @@ import Footer from './components/Footer';
 import { sampleHiddenGems } from './data/content';
 
 const SECTION_TITLES = {
-  home: 'All Sections & Overview',
+  home: 'Home',
   problem: 'The Tourism Paradox & Overcrowding Challenge',
-  solution: 'Yatrika Core Solution Pillars',
-  'how-it-works': 'How Yatrika AI & Safety Telematics Work',
+  solution: 'Yatrika Core Solution Pillars (4 Pillars)',
+  'how-it-works': 'How Yatrika AI & Search Engine Works',
   'gem-simulator': 'AI Hidden Gem Recommender & Simulator',
   impact: 'Pan-India Impact, Feasibility & Safety Infrastructure',
   reviews: 'Public Traveler Reviews & Community Ratings'
@@ -29,7 +29,6 @@ const SECTION_TITLES = {
 export default function App() {
   const [gemsDatabase, setGemsDatabase] = useState(sampleHiddenGems);
   const [currentView, setCurrentView] = useState('home');
-  const [viewMode, setViewMode] = useState('focused'); // 'focused' = dedicated section view mode, 'full' = full scrollable landing page
 
   // Listen to hash changes in URL for seamless SPA navigation without changing tabs
   useEffect(() => {
@@ -43,7 +42,6 @@ export default function App() {
       }
     };
 
-    // Initial check on page load
     handleHashChange();
 
     window.addEventListener('hashchange', handleHashChange);
@@ -71,18 +69,18 @@ export default function App() {
       
       <main className="pt-20">
         
-        {/* Dedicated Section Page Breadcrumb Bar (when not in full home mode) */}
+        {/* Dedicated Section Page Breadcrumb Bar (shown on dedicated section views) */}
         {currentView !== 'home' && (
           <div className="bg-slate-950 text-slate-200 border-b border-slate-800 py-3.5 px-4 sm:px-8 shadow-md">
             <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs">
               
-              {/* Back to Home / All Sections button */}
+              {/* Back to Home Page button */}
               <button
                 onClick={() => handleNavigateView('home')}
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-terracotta-400 font-semibold transition-all hover:scale-105"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Back to Full Home Page</span>
+                <span>Back to Homepage</span>
               </button>
 
               {/* Active Dedicated Page Title Badge */}
@@ -93,30 +91,6 @@ export default function App() {
                 </span>
               </div>
 
-              {/* View Mode Selector (Focused Page vs Full Landing Page) */}
-              <div className="flex items-center gap-1.5 bg-slate-900 p-1 rounded-lg border border-slate-800 text-[11px]">
-                <button
-                  onClick={() => setViewMode('focused')}
-                  className={`px-2.5 py-1 rounded-md font-medium transition-all ${
-                    viewMode === 'focused'
-                      ? 'bg-terracotta-500 text-white shadow-sm'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  Focused Page
-                </button>
-                <button
-                  onClick={() => setViewMode('full')}
-                  className={`px-2.5 py-1 rounded-md font-medium transition-all ${
-                    viewMode === 'full'
-                      ? 'bg-terracotta-500 text-white shadow-sm'
-                      : 'text-slate-400 hover:text-slate-200'
-                  }`}
-                >
-                  Full Page Scroll
-                </button>
-              </div>
-
             </div>
           </div>
         )}
@@ -124,8 +98,8 @@ export default function App() {
         {/* Dynamic Content Views */}
         <AnimatePresence mode="wait">
           
-          {/* VIEW: HOME (Full Landing Page) */}
-          {(currentView === 'home' || viewMode === 'full') && (
+          {/* VIEW: HOMEPAGE (Streamlined Hero with Background Photo Slideshow & Recommender Simulator) */}
+          {currentView === 'home' && (
             <motion.div
               key="view-home"
               initial={{ opacity: 0 }}
@@ -133,31 +107,18 @@ export default function App() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
+              {/* Hero Section with Full Edge-to-Edge Photo Slideshow & Headline Copy */}
               <Hero />
-              <div id="problem"><Problem /></div>
-              <div id="solution"><Solution /></div>
-              <div id="how-it-works"><HowItWorks /></div>
-              <Features />
               
-              {/* Interactive AI Simulator */}
+              {/* AI Simulator Engine for 29 States */}
               <div id="gem-simulator">
                 <GemSimulator customGems={gemsDatabase} />
               </div>
-              
-              {/* User Submission Portal */}
-              <GemSubmission onAddGemToDatabase={handleAddGemToDatabase} />
-              
-              <Feasibility />
-              <div id="impact"><ImpactBenefits /></div>
-              <Research />
-
-              {/* Public Reviews */}
-              <div id="reviews"><PublicReviews /></div>
             </motion.div>
           )}
 
-          {/* DEDICATED FOCUSED PAGE VIEW: The Challenge */}
-          {currentView === 'problem' && viewMode === 'focused' && (
+          {/* DEDICATED PAGE VIEW: The Challenge */}
+          {currentView === 'problem' && (
             <motion.div
               key="view-problem"
               initial={{ opacity: 0, y: 10 }}
@@ -166,12 +127,11 @@ export default function App() {
               transition={{ duration: 0.25 }}
             >
               <Problem />
-              <Features />
             </motion.div>
           )}
 
-          {/* DEDICATED FOCUSED PAGE VIEW: Solution Pillars */}
-          {currentView === 'solution' && viewMode === 'focused' && (
+          {/* DEDICATED PAGE VIEW: Solution Pillars (4 Core Pillars) */}
+          {currentView === 'solution' && (
             <motion.div
               key="view-solution"
               initial={{ opacity: 0, y: 10 }}
@@ -180,12 +140,11 @@ export default function App() {
               transition={{ duration: 0.25 }}
             >
               <Solution />
-              <Features />
             </motion.div>
           )}
 
-          {/* DEDICATED FOCUSED PAGE VIEW: How It Works */}
-          {currentView === 'how-it-works' && viewMode === 'focused' && (
+          {/* DEDICATED PAGE VIEW: How It Works & AI Search Engine */}
+          {currentView === 'how-it-works' && (
             <motion.div
               key="view-how-it-works"
               initial={{ opacity: 0, y: 10 }}
@@ -194,11 +153,12 @@ export default function App() {
               transition={{ duration: 0.25 }}
             >
               <HowItWorks />
+              <Features />
             </motion.div>
           )}
 
-          {/* DEDICATED FOCUSED PAGE VIEW: AI Simulator */}
-          {currentView === 'gem-simulator' && viewMode === 'focused' && (
+          {/* DEDICATED PAGE VIEW: AI Simulator & Recommender */}
+          {currentView === 'gem-simulator' && (
             <motion.div
               key="view-simulator"
               initial={{ opacity: 0, y: 10 }}
@@ -211,8 +171,8 @@ export default function App() {
             </motion.div>
           )}
 
-          {/* DEDICATED FOCUSED PAGE VIEW: Impact & Safety Telematics */}
-          {currentView === 'impact' && viewMode === 'focused' && (
+          {/* DEDICATED PAGE VIEW: Impact & Safety Telematics */}
+          {currentView === 'impact' && (
             <motion.div
               key="view-impact"
               initial={{ opacity: 0, y: 10 }}
@@ -226,8 +186,8 @@ export default function App() {
             </motion.div>
           )}
 
-          {/* DEDICATED FOCUSED PAGE VIEW: Public Reviews */}
-          {currentView === 'reviews' && viewMode === 'focused' && (
+          {/* DEDICATED PAGE VIEW: Public Reviews */}
+          {currentView === 'reviews' && (
             <motion.div
               key="view-reviews"
               initial={{ opacity: 0, y: 10 }}
