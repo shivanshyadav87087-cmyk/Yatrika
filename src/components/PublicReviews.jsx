@@ -84,12 +84,10 @@ export default function PublicReviews() {
   const [ratingFilter, setRatingFilter] = useState('all');
   const [votedHelpful, setVotedHelpful] = useState({});
 
-  // Verified Places list for autocomplete & quick selection
   const verifiedPlaces = useMemo(() => {
     return sampleHiddenGems.map(g => `${g.gemName} (${g.city}, ${g.state})`);
   }, []);
 
-  // Form State
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
   const [selectedPresetDestination, setSelectedPresetDestination] = useState('');
@@ -102,12 +100,10 @@ export default function PublicReviews() {
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [destinationError, setDestinationError] = useState(false);
 
-  // Sync to localStorage
   useEffect(() => {
     localStorage.setItem('yatrika_public_reviews', JSON.stringify(reviews));
   }, [reviews]);
 
-  // Rating Stats Calculation
   const totalReviewsCount = reviews.length;
   const avgRating = totalReviewsCount > 0 
     ? (reviews.reduce((acc, r) => acc + r.rating, 0) / totalReviewsCount).toFixed(1)
@@ -193,7 +189,7 @@ export default function PublicReviews() {
   };
 
   return (
-    <section id="reviews" className="py-24 bg-slate-900 text-slate-100 relative overflow-hidden">
+    <section id="reviews" className="py-24 bg-sand-50 text-slate-900 relative overflow-hidden border-t border-sand-200">
       {/* Background Decorative Glow */}
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-terracotta-500/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -202,58 +198,58 @@ export default function PublicReviews() {
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-terracotta-500/20 text-terracotta-400 text-xs font-semibold uppercase tracking-wider mb-4 border border-terracotta-500/30">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-terracotta-500/10 text-terracotta-600 text-xs font-semibold uppercase tracking-wider mb-4 border border-terracotta-500/30 shadow-sm">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Community Traveler Reviews</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-serif font-bold text-slate-100 tracking-tight mb-4">
+          <h2 className="text-3xl sm:text-4xl font-serif font-bold text-slate-900 tracking-tight mb-4">
             Real Experiences from Yatrika Explorers
           </h2>
-          <p className="text-slate-400 text-base leading-relaxed">
+          <p className="text-slate-600 text-base leading-relaxed">
             See how travelers across India use Yatrika to discover uncrowded offbeat gems backed by verified 24/7 police, medical, food, and safety infrastructure.
           </p>
         </div>
 
         {/* Top Summary Bar & Rating Overview */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 bg-slate-950/80 border border-slate-800/80 rounded-2xl p-6 sm:p-8 mb-12 shadow-xl backdrop-blur-sm">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 bg-white border border-sand-300 rounded-2xl p-6 sm:p-8 mb-12 shadow-md">
           
           {/* Rating Score Card */}
-          <div className="flex flex-col items-center justify-center border-b lg:border-b-0 lg:border-r border-slate-800 pb-6 lg:pb-0 lg:pr-8 text-center">
-            <div className="text-5xl sm:text-6xl font-serif font-extrabold text-amber-400 mb-2">
+          <div className="flex flex-col items-center justify-center border-b lg:border-b-0 lg:border-r border-sand-200 pb-6 lg:pb-0 lg:pr-8 text-center">
+            <div className="text-5xl sm:text-6xl font-serif font-extrabold text-amber-600 mb-2">
               {avgRating}
             </div>
             <div className="flex items-center gap-1 mb-2">
               {[1, 2, 3, 4, 5].map((star) => (
-                <Star key={star} className="w-5 h-5 fill-amber-400 text-amber-400" />
+                <Star key={star} className="w-5 h-5 fill-amber-400 text-amber-500" />
               ))}
             </div>
-            <p className="text-xs text-slate-400 font-medium">
-              Based on <span className="text-slate-200 font-bold">{totalReviewsCount} Community Reviews</span>
+            <p className="text-xs text-slate-600 font-medium">
+              Based on <strong className="text-slate-900 font-bold">{totalReviewsCount} Community Reviews</strong>
             </p>
-            <div className="mt-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium border border-emerald-500/20">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <div className="mt-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 text-xs font-semibold border border-emerald-500/30">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
               <span>Real Traveler Feedback</span>
             </div>
           </div>
 
           {/* Rating Bars Breakdown */}
-          <div className="space-y-2.5 flex flex-col justify-center border-b lg:border-b-0 lg:border-r border-slate-800 pb-6 lg:pb-0 lg:pr-8">
+          <div className="space-y-2.5 flex flex-col justify-center border-b lg:border-b-0 lg:border-r border-sand-200 pb-6 lg:pb-0 lg:pr-8">
             {[5, 4, 3, 2, 1].map((num) => {
               const count = ratingCounts[num] || 0;
               const pct = totalReviewsCount > 0 ? (count / totalReviewsCount) * 100 : 0;
               return (
-                <div key={num} className="flex items-center gap-3 text-xs text-slate-300">
+                <div key={num} className="flex items-center gap-3 text-xs text-slate-700">
                   <div className="flex items-center gap-1 w-14 font-medium">
                     <span>{num}</span>
-                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
                   </div>
-                  <div className="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
+                  <div className="flex-1 h-2 bg-sand-200 rounded-full overflow-hidden">
                     <div 
                       className="h-full bg-gradient-to-r from-amber-500 to-terracotta-500 rounded-full transition-all duration-500" 
                       style={{ width: `${pct}%` }}
                     />
                   </div>
-                  <span className="w-8 text-right font-mono text-slate-400">{count}</span>
+                  <span className="w-8 text-right font-mono text-slate-500">{count}</span>
                 </div>
               );
             })}
@@ -261,18 +257,18 @@ export default function PublicReviews() {
 
           {/* Call to Action Box */}
           <div className="flex flex-col justify-center items-start space-y-4">
-            <h4 className="font-serif font-bold text-lg text-slate-100 flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-terracotta-400" />
+            <h4 className="font-serif font-bold text-lg text-slate-900 flex items-center gap-2">
+              <MessageSquare className="w-5 h-5 text-terracotta-500" />
               <span>Have you visited an offbeat gem?</span>
             </h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-600 leading-relaxed">
               Share your honest rating and review to help fellow travelers explore safe, uncrowded destinations across India.
             </p>
             <a 
               href="#review-form"
-              className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-xs shadow-lg flex items-center justify-center gap-2 transition-all hover:scale-105"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-xs shadow-md flex items-center justify-center gap-2 transition-all hover:scale-105"
             >
-              <Star className="w-4 h-4 text-amber-300 fill-amber-300" />
+              <Star className="w-4 h-4 text-amber-200 fill-amber-200" />
               <span>Write a Public Review</span>
             </a>
           </div>
@@ -283,19 +279,19 @@ export default function PublicReviews() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           
           {/* Left Column: Write Review Form (5 Cols) */}
-          <div id="review-form" className="lg:col-span-5 bg-slate-950/90 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
-            <div className="flex items-center gap-2 text-terracotta-400 font-serif font-bold text-xl mb-2">
-              <Star className="w-5 h-5 fill-terracotta-400 text-terracotta-400" />
+          <div id="review-form" className="lg:col-span-5 bg-white border border-sand-300 rounded-2xl p-6 sm:p-8 shadow-md">
+            <div className="flex items-center gap-2 text-terracotta-600 font-serif font-bold text-xl mb-2">
+              <Star className="w-5 h-5 fill-terracotta-500 text-terracotta-500" />
               <h3>Leave a Public Review</h3>
             </div>
-            <p className="text-xs text-slate-400 mb-6">
+            <p className="text-xs text-slate-600 mb-6">
               Your feedback is published publicly to assist travelers seeking safe, offbeat places.
             </p>
 
             {showSuccessToast && (
-              <div className="mb-6 p-4 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs">
+              <div className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 text-xs">
                 <p className="font-bold">Review Published Successfully!</p>
-                <p className="text-emerald-400/90">Thank you for contributing to the Yatrika travel community.</p>
+                <p className="text-emerald-700">Thank you for contributing to the Yatrika travel community.</p>
               </div>
             )}
 
@@ -303,10 +299,10 @@ export default function PublicReviews() {
               
               {/* Compact & Clean 5-Star Selector */}
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Your Rating <span className="text-terracotta-400">*</span>
+                <label className="block text-xs font-semibold text-slate-800 mb-1.5">
+                  Your Rating <span className="text-terracotta-500">*</span>
                 </label>
-                <div className="flex items-center justify-between bg-slate-900 px-4 py-2.5 rounded-xl border border-slate-800">
+                <div className="flex items-center justify-between bg-sand-50 px-4 py-2.5 rounded-xl border border-sand-300">
                   <div className="flex items-center gap-1">
                     {[1, 2, 3, 4, 5].map((starNum) => (
                       <button
@@ -320,14 +316,14 @@ export default function PublicReviews() {
                         <Star 
                           className={`w-6 h-6 transition-colors ${
                             starNum <= (hoverRating || rating)
-                              ? 'fill-amber-400 text-amber-400'
-                              : 'text-slate-700 fill-slate-800'
+                              ? 'fill-amber-400 text-amber-500'
+                              : 'text-sand-400 fill-sand-200'
                           }`}
                         />
                       </button>
                     ))}
                   </div>
-                  <span className="text-xs font-bold text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-md border border-amber-400/20">
+                  <span className="text-xs font-bold text-amber-700 bg-amber-500/10 px-2.5 py-1 rounded-md border border-amber-500/30">
                     {getStarLabel(hoverRating || rating)}
                   </span>
                 </div>
@@ -336,8 +332,8 @@ export default function PublicReviews() {
               {/* Name & Location */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">
-                    Your Name <span className="text-terracotta-400">*</span>
+                  <label className="block text-xs font-medium text-slate-800 mb-1">
+                    Your Name <span className="text-terracotta-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -345,11 +341,11 @@ export default function PublicReviews() {
                     placeholder="e.g. Priya Sharma"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-terracotta-500 transition-colors"
+                    className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-terracotta-500 transition-colors"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">
+                  <label className="block text-xs font-medium text-slate-800 mb-1">
                     Home City / State
                   </label>
                   <input
@@ -357,15 +353,15 @@ export default function PublicReviews() {
                     placeholder="e.g. Pune, Maharashtra"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-terracotta-500 transition-colors"
+                    className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-terracotta-500 transition-colors"
                   />
                 </div>
               </div>
 
               {/* Verified Destination Selection / Input */}
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
-                  Destination / Place Visited <span className="text-terracotta-400">*</span>
+                <label className="block text-xs font-medium text-slate-800 mb-1">
+                  Destination / Place Visited <span className="text-terracotta-500">*</span>
                 </label>
                 
                 <select
@@ -376,7 +372,7 @@ export default function PublicReviews() {
                       setDestinationError(false);
                     }
                   }}
-                  className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-terracotta-500 transition-colors mb-2"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-terracotta-500 transition-colors mb-2"
                 >
                   <option value="">-- Choose a Verified Destination (29 States) --</option>
                   {verifiedPlaces.map((place, idx) => (
@@ -394,14 +390,14 @@ export default function PublicReviews() {
                       setCustomDestination(e.target.value);
                       if (e.target.value.trim()) setDestinationError(false);
                     }}
-                    className={`w-full px-3.5 py-2.5 bg-slate-900 border ${
-                      destinationError ? 'border-red-500/80 bg-red-500/5' : 'border-slate-800'
-                    } rounded-xl text-xs text-slate-200 focus:outline-none focus:border-terracotta-500 transition-colors`}
+                    className={`w-full px-3.5 py-2.5 bg-sand-50 border ${
+                      destinationError ? 'border-red-500 bg-red-50' : 'border-sand-300'
+                    } rounded-xl text-xs text-slate-900 focus:outline-none focus:border-terracotta-500 transition-colors`}
                   />
                 )}
 
                 {destinationError && (
-                  <p className="text-[11px] text-red-400 mt-1 font-medium">
+                  <p className="text-[11px] text-red-600 mt-1 font-medium">
                     ⚠️ Please select or type the exact destination visited before submitting.
                   </p>
                 )}
@@ -409,8 +405,8 @@ export default function PublicReviews() {
 
               {/* Review Title */}
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
-                  Review Headline / Title <span className="text-terracotta-400">*</span>
+                <label className="block text-xs font-medium text-slate-800 mb-1">
+                  Review Headline / Title <span className="text-terracotta-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -418,14 +414,14 @@ export default function PublicReviews() {
                   placeholder="e.g. Unbelievable peace & 100% safe!"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-terracotta-500 transition-colors"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-terracotta-500 transition-colors"
                 />
               </div>
 
               {/* Review Comment */}
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
-                  Your Detailed Review <span className="text-terracotta-400">*</span>
+                <label className="block text-xs font-medium text-slate-800 mb-1">
+                  Your Detailed Review <span className="text-terracotta-500">*</span>
                 </label>
                 <textarea
                   rows={4}
@@ -433,7 +429,7 @@ export default function PublicReviews() {
                   placeholder="Write your honest review here... Mention safety, food, homestays, or police station availability."
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-terracotta-500 transition-colors resize-none"
+                  className="w-full px-3.5 py-2.5 bg-sand-50 border border-sand-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-terracotta-500 transition-colors resize-none"
                 />
               </div>
 
@@ -441,7 +437,7 @@ export default function PublicReviews() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-3 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-xs shadow-lg flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+                className="w-full py-3 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-xs shadow-md flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <span>Publishing Review...</span>
@@ -459,9 +455,9 @@ export default function PublicReviews() {
           <div className="lg:col-span-7 space-y-6">
             
             {/* Filter Header */}
-            <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-950/80 p-4 rounded-xl border border-slate-800">
-              <div className="flex items-center gap-2 text-xs font-medium text-slate-300">
-                <Filter className="w-4 h-4 text-terracotta-400" />
+            <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-xl border border-sand-300 shadow-sm">
+              <div className="flex items-center gap-2 text-xs font-medium text-slate-700">
+                <Filter className="w-4 h-4 text-terracotta-500" />
                 <span>Filter Reviews:</span>
               </div>
               
@@ -473,7 +469,7 @@ export default function PublicReviews() {
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                       ratingFilter === String(val) || (val === 'all' && ratingFilter === 'all')
                         ? 'bg-terracotta-500 text-white shadow-md'
-                        : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                        : 'bg-sand-100 text-slate-700 hover:text-slate-900 border border-sand-300'
                     }`}
                   >
                     {val === 'all' ? 'All Ratings' : `${val} Stars`}
@@ -491,70 +487,70 @@ export default function PublicReviews() {
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="bg-slate-950/80 border border-slate-800 hover:border-slate-700/80 rounded-2xl p-5 sm:p-6 transition-all shadow-lg"
+                    className="bg-white border border-sand-300 hover:border-sand-400 rounded-2xl p-5 sm:p-6 transition-all shadow-md"
                   >
                     {/* Review Header: User Avatar & Info */}
                     <div className="flex items-start justify-between gap-4 mb-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-terracotta-500 to-amber-600 text-white font-serif font-bold text-sm flex items-center justify-center shadow-md">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-terracotta-500 to-amber-600 text-white font-serif font-bold text-sm flex items-center justify-center shadow-sm">
                           {rev.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
                         </div>
                         <div>
-                          <h4 className="font-serif font-bold text-sm text-slate-100">{rev.name}</h4>
-                          <p className="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5">
+                          <h4 className="font-serif font-bold text-sm text-slate-900">{rev.name}</h4>
+                          <p className="text-[11px] text-slate-500 flex items-center gap-2 mt-0.5">
                             <span className="flex items-center gap-1">
-                              <MapPin className="w-3 h-3 text-terracotta-400" />
+                              <MapPin className="w-3 h-3 text-terracotta-500" />
                               {rev.location}
                             </span>
                             <span>•</span>
-                            <span className="text-slate-500">{rev.date}</span>
+                            <span className="text-slate-400">{rev.date}</span>
                           </p>
                         </div>
                       </div>
 
                       {/* Star Rating Display */}
-                      <div className="flex items-center gap-1 bg-amber-400/10 px-2.5 py-1 rounded-lg border border-amber-400/20">
+                      <div className="flex items-center gap-1 bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/20">
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
                             className={`w-3.5 h-3.5 ${
-                              i < rev.rating ? 'fill-amber-400 text-amber-400' : 'text-slate-700 fill-slate-800'
+                              i < rev.rating ? 'fill-amber-400 text-amber-500' : 'text-sand-300 fill-sand-200'
                             }`}
                           />
                         ))}
-                        <span className="text-xs font-bold text-amber-400 ml-1">{rev.rating}.0</span>
+                        <span className="text-xs font-bold text-amber-700 ml-1">{rev.rating}.0</span>
                       </div>
                     </div>
 
                     {/* Destination Badge */}
                     <div className="flex flex-wrap items-center gap-2 mb-3">
-                      <span className="px-3 py-1 rounded-md bg-slate-900 text-slate-200 text-[11px] font-medium border border-slate-800 flex items-center gap-1.5">
-                        <MapPin className="w-3.5 h-3.5 text-terracotta-400" />
-                        Destination Visited: <strong className="text-amber-400">{rev.destination}</strong>
+                      <span className="px-3 py-1 rounded-md bg-sand-100 text-slate-800 text-[11px] font-medium border border-sand-300 flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-terracotta-500" />
+                        Destination Visited: <strong className="text-amber-700">{rev.destination}</strong>
                       </span>
                     </div>
 
                     {/* Review Title & Comment Body */}
-                    <h5 className="font-serif font-bold text-sm text-slate-100 mb-2">
+                    <h5 className="font-serif font-bold text-sm text-slate-900 mb-2">
                       "{rev.title}"
                     </h5>
-                    <p className="text-xs text-slate-300 leading-relaxed mb-4">
+                    <p className="text-xs text-slate-700 leading-relaxed mb-4">
                       {rev.comment}
                     </p>
 
                     {/* Card Footer: Helpful Voting */}
-                    <div className="flex items-center justify-between pt-3 border-t border-slate-800/80 text-[11px]">
+                    <div className="flex items-center justify-between pt-3 border-t border-sand-200 text-[11px]">
                       <span className="text-slate-500">Was this review helpful to you?</span>
                       <button
                         onClick={() => handleHelpfulVote(rev.id)}
                         disabled={votedHelpful[rev.id]}
                         className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-medium transition-all ${
                           votedHelpful[rev.id]
-                            ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                            : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                            ? 'bg-emerald-500/20 text-emerald-700 border border-emerald-500/30'
+                            : 'bg-sand-100 hover:bg-sand-200 text-slate-700 border border-sand-300'
                         }`}
                       >
-                        <ThumbsUp className={`w-3.5 h-3.5 ${votedHelpful[rev.id] ? 'text-emerald-400' : 'text-slate-400'}`} />
+                        <ThumbsUp className={`w-3.5 h-3.5 ${votedHelpful[rev.id] ? 'text-emerald-600' : 'text-slate-500'}`} />
                         <span>{votedHelpful[rev.id] ? 'Thank you!' : `Helpful (${rev.helpful})`}</span>
                       </button>
                     </div>
@@ -563,8 +559,8 @@ export default function PublicReviews() {
               </AnimatePresence>
 
               {filteredReviews.length === 0 && (
-                <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-8 text-center text-slate-400">
-                  <Star className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+                <div className="bg-white border border-sand-300 rounded-2xl p-8 text-center text-slate-500">
+                  <Star className="w-8 h-8 text-sand-400 mx-auto mb-2" />
                   <p className="text-sm font-medium">No reviews match the selected rating filter.</p>
                 </div>
               )}

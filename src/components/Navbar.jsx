@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Compass, Sparkles, Menu, X, ArrowRight, ShieldCheck, Moon, Sun } from 'lucide-react';
+import { Compass, Sparkles, Menu, X, ArrowRight, ShieldCheck } from 'lucide-react';
 
 /* Custom Yatrika Logo: Compass Ring with N/S/E/W Ticks & Terracotta Orange Diamond Gem */
 function YatrikaLogoIcon({ className = "w-10 h-10" }) {
   return (
     <svg className={className} viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
       {/* Outer Compass Ring */}
-      <circle cx="22" cy="22" r="19" stroke="#e8734a" strokeWidth="2.5" strokeOpacity="0.5" />
-      <circle cx="22" cy="22" r="15" stroke="currentColor" strokeWidth="1" strokeOpacity="0.25" strokeDasharray="3 3" />
+      <circle cx="22" cy="22" r="19" stroke="#e8734a" strokeWidth="2.5" strokeOpacity="0.8" />
+      <circle cx="22" cy="22" r="15" stroke="#1e293b" strokeWidth="1" strokeOpacity="0.25" strokeDasharray="3 3" />
       
       {/* N / S / E / W Ticks */}
       <line x1="22" y1="3" x2="22" y2="8" stroke="#e8734a" strokeWidth="2.5" strokeLinecap="round" />
@@ -18,12 +18,12 @@ function YatrikaLogoIcon({ className = "w-10 h-10" }) {
       
       {/* Center Terracotta Diamond / Gem */}
       <path d="M22 12 L29 22 L22 32 L15 22 Z" fill="#e8734a" />
-      <path d="M22 12 L29 22 L22 22 Z" fill="#f4f1e8" fillOpacity="0.35" />
+      <path d="M22 12 L29 22 L22 22 Z" fill="#ffffff" fillOpacity="0.4" />
     </svg>
   );
 }
 
-export default function Navbar({ currentView = 'home', onNavigate, theme = 'dark', onToggleTheme }) {
+export default function Navbar({ currentView = 'home', onNavigate }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -46,17 +46,11 @@ export default function Navbar({ currentView = 'home', onNavigate, theme = 'dark
     setMobileMenuOpen(false);
   };
 
-  const isLight = theme === 'light';
-
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       scrolled 
-        ? isLight 
-          ? 'bg-white/90 backdrop-blur-md border-b border-sand-300 shadow-lg py-3 text-sand-900' 
-          : 'bg-slate-950/90 backdrop-blur-md border-b border-slate-800 shadow-xl py-3 text-slate-100'
-        : isLight 
-          ? 'bg-white/80 backdrop-blur-sm py-4 border-b border-sand-200 text-sand-900' 
-          : 'bg-slate-950/80 backdrop-blur-sm py-4 border-b border-slate-900 text-slate-100'
+        ? 'bg-white/95 backdrop-blur-md border-b border-sand-300 shadow-md py-3 text-slate-900' 
+        : 'bg-white/90 backdrop-blur-sm py-4 border-b border-sand-200 text-slate-900 shadow-sm'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
@@ -67,38 +61,38 @@ export default function Navbar({ currentView = 'home', onNavigate, theme = 'dark
             onClick={(e) => handleNavClick(e, 'home')}
             className="flex items-center gap-3 group transition-transform hover:scale-105"
           >
-            <YatrikaLogoIcon className="w-10 h-10 text-white transition-transform group-hover:rotate-45" />
-            <span className={`font-serif font-bold text-2xl tracking-tight ${isLight ? 'text-sand-900' : 'text-[#f4f1e8]'}`}>
+            <YatrikaLogoIcon className="w-10 h-10 transition-transform group-hover:rotate-45" />
+            <span className="font-serif font-bold text-2xl tracking-tight text-slate-900">
               Yatrika
             </span>
           </a>
 
-          {/* Desktop Navigation Links (Professional Typography) */}
-          <nav className={`hidden md:flex items-center gap-6 text-xs font-sans font-medium ${isLight ? 'text-sand-800' : 'text-slate-300'}`}>
+          {/* Desktop Navigation Links (Attractive Light Mode Palette) */}
+          <nav className="hidden md:flex items-center gap-7 text-xs font-sans font-semibold text-slate-700">
             <button 
               onClick={(e) => handleNavClick(e, 'problem')} 
-              className={`transition-colors hover:text-terracotta-500 ${currentView === 'problem' ? 'text-terracotta-500 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
+              className={`transition-colors hover:text-terracotta-600 ${currentView === 'problem' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
             >
               The Challenge
             </button>
             
             <button 
               onClick={(e) => handleNavClick(e, 'solution')} 
-              className={`transition-colors hover:text-terracotta-500 ${currentView === 'solution' ? 'text-terracotta-500 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
+              className={`transition-colors hover:text-terracotta-600 ${currentView === 'solution' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
             >
               Solution Pillars
             </button>
 
             <button 
               onClick={(e) => handleNavClick(e, 'how-it-works')} 
-              className={`transition-colors hover:text-terracotta-500 ${currentView === 'how-it-works' ? 'text-terracotta-500 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
+              className={`transition-colors hover:text-terracotta-600 ${currentView === 'how-it-works' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
             >
               How It Works
             </button>
 
             <button 
               onClick={(e) => handleNavClick(e, 'gem-simulator')} 
-              className={`flex items-center gap-1.5 transition-colors ${currentView === 'gem-simulator' ? 'text-amber-600 font-bold border-b-2 border-amber-500 pb-0.5' : 'text-amber-600 font-semibold hover:text-amber-700'}`}
+              className={`flex items-center gap-1.5 transition-colors ${currentView === 'gem-simulator' ? 'text-amber-700 font-bold border-b-2 border-amber-500 pb-0.5' : 'text-amber-700 font-bold hover:text-amber-800'}`}
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>AI Simulator</span>
@@ -106,71 +100,35 @@ export default function Navbar({ currentView = 'home', onNavigate, theme = 'dark
 
             <button 
               onClick={(e) => handleNavClick(e, 'impact')} 
-              className={`transition-colors hover:text-terracotta-500 ${currentView === 'impact' ? 'text-terracotta-500 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
+              className={`transition-colors hover:text-terracotta-600 ${currentView === 'impact' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
             >
               Impact & Safety
             </button>
 
             <button 
               onClick={(e) => handleNavClick(e, 'reviews')} 
-              className={`transition-colors hover:text-terracotta-500 ${currentView === 'reviews' ? 'text-terracotta-500 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
+              className={`transition-colors hover:text-terracotta-600 ${currentView === 'reviews' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
             >
               Public Reviews
             </button>
           </nav>
 
-          {/* Desktop Right Controls: Theme Toggle + CTA */}
+          {/* Desktop Right CTA Button */}
           <div className="hidden md:flex items-center gap-3">
-            
-            {/* User Input Theme Toggle Button (Light & Dark) */}
-            <button
-              onClick={onToggleTheme}
-              className={`px-3 py-2 rounded-xl font-medium text-xs flex items-center gap-1.5 transition-all hover:scale-105 border ${
-                isLight 
-                  ? 'bg-sand-200 hover:bg-sand-300 text-sand-900 border-sand-400' 
-                  : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border-slate-700'
-              }`}
-              title={isLight ? "Switch to Dark Theme" : "Switch to Light Theme"}
-            >
-              {isLight ? (
-                <>
-                  <Moon className="w-4 h-4 text-terracotta-500" />
-                  <span>Dark Mode</span>
-                </>
-              ) : (
-                <>
-                  <Sun className="w-4 h-4 text-amber-400" />
-                  <span>Light Mode</span>
-                </>
-              )}
-            </button>
-
-            {/* CTA Button */}
             <button
               onClick={(e) => handleNavClick(e, 'gem-simulator')}
-              className="px-4 py-2 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-xs shadow-lg flex items-center gap-2 transition-all hover:scale-105"
+              className="px-5 py-2.5 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-xs shadow-md shadow-terracotta-500/20 flex items-center gap-2 transition-all hover:scale-105"
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <Sparkles className="w-3.5 h-3.5 text-amber-200" />
               <span>Explore AI Simulator</span>
             </button>
           </div>
 
-          {/* Mobile Menu & Theme Toggle */}
+          {/* Mobile Menu Toggle */}
           <div className="md:hidden flex items-center gap-2">
             <button
-              onClick={onToggleTheme}
-              className={`p-2 rounded-xl border text-xs ${
-                isLight ? 'bg-sand-200 text-sand-900 border-sand-300' : 'bg-slate-800 text-amber-300 border-slate-700'
-              }`}
-            >
-              {isLight ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
-            </button>
-
-            <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`p-2 rounded-xl border ${
-                isLight ? 'bg-sand-200 text-sand-900 border-sand-300' : 'bg-slate-800 text-white border-slate-700'
-              }`}
+              className="p-2 rounded-xl bg-sand-100 text-slate-800 border border-sand-300"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -186,44 +144,42 @@ export default function Navbar({ currentView = 'home', onNavigate, theme = 'dark
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className={`md:hidden border-b px-4 py-6 space-y-3 font-sans text-sm ${
-              isLight ? 'bg-white border-sand-200 text-sand-900' : 'bg-slate-900 border-slate-800 text-slate-200'
-            }`}
+            className="md:hidden bg-white border-b border-sand-200 px-4 py-6 space-y-3 font-sans text-sm text-slate-800 shadow-xl"
           >
             <button 
               onClick={(e) => handleNavClick(e, 'problem')}
-              className="block w-full text-left hover:text-terracotta-500 py-1"
+              className="block w-full text-left hover:text-terracotta-600 py-1 font-medium"
             >
               The Challenge
             </button>
             <button 
               onClick={(e) => handleNavClick(e, 'solution')}
-              className="block w-full text-left hover:text-terracotta-500 py-1"
+              className="block w-full text-left hover:text-terracotta-600 py-1 font-medium"
             >
               Solution Pillars
             </button>
             <button 
               onClick={(e) => handleNavClick(e, 'how-it-works')}
-              className="block w-full text-left hover:text-terracotta-500 py-1"
+              className="block w-full text-left hover:text-terracotta-600 py-1 font-medium"
             >
               How It Works
             </button>
             <button 
               onClick={(e) => handleNavClick(e, 'gem-simulator')}
-              className="block w-full text-left text-amber-600 font-semibold py-1 flex items-center gap-1.5"
+              className="block w-full text-left text-amber-700 font-bold py-1 flex items-center gap-1.5"
             >
               <Sparkles className="w-4 h-4" />
               <span>AI Recommender Simulator</span>
             </button>
             <button 
               onClick={(e) => handleNavClick(e, 'impact')}
-              className="block w-full text-left hover:text-terracotta-500 py-1"
+              className="block w-full text-left hover:text-terracotta-600 py-1 font-medium"
             >
               Impact & Safety
             </button>
             <button 
               onClick={(e) => handleNavClick(e, 'reviews')}
-              className="block w-full text-left hover:text-terracotta-500 py-1"
+              className="block w-full text-left hover:text-terracotta-600 py-1 font-medium"
             >
               Public Reviews
             </button>

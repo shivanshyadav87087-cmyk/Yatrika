@@ -30,29 +30,13 @@ const SECTION_TITLES = {
 export default function App() {
   const [gemsDatabase, setGemsDatabase] = useState(sampleHiddenGems);
   const [currentView, setCurrentView] = useState('home');
-  
-  // Theme state: User Input Theme Switcher ('dark' or 'light')
-  const [theme, setTheme] = useState(() => {
-    const savedTheme = localStorage.getItem('yatrika_theme');
-    if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme;
-    return 'dark'; // Default dark theme for rich photographic contrast
-  });
 
-  // Sync theme to localStorage & root HTML element
+  // Enforce Light Theme permanently across document
   useEffect(() => {
-    localStorage.setItem('yatrika_theme', theme);
-    if (theme === 'light') {
-      document.documentElement.classList.remove('dark');
-      document.documentElement.classList.add('light');
-    } else {
-      document.documentElement.classList.remove('light');
-      document.documentElement.classList.add('dark');
-    }
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
-  };
+    localStorage.setItem('yatrika_theme', 'light');
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
+  }, []);
 
   // Listen to hash changes in URL for seamless SPA navigation without changing tabs
   useEffect(() => {
@@ -86,37 +70,25 @@ export default function App() {
     setGemsDatabase(prevGems => [newGem, ...prevGems]);
   };
 
-  const isLight = theme === 'light';
-
   return (
-    <div className={`min-h-screen font-sans antialiased selection:bg-terracotta-500 selection:text-white transition-colors duration-300 ${
-      isLight ? 'bg-sand-50 text-slate-900' : 'bg-slate-950 text-slate-100'
-    }`}>
-      {/* Navbar with active view handler & User Theme Toggle */}
+    <div className="min-h-screen font-sans antialiased selection:bg-terracotta-500 selection:text-white bg-sand-50 text-slate-900">
+      {/* Navbar with active view handler */}
       <Navbar 
         currentView={currentView} 
         onNavigate={handleNavigateView} 
-        theme={theme}
-        onToggleTheme={toggleTheme}
       />
       
       <main className="pt-20">
         
         {/* Dedicated Section Page Breadcrumb Bar (shown on dedicated section views) */}
         {currentView !== 'home' && (
-          <div className={`border-b py-3.5 px-4 sm:px-8 shadow-md transition-colors ${
-            isLight ? 'bg-white text-slate-800 border-sand-300' : 'bg-slate-950 text-slate-200 border-slate-800'
-          }`}>
+          <div className="bg-white text-slate-900 border-b border-sand-300 py-3.5 px-4 sm:px-8 shadow-sm">
             <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs">
               
               {/* Back to Home Page button */}
               <button
                 onClick={() => handleNavigateView('home')}
-                className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg font-semibold transition-all hover:scale-105 border ${
-                  isLight 
-                    ? 'bg-sand-100 hover:bg-sand-200 border-sand-400 text-terracotta-600' 
-                    : 'bg-slate-900 hover:bg-slate-800 border-slate-700 text-terracotta-400'
-                }`}
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg font-bold bg-sand-100 hover:bg-sand-200 border border-sand-300 text-terracotta-600 transition-all hover:scale-105"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Back to Homepage</span>
@@ -124,10 +96,10 @@ export default function App() {
 
               {/* Active Dedicated Page Title Badge */}
               <div className="flex items-center gap-2">
-                <span className={isLight ? 'text-slate-600 font-medium' : 'text-slate-400 font-medium'}>
+                <span className="text-slate-600 font-medium">
                   Viewing Dedicated Page:
                 </span>
-                <span className="font-serif font-bold text-amber-600 bg-amber-500/10 px-2.5 py-1 rounded-md border border-amber-500/30">
+                <span className="font-serif font-bold text-amber-700 bg-amber-500/10 px-2.5 py-1 rounded-md border border-amber-500/30">
                   {SECTION_TITLES[currentView] || currentView}
                 </span>
               </div>
