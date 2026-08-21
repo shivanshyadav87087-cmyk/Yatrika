@@ -1,37 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Compass, Sparkles, MapPin, ArrowRight, Activity, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Compass, Sparkles, MapPin, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const heroSlides = [
   {
     id: 1,
     title: "Taj Mahal, Agra",
-    state: "Uttar Pradesh",
+    location: "Agra, Uttar Pradesh",
+    description: "Iconic 17th-century white marble mausoleum built by Mughal Emperor Shah Jahan on the banks of Yamuna River, renowned globally as one of the Seven Wonders of the World.",
     image: "https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1920&q=90"
   },
   {
     id: 2,
-    title: "Amer Fort & Hawa Mahal, Jaipur",
-    state: "Rajasthan",
+    title: "Amer Fort & Hawa Mahal",
+    location: "Jaipur, Rajasthan",
+    description: "Majestic 16th-century Amber Fort atop Aravalli hills and the famous 953-window red and pink sandstone Hawa Mahal (Palace of Winds).",
     image: "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&w=1920&q=90"
   },
   {
     id: 3,
-    title: "Munnar Tea Hills",
-    state: "Kerala",
-    image: "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?auto=format&fit=crop&w=1920&q=90"
-  },
-  {
-    id: 4,
     title: "Varanasi Ganges Ghats",
-    state: "Uttar Pradesh",
+    location: "Varanasi, Uttar Pradesh",
+    description: "One of the world's oldest living cities, famous for its ancient stone Ghats along the sacred Ganges river, spiritual evening Ganga Aarti rituals, and heritage temples.",
     image: "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&w=1920&q=90"
   },
   {
-    id: 5,
+    id: 4,
     title: "Golden Temple, Amritsar",
-    state: "Punjab",
+    location: "Amritsar, Punjab",
+    description: "Sacred 16th-century Harmandir Sahib gilded in pure gold leaf, surrounded by the holy Amrit Sarovar lake and hosting the world's largest community kitchen.",
     image: "https://images.unsplash.com/photo-1514222709107-a180c68d72b4?auto=format&fit=crop&w=1920&q=90"
+  },
+  {
+    id: 5,
+    title: "Qutub Minar & Red Fort",
+    location: "New Delhi",
+    description: "UNESCO World Heritage 73-meter red sandstone victory tower built in 1192 AD alongside Mughal royal sandstone fortresses showcasing imperial history.",
+    image: "https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1920&q=90"
   }
 ];
 
@@ -41,7 +46,7 @@ export default function Hero() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 5000);
+    }, 5500);
     return () => clearInterval(timer);
   }, []);
 
@@ -129,56 +134,49 @@ export default function Hero() {
 
           </div>
 
-          {/* Clean, Minimal Glassmorphism Destination Card (Displays Name & State Only) */}
+          {/* Semi-Transparent Glassmorphism Historic Monument Card */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.95, x: 20 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
             className="lg:col-span-5 relative"
           >
-            <div className="bg-slate-900/90 backdrop-blur-xl p-6 sm:p-7 rounded-3xl border-2 border-amber-500/40 shadow-2xl space-y-5 relative overflow-hidden">
+            <div className="bg-slate-950/40 backdrop-blur-xl p-6 sm:p-7 rounded-3xl border border-white/20 shadow-2xl space-y-5 relative overflow-hidden">
               
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3.5">
-                <div className="flex items-center gap-2 font-mono text-xs text-slate-300">
-                  <Activity className="w-4 h-4 text-amber-400 animate-pulse" />
-                  <span>SLIDESHOW FEATURED DESTINATION</span>
-                </div>
-                <span className="text-[11px] font-mono bg-amber-950/90 text-amber-300 px-3 py-1 rounded-full border border-amber-700 font-bold">
-                  {heroSlides[currentSlide].state}
-                </span>
-              </div>
-
-              {/* Clean Destination Name Only */}
+              {/* Dynamic Content Matched to Active Photo */}
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentSlide}
-                  initial={{ opacity: 0, y: 8 }}
+                  initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.3 }}
-                  className="py-2"
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.35 }}
+                  className="space-y-3"
                 >
-                  <div className="flex items-center gap-2.5 mb-1.5">
-                    <MapPin className="w-5 h-5 text-terracotta-400 shrink-0" />
-                    <span className="text-xs font-mono text-amber-400 uppercase tracking-widest font-bold">
-                      {heroSlides[currentSlide].state}
-                    </span>
+                  <div className="flex items-center gap-2 text-terracotta-400 font-mono text-xs font-bold uppercase tracking-wider">
+                    <MapPin className="w-4 h-4 text-terracotta-400 shrink-0" />
+                    <span>{heroSlides[currentSlide].location}</span>
                   </div>
-                  <h3 className="text-2xl sm:text-3xl font-serif font-extrabold text-white pl-7 tracking-tight">
+
+                  <h3 className="text-2xl sm:text-3xl font-serif font-extrabold text-white tracking-tight leading-snug">
                     {heroSlides[currentSlide].title}
                   </h3>
+
+                  <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans pt-1">
+                    {heroSlides[currentSlide].description}
+                  </p>
                 </motion.div>
               </AnimatePresence>
 
               {/* Slideshow Manual Controls & Indicators */}
-              <div className="flex items-center justify-between pt-3 border-t border-slate-800">
+              <div className="flex items-center justify-between pt-4 border-t border-white/15">
                 <div className="flex items-center gap-1.5">
                   {heroSlides.map((slide, idx) => (
                     <button
                       key={slide.id}
                       onClick={() => setCurrentSlide(idx)}
                       className={`h-2 rounded-full transition-all cursor-pointer ${
-                        currentSlide === idx ? 'w-6 bg-terracotta-500' : 'w-2 bg-slate-700 hover:bg-slate-600'
+                        currentSlide === idx ? 'w-6 bg-terracotta-500' : 'w-2 bg-white/30 hover:bg-white/50'
                       }`}
                     />
                   ))}
@@ -187,25 +185,18 @@ export default function Hero() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={prevSlide}
-                    className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white transition-colors cursor-pointer"
+                    className="p-2 rounded-xl bg-slate-900/60 hover:bg-slate-800/80 border border-white/20 text-white transition-colors cursor-pointer"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </button>
                   <button
                     onClick={nextSlide}
-                    className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white transition-colors cursor-pointer"
+                    className="p-2 rounded-xl bg-slate-900/60 hover:bg-slate-800/80 border border-white/20 text-white transition-colors cursor-pointer"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
               </div>
-
-              <a
-                href="#gem-simulator"
-                className="w-full py-3.5 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-xs shadow-lg flex items-center justify-center gap-2 transition-all block text-center cursor-pointer"
-              >
-                <span>Explore All 29 States in Simulator &rarr;</span>
-              </a>
 
             </div>
           </motion.div>
