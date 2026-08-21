@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Sparkles } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Problem from './components/Problem';
@@ -13,6 +13,7 @@ import Feasibility from './components/Feasibility';
 import ImpactBenefits from './components/ImpactBenefits';
 import Research from './components/Research';
 import PublicReviews from './components/PublicReviews';
+import ConciseRatingSummary from './components/ConciseRatingSummary';
 import Footer from './components/Footer';
 import { sampleHiddenGems } from './data/content';
 
@@ -98,7 +99,7 @@ export default function App() {
         {/* Dynamic Content Views */}
         <AnimatePresence mode="wait">
           
-          {/* VIEW: HOMEPAGE (Streamlined Hero with Background Photo Slideshow & Recommender Simulator) */}
+          {/* VIEW: HOMEPAGE (High-Impact Hero Photo Slideshow + End Concise Public Rating Summary) */}
           {currentView === 'home' && (
             <motion.div
               key="view-home"
@@ -110,10 +111,8 @@ export default function App() {
               {/* Hero Section with Full Edge-to-Edge Photo Slideshow & Headline Copy */}
               <Hero />
               
-              {/* AI Simulator Engine for 29 States */}
-              <div id="gem-simulator">
-                <GemSimulator customGems={gemsDatabase} />
-              </div>
+              {/* Concise Public Rating & Reviews Summary Bar at End of Homepage */}
+              <ConciseRatingSummary onNavigate={handleNavigateView} />
             </motion.div>
           )}
 
