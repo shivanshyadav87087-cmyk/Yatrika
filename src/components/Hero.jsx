@@ -33,10 +33,10 @@ const heroSlides = [
   },
   {
     id: 5,
-    title: "India Gate",
-    location: "New Delhi",
-    description: "Iconic 42-meter red and pale sandstone war memorial arch in New Delhi, designed by Sir Edwin Lutyens, commemorating Indian soldiers with the Amar Jawan Jyoti perpetual flame.",
-    image: "/images/slides/india_gate.jpg"
+    title: "Hawa Mahal, Jaipur",
+    location: "Jaipur, Rajasthan",
+    description: "Iconic 1799 red and pink sandstone Palace of Winds featuring 953 intricate honeycomb windows (jharokhas) built for royal Rajput women to observe city celebrations.",
+    image: "/images/slides/hawa_mahal.jpg"
   }
 ];
 
