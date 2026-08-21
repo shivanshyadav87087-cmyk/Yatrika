@@ -26,17 +26,17 @@ const heroSlides = [
   },
   {
     id: 4,
-    title: "Golden Temple, Amritsar",
-    location: "Amritsar, Punjab",
-    description: "Sacred 16th-century Harmandir Sahib gilded in pure gold leaf, surrounded by the holy Amrit Sarovar lake and hosting the world's largest community kitchen.",
-    image: "/images/slides/golden_temple.jpg"
+    title: "Nalanda University Ruins",
+    location: "Nalanda, Bihar",
+    description: "UNESCO World Heritage 5th-century ancient monastic university and Mahavihara center of learning, renowned as one of the world's first residential international universities.",
+    image: "/images/slides/nalanda_university.jpg"
   },
   {
     id: 5,
-    title: "Red Fort & Qutub Minar",
+    title: "India Gate War Memorial",
     location: "New Delhi",
-    description: "UNESCO World Heritage 73-meter red sandstone victory tower built in 1192 AD alongside Mughal royal sandstone fortresses showcasing imperial history.",
-    image: "/images/slides/red_fort.jpg"
+    description: "Iconic 42-meter red and pale sandstone war memorial arch in New Delhi, designed by Sir Edwin Lutyens, commemorating Indian soldiers with the Amar Jawan Jyoti perpetual flame.",
+    image: "/images/slides/india_gate.jpg"
   }
 ];
 
