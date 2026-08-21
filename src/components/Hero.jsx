@@ -102,18 +102,15 @@ export default function Hero() {
               Discover Hidden Gems Across <span className="text-terracotta-400 italic">29 Indian States</span> Safely with <span className="text-[#f4f1e8] font-medium">Yatrika</span>.
             </motion.h1>
 
-            {/* Distinct, Highlighted Glassmorphism Subheadline Badge */}
-            <motion.div 
+            {/* Distinct Subheadline Text (No box, distinct soft amber/gold color & left accent line) */}
+            <motion.p 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="inline-flex items-center gap-3 px-4 sm:px-5 py-3 rounded-2xl bg-slate-950/85 backdrop-blur-md border-2 border-terracotta-500/60 shadow-[0_0_25px_rgba(232,115,74,0.25)] text-terracotta-300 text-sm sm:text-base font-semibold max-w-2xl"
+              className="text-base sm:text-lg text-amber-200/90 font-sans font-medium leading-relaxed max-w-2xl [text-shadow:_0_1px_6px_rgba(0,0,0,0.85)] pl-4 border-l-2 border-amber-400/80"
             >
-              <Sparkles className="w-5 h-5 text-amber-400 shrink-0 animate-pulse" />
-              <span>
-                Discover lesser-known places, local culture and safer routes — <span className="bg-gradient-to-r from-amber-300 via-amber-200 to-terracotta-300 bg-clip-text text-transparent font-bold underline decoration-terracotta-500/50 decoration-2 underline-offset-4">powered by AI</span>.
-              </span>
-            </motion.div>
+              Discover lesser-known places, local culture and safer routes — <span className="text-white font-semibold">powered by AI</span>.
+            </motion.p>
 
             {/* CTA Action Buttons */}
             <motion.div 
