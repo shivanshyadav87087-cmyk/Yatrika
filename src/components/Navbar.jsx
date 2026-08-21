@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Compass, Sparkles, Menu, X, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Compass, Sparkles, Menu, X, ArrowRight, ShieldCheck, PlusCircle } from 'lucide-react';
 
 /* Custom Yatrika Logo: Compass Ring with N/S/E/W Ticks & Terracotta Orange Diamond Gem */
 function YatrikaLogoIcon({ className = "w-10 h-10" }) {
@@ -98,6 +98,14 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
               <span>AI Simulator</span>
             </button>
 
+            {/* Submit Gem Navigation Tab Link */}
+            <button 
+              onClick={(e) => handleNavClick(e, 'submit-gem')} 
+              className={`transition-colors hover:text-terracotta-600 ${currentView === 'submit-gem' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
+            >
+              Submit Gem
+            </button>
+
             <button 
               onClick={(e) => handleNavClick(e, 'impact')} 
               className={`transition-colors hover:text-terracotta-600 ${currentView === 'impact' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
@@ -163,6 +171,12 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
             >
               <Sparkles className="w-4 h-4" />
               <span>AI Recommender Simulator</span>
+            </button>
+            <button 
+              onClick={(e) => handleNavClick(e, 'submit-gem')}
+              className="block w-full text-left hover:text-terracotta-600 py-1 font-medium"
+            >
+              Submit Gem
             </button>
             <button 
               onClick={(e) => handleNavClick(e, 'impact')}
