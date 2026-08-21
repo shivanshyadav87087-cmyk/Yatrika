@@ -12,9 +12,9 @@ const heroSlides = [
   },
   {
     id: 2,
-    title: "Amer Fort & Hawa Mahal",
+    title: "Amer Fort, Jaipur",
     location: "Jaipur, Rajasthan",
-    description: "Majestic 16th-century Amber Fort atop Aravalli hills and the famous 953-window red and pink sandstone Hawa Mahal (Palace of Winds).",
+    description: "Majestic 16th-century Amber Fort atop Aravalli hills overlooking Maota Lake, famous for its grand red sandstone and marble royal palace architecture.",
     image: "/images/slides/amer_fort.jpg"
   },
   {
@@ -26,14 +26,14 @@ const heroSlides = [
   },
   {
     id: 4,
-    title: "Nalanda University Ruins",
+    title: "Nalanda University",
     location: "Nalanda, Bihar",
     description: "UNESCO World Heritage 5th-century ancient monastic university and Mahavihara center of learning, renowned as one of the world's first residential international universities.",
     image: "/images/slides/nalanda_university.jpg"
   },
   {
     id: 5,
-    title: "India Gate War Memorial",
+    title: "India Gate",
     location: "New Delhi",
     description: "Iconic 42-meter red and pale sandstone war memorial arch in New Delhi, designed by Sir Edwin Lutyens, commemorating Indian soldiers with the Amar Jawan Jyoti perpetual flame.",
     image: "/images/slides/india_gate.jpg"
