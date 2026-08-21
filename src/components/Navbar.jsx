@@ -98,14 +98,6 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
               <span>AI Simulator</span>
             </button>
 
-            {/* Submit Gem Navigation Tab Link */}
-            <button 
-              onClick={(e) => handleNavClick(e, 'submit-gem')} 
-              className={`transition-colors hover:text-terracotta-600 ${currentView === 'submit-gem' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
-            >
-              Submit Gem
-            </button>
-
             <button 
               onClick={(e) => handleNavClick(e, 'impact')} 
               className={`transition-colors hover:text-terracotta-600 ${currentView === 'impact' ? 'text-terracotta-600 font-bold border-b-2 border-terracotta-500 pb-0.5' : ''}`}
@@ -114,8 +106,23 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
             </button>
           </nav>
 
-          {/* Desktop Right CTA Button */}
+          {/* Desktop Right Highlighted Action Buttons (Submit Gem right next to Explore AI Simulator) */}
           <div className="hidden md:flex items-center gap-3">
+            
+            {/* Highlighted Submit Gem CTA Button */}
+            <button
+              onClick={(e) => handleNavClick(e, 'submit-gem')}
+              className={`px-4 py-2.5 rounded-xl font-bold text-xs shadow-md flex items-center gap-2 transition-all hover:scale-105 border ${
+                currentView === 'submit-gem'
+                  ? 'bg-amber-600 text-white border-amber-500 shadow-amber-600/30'
+                  : 'bg-slate-900 hover:bg-slate-800 text-amber-300 border-slate-700'
+              }`}
+            >
+              <PlusCircle className="w-4 h-4 text-amber-400" />
+              <span>Submit Gem</span>
+            </button>
+
+            {/* Explore AI Simulator CTA Button */}
             <button
               onClick={(e) => handleNavClick(e, 'gem-simulator')}
               className="px-5 py-2.5 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-xs shadow-md shadow-terracotta-500/20 flex items-center gap-2 transition-all hover:scale-105"
@@ -123,6 +130,7 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
               <Sparkles className="w-3.5 h-3.5 text-amber-200" />
               <span>Explore AI Simulator</span>
             </button>
+
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -174,9 +182,10 @@ export default function Navbar({ currentView = 'home', onNavigate }) {
             </button>
             <button 
               onClick={(e) => handleNavClick(e, 'submit-gem')}
-              className="block w-full text-left hover:text-terracotta-600 py-1 font-medium"
+              className="block w-full text-left text-amber-700 font-bold py-1 flex items-center gap-1.5"
             >
-              Submit Gem
+              <PlusCircle className="w-4 h-4 text-amber-600" />
+              <span>Submit Gem Portal</span>
             </button>
             <button 
               onClick={(e) => handleNavClick(e, 'impact')}
