@@ -8,35 +8,35 @@ const heroSlides = [
     title: "Taj Mahal, Agra",
     location: "Agra, Uttar Pradesh",
     description: "Iconic 17th-century white marble mausoleum built by Mughal Emperor Shah Jahan on the banks of Yamuna River, renowned globally as one of the Seven Wonders of the World.",
-    image: "https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1920&q=90"
+    image: "/images/slides/taj_mahal.jpg"
   },
   {
     id: 2,
     title: "Amer Fort & Hawa Mahal",
     location: "Jaipur, Rajasthan",
     description: "Majestic 16th-century Amber Fort atop Aravalli hills and the famous 953-window red and pink sandstone Hawa Mahal (Palace of Winds).",
-    image: "https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?auto=format&fit=crop&w=1920&q=90"
+    image: "/images/slides/amer_fort.jpg"
   },
   {
     id: 3,
     title: "Varanasi Sacred Ganges Ghats",
     location: "Varanasi, Uttar Pradesh",
     description: "One of the world's oldest living cities, famous for its ancient stone Ghats along the sacred Ganges river, spiritual evening Ganga Aarti rituals, and heritage temples.",
-    image: "https://images.unsplash.com/photo-1571536802807-30451e3955d8?auto=format&fit=crop&w=1920&q=90"
+    image: "/images/slides/varanasi_ghats.jpg"
   },
   {
     id: 4,
     title: "Golden Temple, Amritsar",
     location: "Amritsar, Punjab",
     description: "Sacred 16th-century Harmandir Sahib gilded in pure gold leaf, surrounded by the holy Amrit Sarovar lake and hosting the world's largest community kitchen.",
-    image: "https://images.unsplash.com/photo-1609949279531-cf48d64bed89?auto=format&fit=crop&w=1920&q=90"
+    image: "/images/slides/golden_temple.jpg"
   },
   {
     id: 5,
-    title: "Qutub Minar & Red Fort",
+    title: "Red Fort & Qutub Minar",
     location: "New Delhi",
     description: "UNESCO World Heritage 73-meter red sandstone victory tower built in 1192 AD alongside Mughal royal sandstone fortresses showcasing imperial history.",
-    image: "https://images.unsplash.com/photo-1592639296346-560c37a0f711?auto=format&fit=crop&w=1920&q=90"
+    image: "/images/slides/red_fort.jpg"
   }
 ];
 
