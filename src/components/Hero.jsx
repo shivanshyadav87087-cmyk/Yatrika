@@ -107,7 +107,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-base sm:text-lg text-slate-200 leading-relaxed font-sans max-w-2xl [text-shadow:_0_1px_5px_rgba(0,0,0,0.8)]"
+              className="text-base sm:text-lg text-terracotta-400 leading-relaxed font-sans max-w-2xl font-semibold [text-shadow:_0_1px_5px_rgba(0,0,0,0.8)]"
             >
               Discover lesser-known places, local culture and safer routes — powered by AI.
             </motion.p>
