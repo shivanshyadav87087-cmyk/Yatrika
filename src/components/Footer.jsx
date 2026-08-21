@@ -35,7 +35,7 @@ export default function Footer() {
             </a>
             
             <p className="text-xs text-forest-200 leading-relaxed font-sans max-w-sm">
-              An AI-powered hidden gem discovery & safe tourism engine for all 28 Indian States & UTs. Equipping travelers with verified nearby food, medical care, transport, nearest police stations, and 24/7 night emergency SOS assistance.
+              An AI-powered hidden gem discovery & safe tourism engine for all 29 Indian States & UTs. Equipping travelers with verified nearby food, medical care, transport, nearest police stations, and 24/7 night emergency SOS assistance.
             </p>
 
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-forest-900 border border-forest-800 text-[11px] font-mono text-terracotta-300">

@@ -31,7 +31,7 @@ export default function Problem() {
           </h2>
 
           <p className="text-base sm:text-lg text-sand-700 leading-relaxed font-sans">
-            Most tourists today only visit famous spots because of herd mentality—they go wherever they see crowds. Even local guides at famous monuments (like Taj Mahal or Shimla) only suggest commercial spots right next door that are already over-explored. <strong className="text-forest-900 font-bold">Yatrika breaks this cycle by uncovering TRULY NEW, UNTOUCHED & UNIQUE places</strong> across all 28 states with complete 24/7 safety and emergency facility backing.
+            Most tourists today only visit famous spots because of herd mentality—they go wherever they see crowds. Even local guides at famous monuments (like Taj Mahal or Shimla) only suggest commercial spots right next door that are already over-explored. <strong className="text-forest-900 font-bold">Yatrika breaks this cycle by uncovering TRULY NEW, UNTOUCHED & UNIQUE places</strong> across all 29 states with complete 24/7 safety and emergency facility backing.
           </p>
         </motion.div>
 
@@ -158,7 +158,7 @@ export default function Problem() {
               <ul className="space-y-2.5 text-xs sm:text-sm">
                 <li className="flex items-start gap-2 text-forest-100">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span><strong>Pristine Uniqueness:</strong> Untouched historical fortresses, ancient stepwells & river sanctuaries across 28 states.</span>
+                  <span><strong>Pristine Uniqueness:</strong> Untouched historical fortresses, ancient stepwells & river sanctuaries across 29 states.</span>
                 </li>
                 <li className="flex items-start gap-2 text-forest-100">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />

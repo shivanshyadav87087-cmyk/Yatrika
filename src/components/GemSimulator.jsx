@@ -248,7 +248,7 @@ export default function GemSimulator({ customGems }) {
             <div className="space-y-2">
               <label className="text-xs font-semibold text-sand-700 uppercase tracking-wider block flex items-center justify-between">
                 <span className="font-bold text-terracotta-600">1. Select Target Indian State</span>
-                <span className="text-[10px] text-terracotta-600 font-mono font-bold">28 States & UTs</span>
+                <span className="text-[10px] text-terracotta-600 font-mono font-bold">29 States & UTs</span>
               </label>
               
               <div className="relative">
