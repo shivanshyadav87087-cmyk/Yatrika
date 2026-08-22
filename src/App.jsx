@@ -11,6 +11,7 @@ import Feasibility from './components/Feasibility';
 import ImpactBenefits from './components/ImpactBenefits';
 import Research from './components/Research';
 import Footer from './components/Footer';
+import Chatbot from './components/Chatbot';
 import { sampleHiddenGems } from './data/content';
 
 const SECTION_TITLES = {
@@ -177,6 +178,7 @@ export default function App() {
       </main>
       
       <Footer />
+      <Chatbot />
     </div>
   );
 }
