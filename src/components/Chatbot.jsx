@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, Sparkles, Bot, User, RefreshCw, Compass, ShieldCheck } from 'lucide-react';
+import { MessageSquare, X, Send, Sparkles, Bot, User, RefreshCw, Compass, ShieldCheck, MapPin, Utensils, CloudSun, Siren, Phone } from 'lucide-react';
 import { sampleHiddenGems } from '../data/content.js';
+import { destinationsDataset } from '../data/destinations.js';
 
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,31 +24,100 @@ export default function Chatbot() {
     }
   }, [messages, isOpen]);
 
-  // Knowledge base lookup generator for YatrikaAI
+  // Comprehensive, Intelligent Custom Query Engine for YatrikaAI
   const generateAIResponse = (userText) => {
-    const query = userText.toLowerCase();
+    const rawQuery = userText.trim();
+    const query = rawQuery.toLowerCase();
 
-    if (query.includes('taj mahal') || query.includes('agra') || query.includes('uttar pradesh')) {
-      return "Near Taj Mahal, Agra, YatrikaAI recommends exploring **Kachhpura Heritage Village** for moonlight Yamuna views, **Bateshwar Temple Complex** (40km), and tasting authentic Agra Petha & Bedai!";
-    }
-    if (query.includes('kerala') || query.includes('munnar') || query.includes('nature')) {
-      return "In Kerala, skip overcrowded spots and head to **Anakkulam Wild Elephant Mineral Spring**, **Marayoor Sandalwood Forests**, or **Ranipuram Hills** in Kasaragod!";
-    }
-    if (query.includes('rajasthan') || query.includes('jaipur') || query.includes('fort')) {
-      return "In Rajasthan, discover **Sagar Stepwell** right behind Amer Fort, **Abhaneri Chand Baori**, or **Kumbhalgarh Great Wall**! Enjoy Dal Baati Churma & Bandhani silk crafts.";
-    }
-    if (query.includes('sos') || query.includes('safety') || query.includes('police') || query.includes('emergency')) {
-      return "🛡️ **Yatrika 24/7 Safety**: All offbeat gems are linked to verified nearest police posts (<4 min response time), 24/7 ER hospitals, and 1-tap Night SOS dispatch!";
-    }
-    if (query.includes('weather') || query.includes('rain') || query.includes('climate')) {
-      return "🌤️ **Yatrika Weather AI**: Select any place in the AI Simulator to view Past 24h temperature reports, live AQI & UV metrics, and 4-Day Weather Predictions!";
-    }
-    if (query.includes('food') || query.includes('eat') || query.includes('cloth') || query.includes('craft')) {
-      return "🍲 **Local Culture**: Yatrika maps organic village dhabas serving famous regional thalis alongside authentic native handlooms and artisan village crafts.";
+    // 1. Safety / SOS / Police / Emergency Queries
+    if (query.includes('sos') || query.includes('safety') || query.includes('police') || query.includes('female') || query.includes('woman') || query.includes('safe') || query.includes('emergency') || query.includes('hospital')) {
+      return `🛡️ **Yatrika 24/7 Safety & Telematics Support**:
+      
+• **Verified Police Posts**: Every offbeat destination on Yatrika is audited and linked to its nearest police station (<4 min response window).
+• **1-Tap Night Emergency SOS**: Instant location dispatch to regional helpline & trusted emergency contacts.
+• **Solo Female Traveler Guarantee**: Verified local female homestay hosts & emergency transport available.
+• **Helplines**: National Emergency: 112 | Women Helpline: 1091 | Ambulance: 102.`;
     }
 
-    // Default intelligent fallback
-    return `YatrikaAI can help you explore uncrowded hidden places across all 29 Indian States & UTs! You can ask me about offbeat spots near Taj Mahal, Munnar, Shimla, Jaipur, or ask about safety SOS and local food!`;
+    // 2. Weather / Climate / Forecast Queries
+    if (query.includes('weather') || query.includes('rain') || query.includes('climate') || query.includes('temp') || query.includes('temperature') || query.includes('forecast') || query.includes('season')) {
+      return `🌤️ **Yatrika Weather Telematics & Forecast**:
+      
+• **Live Weather Audit**: Real-time temperature, humidity, wind speed & Air Quality Index (AQI) available for all 29 Indian States & UTs.
+• **Past 24h Telematics**: View recorded past temperatures and rainfall data.
+• **4-Day Forecast Prediction**: Day-by-day temperature range & travel suitability advisory in the Yatrika Recommender Simulator!`;
+    }
+
+    // 3. Food / Dishes / Crafts / Shopping Queries
+    if (query.includes('food') || query.includes('eat') || query.includes('dish') || query.includes('cuisine') || query.includes('cloth') || query.includes('craft') || query.includes('shopping') || query.includes('dress') || query.includes('saree')) {
+      return `🍲 **Famous Regional Food & Native Crafts**:
+      
+• **North India**: Bedai & Agra Petha (UP), Dal Baati Churma & Bandhani Silk (Rajasthan), Makki Roti & Phulkari (Punjab).
+• **South India**: Appam with Stew (Kerala), Bisi Bele Bath & Channapatna Toys (Karnataka), Chettinad Spices (Tamil Nadu).
+• **East & NE India**: Litti Chokha (Bihar), Rasgulla & Kantha Stitch (Bengal), Bamboo Shoot & Muga Silk (Assam).
+• **West & Central**: Poha Jalebi (MP), Misal Pav & Paithani (Maharashtra), Dhokla & Patola (Gujarat).`;
+    }
+
+    // 4. Route / Reach / Transport / Distance Queries
+    if (query.includes('reach') || query.includes('how to go') || query.includes('route') || query.includes('bus') || query.includes('train') || query.includes('flight') || query.includes('distance') || query.includes('cab')) {
+      return `🚗 **Yatrika Transit & Directions Engine**:
+      
+Yatrika calculates carbon-optimized routes from major transit hubs:
+• Direct auto & jeep contacts available for last-mile village transit.
+• Exact distance to nearest Petrol Pump, ATM, District Hospital & National Highway mapped in the Simulator!`;
+    }
+
+    // 5. Dynamic Dataset Search across sampleHiddenGems and destinationsDataset
+    let matchedGems = sampleHiddenGems.filter(g => 
+      (g.state && g.state.toLowerCase().includes(query)) ||
+      (g.city && g.city.toLowerCase().includes(query)) ||
+      (g.gemName && g.gemName.toLowerCase().includes(query)) ||
+      (g.location && g.location.toLowerCase().includes(query)) ||
+      (g.vibeTag && g.vibeTag.toLowerCase().includes(query)) ||
+      (g.landmarkHub && g.landmarkHub.toLowerCase().includes(query))
+    );
+
+    // If no direct gem match, search state names in destinationsDataset
+    if (matchedGems.length === 0 && Array.isArray(destinationsDataset)) {
+      const stateMatch = destinationsDataset.find(s => 
+        s.state.toLowerCase().includes(query) || query.includes(s.state.toLowerCase())
+      );
+      if (stateMatch) {
+        const cityList = stateMatch.cities.map(c => c.name).join(', ');
+        return `📍 **Yatrika Destinations in ${stateMatch.state}**:
+        
+Yatrika has registered verified offbeat places across **${cityList}** in ${stateMatch.state}!
+• **Popular Cities**: ${cityList}
+• **AI Recommendation**: Open the **AI Simulator** above, select **${stateMatch.state}**, and launch instant offbeat recommendations with local food & safety telematics!`;
+      }
+    }
+
+    // If matching gems were found in dataset
+    if (matchedGems.length > 0) {
+      const topGem = matchedGems[0];
+      return `📍 **Yatrika Recommendation for "${rawQuery}"**:
+
+✨ **${topGem.gemName}** (${topGem.state})
+• **Vibe**: ${topGem.vibeTag || topGem.category} (Score: ${topGem.score}/100)
+• **Location**: ${topGem.location} (${topGem.distance})
+• **Overview**: ${topGem.desc}
+• **Famous Food**: ${topGem.essentialFacilities?.famousRegionalSpecialties?.food || 'Local Organic Thali'}
+• **Native Crafts**: ${topGem.essentialFacilities?.famousRegionalSpecialties?.crafts || 'Traditional Handlooms'}
+• **Police Safety**: ${topGem.essentialFacilities?.womenSafety?.policeStationName || 'Verified Local Police Post'}`;
+    }
+
+    // 6. Intelligent Contextual Custom Travel Advisor for ANY general query
+    return `🤖 **YatrikaAI Travel Assistant**:
+
+I understand you are asking about: **"${rawQuery}"**!
+
+YatrikaAI covers all **29 Indian States & UTs**. Here is how I can best assist you:
+1. **Find Offbeat Places**: Ask about any state or landmark (e.g. *"Hidden places in Himachal"*, *"Offbeat spots near Shimla"*).
+2. **Local Food & Shopping**: Ask about famous dishes or native handicrafts (e.g. *"What food to eat in Jaipur?"*).
+3. **Safety & Emergency**: Ask about police stations, female safety, or night SOS.
+4. **Weather Forecast**: Ask about weather telematics and travel advisories.
+
+Try selecting your state in the **AI Simulator** above for interactive 3D map exploration!`;
   };
 
   const handleSendMessage = (e) => {
@@ -76,7 +146,7 @@ export default function Chatbot() {
       };
       setMessages((prev) => [...prev, aiMsg]);
       setIsTyping(false);
-    }, 800);
+    }, 700);
   };
 
   const handleQuickPrompt = (promptText) => {
@@ -118,7 +188,7 @@ export default function Chatbot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.25 }}
-            className="fixed bottom-24 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[380px] h-[520px] bg-slate-950 text-white rounded-3xl border-2 border-amber-500/40 shadow-2xl flex flex-col overflow-hidden backdrop-blur-2xl"
+            className="fixed bottom-24 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[400px] h-[540px] bg-slate-950 text-white rounded-3xl border-2 border-amber-500/40 shadow-2xl flex flex-col overflow-hidden backdrop-blur-2xl"
           >
             {/* Chat Modal Header */}
             <div className="p-4 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
@@ -133,13 +203,13 @@ export default function Chatbot() {
                     <span>YatrikaAI</span>
                     <span className="text-[9px] font-mono bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.2 rounded-full font-bold">ONLINE</span>
                   </h3>
-                  <p className="text-[10px] text-slate-400 font-mono">Your AI Travel & Safety Assistant</p>
+                  <p className="text-[10px] text-slate-400 font-mono">29 States AI Travel & Safety Assistant</p>
                 </div>
               </div>
 
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+                className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -148,10 +218,11 @@ export default function Chatbot() {
             {/* Quick Prompt Chips */}
             <div className="px-4 py-2 bg-slate-900/60 border-b border-slate-800 flex items-center gap-1.5 overflow-x-auto text-[11px] scrollbar-none">
               {[
-                "Hidden places near Taj Mahal",
-                "Kerala nature spots",
+                "Places in Bihar",
+                "Places in Himachal",
                 "24/7 Safety SOS",
-                "Famous food"
+                "Famous food",
+                "Weather forecast"
               ].map((chip) => (
                 <button
                   key={chip}
@@ -183,7 +254,7 @@ export default function Chatbot() {
                   </div>
 
                   <div
-                    className={`max-w-[80%] p-3 rounded-2xl leading-relaxed ${
+                    className={`max-w-[85%] p-3 rounded-2xl leading-relaxed ${
                       msg.sender === 'user'
                         ? 'bg-amber-500 text-slate-950 font-medium rounded-tr-none'
                         : 'bg-slate-900 border border-slate-800 text-slate-100 rounded-tl-none shadow-md'
@@ -204,7 +275,7 @@ export default function Chatbot() {
               {isTyping && (
                 <div className="flex items-center gap-2 text-slate-400 text-xs font-mono py-1">
                   <Bot className="w-4 h-4 text-amber-300 animate-spin" />
-                  <span>YatrikaAI is thinking...</span>
+                  <span>YatrikaAI is searching 29 states...</span>
                 </div>
               )}
 
@@ -217,7 +288,7 @@ export default function Chatbot() {
                 type="text"
                 value={inputQuery}
                 onChange={(e) => setInputQuery(e.target.value)}
-                placeholder="Ask YatrikaAI about any destination..."
+                placeholder="Ask YatrikaAI any travel question..."
                 className="flex-1 text-xs p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
               />
               <button
