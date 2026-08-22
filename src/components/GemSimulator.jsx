@@ -1,8 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, MapPin, Compass, Clock, Wallet, ShieldCheck, Route, ArrowRight, RefreshCw, CheckCircle2, Utensils, Home, Stethoscope, ShieldAlert, PhoneCall, Bus, Navigation, Moon, AlertTriangle, X, Search, Globe, Shield, Phone, Siren, Tag, Mountain, Flame, Activity, Building2, Landmark, ShoppingBag, UtensilsCrossed, Layers, Eye, PlusCircle } from 'lucide-react';
+import { Sparkles, MapPin, Compass, Clock, Wallet, ShieldCheck, Route, ArrowRight, RefreshCw, CheckCircle2, Utensils, Home, Stethoscope, ShieldAlert, PhoneCall, Bus, Navigation, Moon, AlertTriangle, X, Search, Globe, Shield, Phone, Siren, Tag, Mountain, Flame, Activity, Building2, Landmark, ShoppingBag, UtensilsCrossed, Layers, Eye, PlusCircle, CloudSun, Sun, Wind, Thermometer, Droplets } from 'lucide-react';
 import { sampleHiddenGems, indianStatesList, famousLandmarkHubs } from '../data/content.js';
 import { destinationsDataset, getCitiesForState, getLandmarksForStateAndCity } from '../data/destinations.js';
+import { getWeatherForDestination } from '../utils/weatherData.js';
 import { API_BASE_URL } from '../config/api.js';
 import confetti from 'canvas-confetti';
 import InteractiveMap from './InteractiveMap.jsx';
@@ -107,6 +108,10 @@ export default function GemSimulator({ customGems }) {
     food: "Local Organic Thali & Regional Desserts",
     crafts: "Native Handlooms, Block Prints & Traditional Crafts"
   };
+
+  const weatherData = useMemo(() => {
+    return getWeatherForDestination(currentGem?.state, currentGem?.location, currentGem?.gemName);
+  }, [currentGem]);
 
   const handleSelectState = (st) => {
     setSelectedState(st);
@@ -453,6 +458,7 @@ export default function GemSimulator({ customGems }) {
             <div className="flex flex-wrap items-center gap-1.5 bg-white p-1.5 rounded-2xl border border-sand-200 shadow-sm relative">
               {[
                 { id: 'result', label: 'Overview' },
+                { id: 'weather', label: 'Weather & Forecast', icon: CloudSun, color: 'text-amber-400' },
                 { id: 'specialties', label: 'Famous Food & Clothes', icon: ShoppingBag, color: 'text-amber-500' },
                 { id: 'essential', label: 'Food & Homestays', icon: Utensils, color: 'text-terracotta-500' },
                 { id: 'medical', label: 'Hospitals & Medical', icon: Stethoscope, color: 'text-red-400' },
@@ -603,6 +609,43 @@ export default function GemSimulator({ customGems }) {
                         {currentGem.desc}
                       </p>
 
+                      {/* Weather & Forecast Teaser Box */}
+                      <div className="p-4 rounded-2xl bg-slate-950/90 border border-sky-500/40 space-y-2 text-xs">
+                        <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                          <span className="text-sky-400 font-bold font-mono uppercase tracking-wider flex items-center gap-1.5">
+                            <CloudSun className="w-4 h-4 text-amber-300" />
+                            Live Weather Telematics & Forecast
+                          </span>
+                          <button 
+                            onClick={() => setActiveTab('weather')}
+                            className="text-[10px] text-amber-300 font-mono font-bold hover:underline cursor-pointer"
+                          >
+                            Full Report & Forecast &rarr;
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-mono">
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Live Temp:</span>
+                            <span className="text-amber-300 font-bold text-sm">{weatherData.current.temp}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Condition:</span>
+                            <span className="text-white font-medium truncate block">{weatherData.current.condition}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">Past 24h Avg:</span>
+                            <span className="text-slate-300 font-medium">{weatherData.past24h.avgTemp}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-400 block text-[10px]">AQI Air Index:</span>
+                            <span className="text-emerald-400 font-bold">{weatherData.current.aqi}</span>
+                          </div>
+                        </div>
+                        <div className="pt-1.5 border-t border-slate-800/80 text-[11px] text-amber-200 font-sans flex items-center gap-1.5">
+                          <span>{weatherData.current.travelAdvisory}</span>
+                        </div>
+                      </div>
+
                       {/* Regional Famous Food & Clothes Teaser Box */}
                       <div className="p-4 rounded-2xl bg-slate-950/90 border border-amber-500/40 space-y-2 text-xs">
                         <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
@@ -656,6 +699,130 @@ export default function GemSimulator({ customGems }) {
                         </div>
                       )}
 
+                    </motion.div>
+                  ) : activeTab === 'weather' ? (
+                    /* Dedicated Weather & Forecast Telematics Tab */
+                    <motion.div
+                      key="weather"
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -12 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-5"
+                    >
+                      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div>
+                          <h4 className="font-serif font-bold text-lg text-sand-50 flex items-center gap-2">
+                            <CloudSun className="w-5 h-5 text-amber-300" />
+                            Weather Telematics & Forecast for {currentGem.gemName}
+                          </h4>
+                          <span className="text-xs text-slate-300 font-mono">Past 24h report, live weather telematics & 4-day forecast prediction</span>
+                        </div>
+                        <span className="bg-amber-950/80 text-amber-300 border border-amber-800 text-xs px-3 py-1 rounded-full font-mono font-bold">
+                          Live Climate Telematics
+                        </span>
+                      </div>
+
+                      {/* Section 1: Past 24 Hours Weather Report */}
+                      <div className="p-4 rounded-2xl bg-slate-950/90 border border-slate-800 space-y-2 text-xs">
+                        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                          <span className="font-mono text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                            <Clock className="w-4 h-4 text-amber-400" />
+                            Past 24 Hours Weather Report ({weatherData.past24h.date})
+                          </span>
+                          <span className="text-[10px] font-mono text-slate-400">Recorded Telematics</span>
+                        </div>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-mono pt-1">
+                          <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                            <span className="text-slate-400 block text-[10px]">Past Avg Temp:</span>
+                            <span className="text-sand-100 font-bold">{weatherData.past24h.avgTemp}</span>
+                          </div>
+                          <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                            <span className="text-slate-400 block text-[10px]">Temp Range:</span>
+                            <span className="text-sand-100 font-bold">{weatherData.past24h.tempLow} - {weatherData.past24h.tempHigh}</span>
+                          </div>
+                          <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                            <span className="text-slate-400 block text-[10px]">Past Condition:</span>
+                            <span className="text-slate-200 font-medium truncate block">{weatherData.past24h.condition}</span>
+                          </div>
+                          <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                            <span className="text-slate-400 block text-[10px]">Past Rainfall:</span>
+                            <span className="text-cyan-300 font-bold">{weatherData.past24h.rainfall}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Section 2: Current Live Weather Telematics */}
+                      <div className="p-5 rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950/60 border border-amber-500/40 space-y-4 shadow-xl">
+                        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center justify-center font-bold shadow-lg">
+                              <Sun className="w-7 h-7 text-amber-300 animate-spin" style={{ animationDuration: '30s' }} />
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-3xl font-serif font-extrabold text-white">{weatherData.current.temp}</span>
+                                <span className="text-xs text-slate-300 font-mono">Feels like {weatherData.current.feelsLike}</span>
+                              </div>
+                              <span className="text-xs text-amber-300 font-semibold font-sans">{weatherData.current.condition}</span>
+                            </div>
+                          </div>
+
+                          <div className="bg-slate-950/90 px-3.5 py-2 rounded-xl border border-amber-500/30 text-right">
+                            <span className="text-[10px] text-slate-400 font-mono block">Travel Advisory</span>
+                            <span className="text-xs font-bold text-emerald-400 font-sans">{weatherData.current.travelAdvisory}</span>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
+                          <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
+                            <span className="text-slate-400 text-[10px] uppercase block flex items-center gap-1">
+                              <Droplets className="w-3 h-3 text-cyan-400" /> Humidity
+                            </span>
+                            <span className="text-sand-100 font-bold text-xs mt-0.5 block">{weatherData.current.humidity}</span>
+                          </div>
+                          <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
+                            <span className="text-slate-400 text-[10px] uppercase block flex items-center gap-1">
+                              <Wind className="w-3 h-3 text-cyan-400" /> Wind Speed
+                            </span>
+                            <span className="text-sand-100 font-bold text-xs mt-0.5 block">{weatherData.current.windSpeed}</span>
+                          </div>
+                          <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
+                            <span className="text-slate-400 text-[10px] uppercase block flex items-center gap-1">
+                              <Sun className="w-3 h-3 text-amber-400" /> UV Index
+                            </span>
+                            <span className="text-amber-300 font-bold text-xs mt-0.5 block">{weatherData.current.uvIndex}</span>
+                          </div>
+                          <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800">
+                            <span className="text-slate-400 text-[10px] uppercase block flex items-center gap-1">
+                              <Activity className="w-3 h-3 text-emerald-400" /> Air Quality (AQI)
+                            </span>
+                            <span className="text-emerald-400 font-bold text-xs mt-0.5 block">{weatherData.current.aqi}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Section 3: Weather Forecast Prediction (Next 4 Days) */}
+                      <div className="space-y-2">
+                        <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider block">
+                          🔮 4-Day Weather Forecast Prediction
+                        </span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs">
+                          {weatherData.forecast.map((f, idx) => (
+                            <div key={idx} className="p-3.5 rounded-2xl bg-slate-950/90 border border-slate-800 space-y-1.5">
+                              <div className="flex items-center justify-between font-mono">
+                                <span className="font-bold text-amber-300">{f.day}</span>
+                                <span className="text-[10px] text-slate-400">Rain: {f.rainChance}</span>
+                              </div>
+                              <div className="text-sm font-serif font-bold text-white flex items-center justify-between">
+                                <span>{f.tempHigh}</span>
+                                <span className="text-xs text-slate-400 font-mono">Low: {f.tempLow}</span>
+                              </div>
+                              <span className="text-[11px] text-slate-300 font-sans block truncate">{f.condition}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </motion.div>
                   ) : activeTab === 'specialties' ? (
                     /* Famous Food & Native Clothes/Crafts Tab */
